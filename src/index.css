@@ -1,0 +1,51 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --font-arabic: 'Noto Sans Arabic', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-nastaliq: 'Noto Nastaliq Urdu', 'Noto Sans Arabic', serif;
+    --font-english: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  }
+
+  body {
+    font-family: var(--font-arabic);
+    line-height: 1.7;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  [dir="ltr"] {
+    font-family: var(--font-english);
+    line-height: 1.5;
+  }
+
+  [dir="rtl"] .urdu-nastaliq {
+    font-family: var(--font-nastaliq);
+    line-height: 2.2;
+  }
+}
+
+/* Custom scrollbar for mobile friendly smooth scroll */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Smooth transitions */
+* {
+  box-sizing: border-box;
+}
+
+/* Touch friendly minimums */
+button, a, input, select, textarea {
+  touch-action: manipulation;
+}

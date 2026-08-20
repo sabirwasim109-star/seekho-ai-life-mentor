@@ -1,0 +1,76 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "Seekho learner profile containing demographics, learning goals, village and regional context.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "fullName": { "type": "string" },
+        "email": { "type": "string" },
+        "photoURL": { "type": "string" },
+        "preferredLanguage": { "type": "string", "enum": ["ur", "en"] },
+        "ageGroup": { "type": "string", "enum": ["10-15", "16-25", "26-45", "46+"] },
+        "educationLevel": { "type": "string" },
+        "occupationCategory": { "type": "string" },
+        "interests": { "type": "array", "items": { "type": "string" } },
+        "pilotRegion": {
+          "type": "object",
+          "properties": {
+            "country": { "type": "string" },
+            "district": { "type": "string" },
+            "tehsil": { "type": "string" },
+            "villageOrTown": { "type": "string" }
+          }
+        },
+        "streakDays": { "type": "number" },
+        "totalPoints": { "type": "number" },
+        "enrolledCourseIds": { "type": "array", "items": { "type": "string" } },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "fullName", "preferredLanguage", "ageGroup", "createdAt", "updatedAt"]
+    },
+    "CourseProgress": {
+      "title": "CourseProgress",
+      "description": "Progress records per enrolled course for a learner.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "courseId": { "type": "string" },
+        "completedLessonIds": { "type": "array", "items": { "type": "string" } },
+        "progressPercent": { "type": "number" },
+        "status": { "type": "string", "enum": ["enrolled", "in_progress", "completed"] },
+        "lastAccessedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "courseId", "completedLessonIds", "progressPercent", "status", "lastAccessedAt"]
+    },
+    "CommunityAction": {
+      "title": "CommunityAction",
+      "description": "Practical family and community service action started or completed by learner.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "actionCategory": { "type": "string", "enum": ["family", "village", "society"] },
+        "titleUrdu": { "type": "string" },
+        "status": { "type": "string", "enum": ["started", "in_progress", "completed"] },
+        "startedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "actionCategory", "titleUrdu", "status", "startedAt"]
+    }
+  },
+  "firestore": {
+    "users/{userId}": {
+      "schema": "UserProfile",
+      "description": "User profile document."
+    },
+    "users/{userId}/courseProgress/{courseId}": {
+      "schema": "CourseProgress",
+      "description": "User progress for individual courses."
+    },
+    "users/{userId}/communityActions/{actionId}": {
+      "schema": "CommunityAction",
+      "description": "User started or completed community service actions."
+    }
+  }
+}
