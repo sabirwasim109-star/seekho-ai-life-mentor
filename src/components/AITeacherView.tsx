@@ -34,6 +34,7 @@ import { ChatMessage, Course, Language, Lesson, UserProfile, MentorChallenge, Me
 import { UI_TRANSLATIONS } from '../data/mockData';
 import { generateAITeacherResponse } from '../utils/aiTeacherEngine';
 import { MENTOR_CHALLENGES, getRecommendedChallengesForUser } from '../data/mentorChallengesData';
+import { AudioReaderButton, VoiceInputButton } from './AudioSpeechControls';
 
 interface AITeacherViewProps {
   language: Language;
@@ -72,10 +73,11 @@ export const AITeacherView: React.FC<AITeacherViewProps> = ({
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const isUrdu = language === 'ur';
-  const ageLabel = userProfile.ageGroup ? `${userProfile.ageGroup} ${isUrdu ? 'سال' : 'yrs'}` : (isUrdu ? 'تمام عمر' : 'All ages');
+  const isDual = language === 'dual';
+  const ageLabel = userProfile.ageGroup ? `${userProfile.ageGroup} ${isUrdu || isDual ? 'سال' : 'yrs'}` : (isUrdu || isDual ? 'تمام عمر' : 'All ages');
   const activeCourseName = currentCourse 
-    ? (isUrdu ? currentCourse.titleUrdu : currentCourse.titleEn)
-    : (userProfile.interests && userProfile.interests.length > 0 ? userProfile.interests[0] : (isUrdu ? 'عملی ہنر مندی' : 'Practical Skills'));
+    ? (isUrdu ? currentCourse.titleUrdu : isDual ? `${currentCourse.titleUrdu} (${currentCourse.titleEn})` : currentCourse.titleEn)
+    : (userProfile.interests && userProfile.interests.length > 0 ? userProfile.interests[0] : (isUrdu || isDual ? 'عملی ہنر مندی (Practical Skills)' : 'Practical Skills'));
 
   const recommendedChallenges = getRecommendedChallengesForUser(userProfile, language);
 
@@ -90,6 +92,25 @@ export const AITeacherView: React.FC<AITeacherViewProps> = ({
 عمر: **${ageLabel}** • پیشۂ/تعلیم: **${userProfile.currentOccupation || 'طالب علم / متلاشی'}** • فعال موضوع: **${activeCourseName}**
 
 جب بھی آپ پوچھیں گے **"اب مجھے کیا کرنا چاہیے؟"**، میں آپ کے ہنر، روزانہ مشن، ذاتی ترقی، قرآنی و نبوی رہنمائی اور اخلاق کو جوڑ کر بالکل جامع ۶ نکاتی لائحہ عمل دوں گا۔`;
+
+  const initialWelcomeDual = `السلام علیکم و رحمتہ اللہ، ${userProfile.name || 'محترم ساتھی'}!
+
+میں **"استاد سیکھو"** ہوں—آپ کا ذاتی زندگی اور ہنر کا مشیر و رہنما (Personal Life Mentor)۔ 
+
+🌱 **ہمارا منشور (Our Vision):**
+**سیکھیں → مشق کریں → خود کو سنواریں → خاندان اور برادری کی خدمت کریں**
+*(Learn → Practice → Improve Yourself → Uplift Family & Community)*
+
+💡 **آپ کا ذاتی پس منظر:**
+عمر: **${ageLabel}** • پیشۂ/تعلیم: **${userProfile.currentOccupation || 'طالب علم / متلاشی'}** • فعال موضوع: **${activeCourseName}**
+
+جب بھی آپ پوچھیں گے **"اب مجھے کیا کرنا چاہیے؟"**، میں آپ کے ہنر، روزانہ مشن، ذاتی ترقی، قرآنی و نبوی رہنمائی اور اخلاق کو جوڑ کر جامع ۶ نکاتی لائحہ عمل دوں گا۔
+
+---
+
+**English Summary & Next Steps:**
+• **Role:** Teacher Seekho provides personalized guidance on skills, halal livelihood, decision making, and community upliftment.
+• **How to use:** Ask any life or learning question, or choose from the quick prompts below.`;
 
   const initialWelcomeEn = `Hello and Welcome, ${userProfile.name || 'Learner'}!
 
@@ -107,9 +128,15 @@ Whenever you ask **"What should I do now?"**, I will connect your skills, daily 
     {
       id: 'welcome-1',
       role: 'assistant',
-      text: isUrdu ? initialWelcomeUrdu : initialWelcomeEn,
+      text: isDual ? initialWelcomeDual : isUrdu ? initialWelcomeUrdu : initialWelcomeEn,
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-      suggestions: isUrdu ? [
+      suggestions: isDual ? [
+        'مجھے آگے کیا کرنا چاہیے؟ (What should I do next?)',
+        'آج کا مشن اور ہنر (Today’s Mission & Skill)',
+        'حلال روزگار اور برکت (Halal Livelihood)',
+        'غصہ یا دباؤ آئے تو سنت کے مطابق کیسے فیصلہ کریں؟ (Wise Decision Under Pressure)',
+        'مجھے سمجھ نہیں آئی، آسان الفاظ میں سمجھائیں (Explain Simpler)',
+      ] : isUrdu ? [
         'مجھے آگے کیا کرنا چاہیے؟',
         'آج کا مشن اور ہنر',
         'حلال روزگار اور خدمت کا راستہ',
@@ -459,8 +486,32 @@ Whenever you ask **"What should I do now?"**, I will connect your skills, daily 
                     : 'bg-emerald-800 text-white rounded-tr-xs'
                 }`}
               >
-                <div className="whitespace-pre-line font-arabic">
-                  {msg.text}
+                <div className="space-y-2">
+                  {msg.text.includes('---') ? (
+                    (() => {
+                      const parts = msg.text.split('---');
+                      const urduPart = parts[0].trim();
+                      const enPart = parts.slice(1).join('---').trim();
+                      return (
+                        <>
+                          <div className="whitespace-pre-line font-arabic text-[16px] sm:text-[17px] leading-[1.9] text-slate-900">
+                            {urduPart}
+                          </div>
+                          {enPart && (
+                            <div className="mt-2.5 p-3 rounded-xl bg-slate-50/90 border border-slate-200/90 text-left dir-ltr text-xs sm:text-[13px] text-slate-700 leading-relaxed font-sans">
+                              <div className="whitespace-pre-line">
+                                {enPart}
+                              </div>
+                            </div>
+                          )}
+                        </>
+                      );
+                    })()
+                  ) : (
+                    <div className="whitespace-pre-line font-arabic text-[15.5px] sm:text-[16.5px] leading-[1.85]">
+                      {msg.text}
+                    </div>
+                  )}
                 </div>
 
                 {/* Audio readout & timestamp footer */}
@@ -468,22 +519,16 @@ Whenever you ask **"What should I do now?"**, I will connect your skills, daily 
                   <span>{msg.timestamp}</span>
 
                   {isAssistant && (
-                    <button
-                      onClick={() => handleSpeak(msg.id, msg.text)}
-                      className="flex items-center gap-1 text-emerald-800 hover:text-emerald-950 font-bold bg-emerald-50 px-2 py-0.5 rounded-md transition"
-                    >
-                      {isSpeakingId === msg.id ? (
-                        <>
-                          <VolumeX className="w-3.5 h-3.5" />
-                          <span>{isUrdu ? 'آواز بند کریں' : 'Stop'}</span>
-                        </>
-                      ) : (
-                        <>
-                          <Volume2 className="w-3.5 h-3.5" />
-                          <span>{isUrdu ? 'سنیں' : 'Listen'}</span>
-                        </>
-                      )}
-                    </button>
+                    <AudioReaderButton
+                      id={`ai-msg-tts-${msg.id}`}
+                      text={msg.text}
+                      language={language}
+                      variant="inline"
+                      size="sm"
+                      showLabel={true}
+                      labelUr="سنیں"
+                      labelEn="Listen"
+                    />
                   )}
                 </div>
 
@@ -613,8 +658,18 @@ Whenever you ask **"What should I do now?"**, I will connect your skills, daily 
           type="text"
           value={inputMessage}
           onChange={(e) => setInputMessage(e.target.value)}
-          placeholder={isUrdu ? 'استاد سیکھو سے کچھ بھی پوچھیں (مثلاً "اب مجھے کیا کرنا چاہیے؟" یا "کینوا کیسے سیکھیں؟")...' : 'Ask Teacher Seekho (e.g. "What should I do now?" or "How to use Canva?")...'}
+          placeholder={isUrdu ? 'استاد سیکھو سے کچھ بھی پوچھیں یا مائیک کا بٹن دبائیں...' : 'Ask Teacher Seekho or click mic to speak...'}
           className="flex-1 px-3 py-2 text-xs sm:text-sm bg-transparent text-slate-900 focus:outline-none placeholder:text-slate-400 font-medium font-arabic"
+        />
+
+        <VoiceInputButton
+          language={language}
+          size="md"
+          tooltipUr="بول کر سوال پوچھیں"
+          tooltipEn="Speak your question"
+          onTranscript={(text) => {
+            setInputMessage((prev) => (prev ? `${prev} ${text}` : text));
+          }}
         />
 
         <button

@@ -20,13 +20,15 @@ import {
   CheckCircle2,
   RefreshCw
 } from 'lucide-react';
-import { AgeGroup, Language, UserProfile } from '../types';
+import { AgeGroup, FontSize, Language, UserProfile } from '../types';
 import { UI_TRANSLATIONS } from '../data/mockData';
 import { useAuth } from '../lib/AuthContext';
 import { SeekhoLogo } from './SeekhoLogo';
 
 interface ProfileViewProps {
   language: Language;
+  fontSize?: FontSize;
+  onFontSizeChange?: (size: FontSize) => void;
   userProfile: UserProfile;
   onUpdateProfile: (updated: Partial<UserProfile>) => void;
   onOpenAssessment: () => void;
@@ -38,6 +40,8 @@ interface ProfileViewProps {
 
 export const ProfileView: React.FC<ProfileViewProps> = ({
   language,
+  fontSize = 'normal',
+  onFontSizeChange,
   userProfile,
   onUpdateProfile,
   onOpenAssessment,
@@ -323,6 +327,71 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
         )}
       </div>
 
+      {/* Accessibility & Urdu Text Size Preference */}
+      {onFontSizeChange && (
+        <div className="bg-white p-5 rounded-3xl border border-slate-200 shadow-xs space-y-3 font-arabic">
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2.5">
+              <div className="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold text-base shrink-0">
+                <span>Aa</span>
+              </div>
+              <div>
+                <h3 className="text-sm sm:text-base font-bold text-slate-900">
+                  {language === 'ur' ? 'اردو تحریر کا سائز (Text Size & Readability)' : 'Text Size & Readability'}
+                </h3>
+                <p className="text-xs text-slate-500">
+                  {language === 'ur' ? 'پڑھنے میں آسانی کے لیے فونٹ کا سائز تبدیل کریں' : 'Adjust font size for comfortable reading'}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-3 gap-2.5 pt-1">
+            <button
+              id="font-size-normal-btn"
+              type="button"
+              onClick={() => onFontSizeChange('normal')}
+              className={`p-3 rounded-2xl border text-center transition flex flex-col items-center justify-center gap-1 ${
+                fontSize === 'normal'
+                  ? 'border-emerald-600 bg-emerald-50/90 text-emerald-950 font-black shadow-xs ring-2 ring-emerald-500/20'
+                  : 'border-slate-200 bg-slate-50/80 text-slate-700 hover:bg-slate-100'
+              }`}
+            >
+              <span className="text-sm">عام (Normal)</span>
+              <span className="text-[11px] text-slate-500">17px</span>
+            </button>
+
+            <button
+              id="font-size-large-btn"
+              type="button"
+              onClick={() => onFontSizeChange('large')}
+              className={`p-3 rounded-2xl border text-center transition flex flex-col items-center justify-center gap-1 ${
+                fontSize === 'large'
+                  ? 'border-emerald-600 bg-emerald-50/90 text-emerald-950 font-black shadow-xs ring-2 ring-emerald-500/20'
+                  : 'border-slate-200 bg-slate-50/80 text-slate-700 hover:bg-slate-100'
+              }`}
+            >
+              <span className="text-base font-bold">بڑا (Large)</span>
+              <span className="text-[11px] text-slate-500">19.5px</span>
+            </button>
+
+            <button
+              id="font-size-xlarge-btn"
+              type="button"
+              onClick={() => onFontSizeChange('xlarge')}
+              className={`p-3 rounded-2xl border text-center transition flex flex-col items-center justify-center gap-1 ${
+                fontSize === 'xlarge'
+                  ? 'border-emerald-600 bg-emerald-50/90 text-emerald-950 font-black shadow-xs ring-2 ring-emerald-500/20'
+                  : 'border-slate-200 bg-slate-50/80 text-slate-700 hover:bg-slate-100'
+              }`}
+            >
+              <span className="text-lg font-black">بہت بڑا (XL)</span>
+              <span className="text-[11px] text-slate-500">21.5px</span>
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Quick Action Shortcuts */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {onOpenOpportunities && (
@@ -370,22 +439,26 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
         )}
 
         <div 
+          id="btn-profile-retake-onboarding"
           onClick={onOpenAssessment}
-          className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs hover:border-emerald-400 cursor-pointer transition flex items-center justify-between"
+          className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs hover:border-emerald-500 hover:bg-emerald-50/40 cursor-pointer transition flex items-center justify-between"
         >
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-800 flex items-center justify-center shrink-0">
-              <Award className="w-5 h-5" />
+            <div className="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center shrink-0">
+              <RotateCcw className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-sm sm:text-base font-bold text-slate-900">
-                {language === 'ur' ? 'اسکل اسیسمنٹ دوبارہ حل کریں' : 'Retake Skill Assessment'}
+              <h3 className="text-sm sm:text-base font-bold text-slate-900 font-arabic">
+                {language === 'ur' ? 'Learning Profile دوبارہ ترتیب دیں (آن بورڈنگ و اسیسمنٹ)' : 'Retake Learning Profile & Assessment'}
               </h3>
-              <p className="text-xs text-slate-500">
-                {language === 'ur' ? 'اپنی دلچسپیوں اور وقت کے مطابق نئی تجاویز حاصل کریں' : 'Re-customize your roadmap and recommended skills.'}
+              <p className="text-xs text-slate-500 font-arabic">
+                {language === 'ur' ? 'اپنے ۱۰ اہداف، روزانہ وقت، اسیسمنٹ اور ذاتی روڈ میپ کو دوبارہ سیٹ کریں' : 'Update your 10 goals, daily time, diagnostic test & personal roadmap.'}
               </p>
             </div>
           </div>
+          <span className="text-xs font-bold text-emerald-800 bg-emerald-100 px-3 py-1 rounded-full border border-emerald-300 font-arabic shrink-0">
+            {language === 'ur' ? 'ترتیب دیں' : 'Retake'}
+          </span>
         </div>
 
         <div 

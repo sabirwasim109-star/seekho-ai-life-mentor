@@ -20,6 +20,8 @@ import {
 } from 'lucide-react';
 import { Language, UserProfile, PracticalLifeLesson } from '../types';
 import { LIFE_SKILLS_CORE_PRINCIPLE, LIFE_SKILL_CATEGORIES } from '../data/practicalLifeSkillsData';
+import { AudioReaderButton, VoiceInputButton } from './AudioSpeechControls';
+import { stopSpeaking } from '../utils/speech';
 
 interface PracticalLifeSkillModalProps {
   lesson: PracticalLifeLesson;
@@ -104,13 +106,39 @@ export const PracticalLifeSkillModal: React.FC<PracticalLifeSkillModalProps> = (
               </span>
             </div>
 
-            <button
-              onClick={onClose}
-              className="w-9 h-9 rounded-2xl bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition shrink-0"
-              aria-label="Close"
-            >
-              <X className="w-5 h-5" />
-            </button>
+            <div className="flex items-center gap-2">
+              <AudioReaderButton
+                id={`practical-skill-tts-${lesson.id}-${currentStep}`}
+                text={
+                  currentStep === 'learn'
+                    ? `${isUrdu ? lesson.titleUrdu : lesson.titleEn}. ${isUrdu ? lesson.subtitleUrdu : lesson.subtitleEn}. ${isUrdu ? 'بنیادی اصول:' : 'Core Principle:'} ${isUrdu ? lesson.corePrincipleUrdu : lesson.corePrincipleEn}. ${isUrdu ? lesson.realLifeSituationUrdu : lesson.realLifeSituationEn}`
+                    : currentStep === 'practice'
+                    ? `${isUrdu ? 'عملی منظرنامہ:' : 'Practice Scenario:'} ${isUrdu ? lesson.practiceScenarioUrdu : lesson.practiceScenarioEn}`
+                    : currentStep === 'apply'
+                    ? `${isUrdu ? 'عملی قدم:' : 'Action Checklist:'} ${isUrdu ? lesson.applyActionUrdu : lesson.applyActionEn}. ${(isUrdu ? lesson.applyChecklistUrdu : lesson.applyChecklistEn).join('. ')}`
+                    : currentStep === 'reflect'
+                    ? `${isUrdu ? 'خود احتسابی:' : 'Self-Reflection:'} ${isUrdu ? lesson.reflectPromptUrdu : lesson.reflectPromptEn}`
+                    : `${isUrdu ? lesson.titleUrdu : lesson.titleEn}. ${isUrdu ? lesson.proTipUrdu : lesson.proTipEn}`
+                }
+                language={language}
+                variant="header"
+                size="md"
+                showLabel={true}
+                labelUr="پڑھ کے سنائیں"
+                labelEn="Listen"
+              />
+
+              <button
+                onClick={() => {
+                  stopSpeaking();
+                  onClose();
+                }}
+                className="w-9 h-9 rounded-2xl bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition shrink-0"
+                aria-label="Close"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
           </div>
 
           <div>
@@ -409,13 +437,26 @@ export const PracticalLifeSkillModal: React.FC<PracticalLifeSkillModalProps> = (
                 <label className="text-xs font-bold text-slate-600 dark:text-slate-300 font-arabic">
                   {isUrdu ? 'کوئی ذاتی نوٹ یا عزم لکھنا چاہیں (اختیاری):' : 'Personal note or commitment (optional):'}
                 </label>
-                <input
-                  type="text"
-                  value={reflectionCustomText}
-                  onChange={(e) => setReflectionCustomText(e.target.value)}
-                  placeholder={isUrdu ? 'مثلاً: میں کل سے صبح جلدی اٹھ کر اس اصول پر عمل کروں گا...' : 'e.g., I will start applying this rule from tomorrow morning...'}
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs sm:text-sm font-arabic focus:ring-2 focus:ring-emerald-500 outline-hidden text-slate-900 dark:text-white"
-                />
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={reflectionCustomText}
+                    onChange={(e) => setReflectionCustomText(e.target.value)}
+                    placeholder={isUrdu ? 'مثلاً: میں کل سے صبح جلدی اٹھ کر عمل کروں گا... (یا مائیک سے بولیں)' : 'e.g., I will start applying this rule... (type or speak via mic)'}
+                    className="w-full px-4 pe-12 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs sm:text-sm font-arabic focus:ring-2 focus:ring-emerald-500 outline-hidden text-slate-900 dark:text-white"
+                  />
+                  <div className="absolute top-1.5 end-1.5">
+                    <VoiceInputButton
+                      language={language}
+                      size="sm"
+                      tooltipUr="بول کر عزم درج کریں"
+                      tooltipEn="Speak commitment"
+                      onTranscript={(text) => {
+                        setReflectionCustomText((prev) => (prev ? `${prev} ${text}` : text));
+                      }}
+                    />
+                  </div>
+                </div>
               </div>
             </div>
           )}

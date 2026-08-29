@@ -278,10 +278,145 @@ export function generateLifeRoadmap(userProfile: UserProfile): LifeRoadmapData {
   ];
 
   // Determine the Single "Next Best Step" Priority at top
-  // Priority rule: Focus on the lowest completed foundational area that offers immediate, high leverage
+  // Priority rule: Respect the user's primary learning goal first, then foundational priorities
   let nextBestStep: NextBestStepPriority;
 
-  if (completedIslamic.length === 0) {
+  const primaryGoal = userProfile.learningGoals?.[0] || userProfile.interests?.[0] || '';
+  const isCommunityGoal = primaryGoal.includes('community') || primaryGoal.includes('برادری') || primaryGoal.includes('خدمت') || primaryGoal.includes('فلاح');
+  const isBusinessGoal = primaryGoal.includes('business') || primaryGoal.includes('کاروبار') || primaryGoal.includes('فری لانسنگ') || primaryGoal.includes('freelanc');
+  const isFinanceGoal = primaryGoal.includes('finance') || primaryGoal.includes('مالیات') || primaryGoal.includes('بچت') || primaryGoal.includes('money');
+  const isLeadershipGoal = primaryGoal.includes('leadership') || primaryGoal.includes('قیادت') || primaryGoal.includes('رہنمائی');
+  const isCommunicationGoal = primaryGoal.includes('comm') || primaryGoal.includes('مواصلات') || primaryGoal.includes('گفتگو');
+  const isFamilyGoal = primaryGoal.includes('family') || primaryGoal.includes('خاندان') || primaryGoal.includes('گھریلو');
+  const isGrowthGoal = primaryGoal.includes('growth') || primaryGoal.includes('ذاتی') || primaryGoal.includes('نظم');
+
+  if (isCommunityGoal) {
+    nextBestStep = {
+      areaId: 'community_service',
+      areaTitleUrdu: 'خدمتِ خلق اور برادری کی فلاح',
+      areaTitleEn: 'Community Service & Social Uplift',
+      titleUrdu: 'آج کا بہترین قدم: کمیونٹی کے مسئلے کو سمجھنا اور خدمت کا جذبہ',
+      titleEn: 'Next Best Step: Understanding Community Needs & Spirit of Service',
+      descriptionUrdu: 'اپنے محلے اور برادری کے بنیادی مسائل کو سمجھیں اور خدمتِ خلق کے عملی اور باوقار طریقوں کا پہلا سبق مکمل کریں۔',
+      descriptionEn: 'Understand core community needs and complete Lesson 1 on dignified service and collective uplift.',
+      estimatedMinutes: 15,
+      timeLabelUrdu: '۱۵ منٹ',
+      timeLabelEn: '15 mins',
+      buttonLabelUrdu: 'سبق شروع کریں (15 منٹ)',
+      buttonLabelEn: 'Start Lesson (15 min)',
+      aiPromptUrdu: 'السلام علیکم! مجھے بتائیں کہ میں اپنی برادری یا محلے کے مسائل سمجھ کر خدمتِ خلق کا پہلا عملی قدم کیسے اٹھاؤں؟',
+      aiPromptEn: 'Guide me on identifying local community needs and taking my first dignified step in social service.',
+      actionType: 'community'
+    };
+  } else if (isBusinessGoal) {
+    nextBestStep = {
+      areaId: 'money_finance',
+      areaTitleUrdu: 'کاروبار اور فری لانسنگ',
+      areaTitleEn: 'Business & Freelancing',
+      titleUrdu: 'آج کا بہترین قدم: منافع بخش کاروباری آئیڈیا اور مارکیٹ کی ضرورت',
+      titleEn: 'Next Best Step: Profitable Business Ideas & Market Validation',
+      descriptionUrdu: 'چھوٹے سرمائے سے نفع بخش کاروبار کا انتخاب کرنے اور گاہک کی حقیقی ضرورت جانچنے کا بنیادی سبق حاصل کریں۔',
+      descriptionEn: 'Learn how to identify profitable local/digital business ideas and validate customer demand.',
+      estimatedMinutes: 15,
+      timeLabelUrdu: '۱۵ منٹ',
+      timeLabelEn: '15 mins',
+      buttonLabelUrdu: 'سبق شروع کریں (15 منٹ)',
+      buttonLabelEn: 'Start Lesson (15 min)',
+      aiPromptUrdu: 'مجھے چھوٹے سرمائے یا بغیر سرمائے کے حلال اور نفع بخش کاروبار شروع کرنے کے بنیادی مراحل بتائیں۔',
+      aiPromptEn: 'Guide me on validating a small-capital halal business or freelancing idea effectively.',
+      actionType: 'money'
+    };
+  } else if (isFinanceGoal) {
+    nextBestStep = {
+      areaId: 'money_finance',
+      areaTitleUrdu: 'مالیاتی شعور اور حلال کمائی',
+      areaTitleEn: 'Money & Financial Knowledge',
+      titleUrdu: 'آج کا بہترین قدم: آمدن، بجٹ اور 10 فیصد بچت کا اصول',
+      titleEn: 'Next Best Step: Master the 10% Savings & Halal Budget Habit',
+      descriptionUrdu: 'اپنے روزمرہ اخراجات کو لکھیں، غیر ضروری خرچ کم کریں اور باقاعدہ بچت کا مضبوط معمول بنائیں۔',
+      descriptionEn: 'Track your daily expenses in writing and allocate 10% toward disciplined savings for future independence.',
+      estimatedMinutes: 10,
+      timeLabelUrdu: '۱۰ منٹ',
+      timeLabelEn: '10 mins',
+      buttonLabelUrdu: 'بجٹ کا سبق پڑھیں (10 منٹ)',
+      buttonLabelEn: 'Review Budget Skill (10 min)',
+      aiPromptUrdu: 'السلام علیکم! مجھے اپنی موجودہ آمدنی سے 10 فیصد بچت اور فضول خرچی ختم کرنے کا عملی نسخہ بتائیں۔',
+      aiPromptEn: 'Guide me on managing personal expenses wisely and building an unbreakable 10% savings habit.',
+      actionType: 'money'
+    };
+  } else if (isLeadershipGoal) {
+    nextBestStep = {
+      areaId: 'skills_career',
+      areaTitleUrdu: 'کردار اور قیادت',
+      areaTitleEn: 'Character & Leadership',
+      titleUrdu: 'آج کا بہترین قدم: بااثر اور خدمت گار لیڈر کی بنیادی خوبیاں',
+      titleEn: 'Next Best Step: Core Qualities of a Servant Leader',
+      descriptionUrdu: 'لیڈرشپ کی اصل بنیاد دوسروں کو راستہ دکھانا، ذمہ داری لینا اور عدل و اعتماد قائم کرنا ہے۔',
+      descriptionEn: 'Learn how true leadership stems from responsibility, trust-building, and serving others.',
+      estimatedMinutes: 15,
+      timeLabelUrdu: '۱۵ منٹ',
+      timeLabelEn: '15 mins',
+      buttonLabelUrdu: 'سبق شروع کریں (15 منٹ)',
+      buttonLabelEn: 'Start Lesson (15 min)',
+      aiPromptUrdu: 'مجھے اپنے کام، گھر یا محلے میں ایک ذمہ دار اور بااعتماد لیڈر بننے کے بنیادی اصول سکھائیں۔',
+      aiPromptEn: 'Mentor me on developing practical leadership qualities and building team trust.',
+      actionType: 'skills'
+    };
+  } else if (isCommunicationGoal) {
+    nextBestStep = {
+      areaId: 'skills_career',
+      areaTitleUrdu: 'مواصلات اور موثر گفتگو',
+      areaTitleEn: 'Communication & Interpersonal Skills',
+      titleUrdu: 'آج کا بہترین قدم: دھیان سے سننا (Active Listening) اور پرسکون جواب',
+      titleEn: 'Next Best Step: Active Listening & Calm Articulation',
+      descriptionUrdu: 'دوسروں کی بات بغیر کاٹے غور سے سننے اور احترام کے ساتھ اپنی رائے پیش کرنے کی مشق کریں۔',
+      descriptionEn: 'Practice active listening and delivering calm, articulate responses in daily conversations.',
+      estimatedMinutes: 15,
+      timeLabelUrdu: '۱۵ منٹ',
+      timeLabelEn: '15 mins',
+      buttonLabelUrdu: 'سبق شروع کریں (15 منٹ)',
+      buttonLabelEn: 'Start Lesson (15 min)',
+      aiPromptUrdu: 'مجھے روزمرہ زندگی اور کام میں موثر انداز میں بات چیت اور ایکٹو لسننگ کی تکنیک سکھائیں۔',
+      aiPromptEn: 'Guide me on mastering active listening and clear communication techniques.',
+      actionType: 'skills'
+    };
+  } else if (isFamilyGoal) {
+    nextBestStep = {
+      areaId: 'family_social',
+      areaTitleUrdu: 'خاندانی اور سماجی تعلقات',
+      areaTitleEn: 'Family & Social Relations',
+      titleUrdu: 'آج کا بہترین قدم: والدین، شریکِ حیات اور اہل خانہ کا احترام',
+      titleEn: 'Next Best Step: Respect & Harmony in Family Relations',
+      descriptionUrdu: 'گھر کے افراد کی قربانیوں کا اعتراف، نرم لہجہ اور گھریلو ذمہ داریوں میں ہاتھ بٹانے کا ہنر سیکھیں۔',
+      descriptionEn: 'Learn practical principles of gentle communication, domestic cooperation, and family harmony.',
+      estimatedMinutes: 15,
+      timeLabelUrdu: '۱۵ منٹ',
+      timeLabelEn: '15 mins',
+      buttonLabelUrdu: 'سبق شروع کریں (15 منٹ)',
+      buttonLabelEn: 'Start Lesson (15 min)',
+      aiPromptUrdu: 'مجھے گھر اور خاندان میں محبت اور احترام بڑھانے کے لیے عملی تجاویز دیں۔',
+      aiPromptEn: 'Suggest practical actions to strengthen family bonding and resolve small domestic tensions calmly.',
+      actionType: 'family'
+    };
+  } else if (isGrowthGoal) {
+    nextBestStep = {
+      areaId: 'health_discipline',
+      areaTitleUrdu: 'ذاتی ترقی اور خود اعتمادی',
+      areaTitleEn: 'Personal Growth & Confidence',
+      titleUrdu: 'آج کا بہترین قدم: صبح کے اوقات اور روزانہ کے معمول کا نظم و ضبط',
+      titleEn: 'Next Best Step: Morning Routine & Daily Self-Discipline',
+      descriptionUrdu: 'وقت کے ضیاع سے بچنے، مستقل مزاجی پیدا کرنے اور ذاتی اہداف حاصل کرنے کا عملی سبق مکمل کریں۔',
+      descriptionEn: 'Master morning focus, habit consistency, and structured daily routines for personal growth.',
+      estimatedMinutes: 15,
+      timeLabelUrdu: '۱۵ منٹ',
+      timeLabelEn: '15 mins',
+      buttonLabelUrdu: 'سبق شروع کریں (15 منٹ)',
+      buttonLabelEn: 'Start Lesson (15 min)',
+      aiPromptUrdu: 'مجھے روزانہ وقت کی پابندی اور مستقل مزاجی برقرار رکھنے کا عملی فریم ورک بتائیں۔',
+      aiPromptEn: 'Guide me on building daily self-discipline and an effective morning routine.',
+      actionType: 'health'
+    };
+  } else if (completedIslamic.length === 0) {
     nextBestStep = {
       areaId: 'character_islamic',
       areaTitleUrdu: 'اخلاق اور اسلامی کردار',
@@ -315,24 +450,6 @@ export function generateLifeRoadmap(userProfile: UserProfile): LifeRoadmapData {
       buttonLabelEn: 'Start Lesson (15 min)',
       aiPromptUrdu: 'مجھے بتائیں کہ میں اپنی پہلی ڈیجیٹل اسکل کی مشق 15 منٹ میں کیسے شروع کروں؟',
       aiPromptEn: 'How should I start my first 15-minute practical skill exercise today?',
-      actionType: 'skills'
-    };
-  } else if (completedPractices.length === 0) {
-    nextBestStep = {
-      areaId: 'character_islamic',
-      areaTitleUrdu: 'سوچیں اور محفوظ فیصلہ کریں',
-      areaTitleEn: 'Decision & Mindset Practice',
-      titleUrdu: 'آج کا بہترین قدم: حقیقی زندگی کے ایک فیصلے کی سمیلیشن مکمل کریں',
-      titleEn: 'Next Best Step: Practice 1 Real-Life Decision Scenario',
-      descriptionUrdu: 'غصے، منفی دباؤ یا لالچ سے بچنے کے 10 سمیلیٹرز میں سے کسی ایک کا انتخاب کر کے 3 راستوں کے نتائج دیکھیں۔',
-      descriptionEn: 'Select any of the 10 Real Life Practice scenarios, test 3 choices, and observe consequence breakdowns.',
-      estimatedMinutes: 5,
-      timeLabelUrdu: '۵ منٹ',
-      timeLabelEn: '5 mins',
-      buttonLabelUrdu: 'عملی مشق شروع کریں (5 منٹ)',
-      buttonLabelEn: 'Start Practice (5 min)',
-      aiPromptUrdu: 'مجھے غصے یا منفی دباؤ کے وقت درست فیصلہ کرنے کے لیے 5-Step ماڈل کی رہنمائی دیں۔',
-      aiPromptEn: 'Mentor me on using the 5-step decision framework to handle high-pressure moments.',
       actionType: 'skills'
     };
   } else {

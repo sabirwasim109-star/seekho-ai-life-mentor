@@ -11,6 +11,7 @@ import { PRACTICAL_LIFE_LESSONS } from '../data/practicalLifeSkillsData';
 import { ISLAMIC_LESSONS_DATA } from '../data/islamicGuidanceData';
 import { REAL_LIFE_MISSIONS_DATA } from '../data/realLifeMissionsData';
 import { getPersonalizedMission } from './realLifeMissionEngine';
+import { getPersonalizedCourseForUser } from './personalLearningPathEngine';
 
 export const JOURNEY_TIME_OPTIONS: {
   id: JourneyTimeLength;
@@ -172,60 +173,72 @@ export function generateDailySmartJourney(
   }
 
   // -------------------------------------------------------------
-  // STEP 1: LEARN (سیکھیں)
+  // STEP 1: LEARN (سیکھیں - Personalized from Personal Learning Path)
   // -------------------------------------------------------------
-  let selectedCourse: Course = COURSES_DATA[0];
-  let selectedLesson: Lesson = selectedCourse.lessons[0];
+  const personalizedResult = getPersonalizedCourseForUser(userProfile, COURSES_DATA);
+  
+  let courseId = 'community-service-uplift-basics';
+  let courseTitleUrdu = 'کمیونٹی سروس اور برادری کی فلاح';
+  let courseTitleEn = 'Community Service & Social Uplift';
+  let lessonId = 'cs-b-l1';
+  let lessonTitleUrdu = '1. کمیونٹی کے مسئلے کو سمجھنا اور خدمتِ خلق کا جذبہ';
+  let lessonTitleEn = '1. Understanding Community Needs & Spirit of Service';
+  let keyConceptUrdu = 'اس سبق کا بنیادی نکتہ روزمرہ زندگی اور برادری میں مثبت کردار ادا کرنا ہے۔';
+  let keyConceptEn = 'The core takeaway is practical positive action and service in your daily routine.';
+  let takeawayUrdu = 'ایک وقت میں ایک چیز پر توجہ دیں اور نیت کے اخلاص کے ساتھ عمل کریں۔';
+  let takeawayEn = 'Focus on one specific action with sincere intent and practice it immediately.';
 
-  // Try finding user's active course first
-  const activeCourse = COURSES_DATA.find(c => {
-    const hasUnfinished = c.lessons.some(l => !completedLessonIds.includes(l.id));
-    const hasStarted = c.lessons.some(l => completedLessonIds.includes(l.id));
-    return hasStarted && hasUnfinished;
-  });
-
-  if (activeCourse) {
-    selectedCourse = activeCourse;
-    const nextUnfinished = activeCourse.lessons.find(l => !completedLessonIds.includes(l.id));
-    if (nextUnfinished) selectedLesson = nextUnfinished;
-  } else {
-    // If no course started, pick Mobile Literacy or AI/Prompting
-    const unstarted = COURSES_DATA.find(c => c.lessons.some(l => !completedLessonIds.includes(l.id)));
-    if (unstarted) {
-      selectedCourse = unstarted;
-      const firstUnfinished = unstarted.lessons.find(l => !completedLessonIds.includes(l.id));
-      if (firstUnfinished) selectedLesson = firstUnfinished;
-    }
+  if (personalizedResult.course && personalizedResult.lesson) {
+    const { course, lesson } = personalizedResult;
+    courseId = course.id;
+    courseTitleUrdu = course.titleUrdu;
+    courseTitleEn = course.titleEn;
+    lessonId = lesson.id;
+    lessonTitleUrdu = lesson.titleUrdu;
+    lessonTitleEn = lesson.titleEn;
+    keyConceptUrdu = lesson.keyTakeawaysUrdu?.[0] || keyConceptUrdu;
+    keyConceptEn = lesson.keyTakeawaysEn?.[0] || keyConceptEn;
+    takeawayUrdu = lesson.keyTakeawaysUrdu?.[1] || lesson.keyTakeawaysUrdu?.[0] || takeawayUrdu;
+    takeawayEn = lesson.keyTakeawaysEn?.[1] || lesson.keyTakeawaysEn?.[0] || takeawayEn;
+  } else if (personalizedResult.isContentPending) {
+    courseId = `pending-${personalizedResult.primaryGoalId}`;
+    courseTitleUrdu = personalizedResult.primaryGoalLabelUrdu;
+    courseTitleEn = personalizedResult.primaryGoalLabelEn;
+    lessonId = `pending-l1`;
+    lessonTitleUrdu = personalizedResult.fallbackMessageUrdu;
+    lessonTitleEn = personalizedResult.fallbackMessageEn;
+    keyConceptUrdu = personalizedResult.fallbackMessageUrdu;
+    keyConceptEn = personalizedResult.fallbackMessageEn;
   }
 
   const learnStep = {
-    courseId: selectedCourse.id,
-    courseTitleUrdu: selectedCourse.titleUrdu,
-    courseTitleEn: selectedCourse.titleEn,
-    lessonId: selectedLesson.id,
-    lessonTitleUrdu: selectedLesson.titleUrdu,
-    lessonTitleEn: selectedLesson.titleEn,
-    keyConceptUrdu: selectedLesson.keyTakeawaysUrdu?.[0] || 'اس سبق کا بنیادی نکتہ روزمرہ زندگی میں آسانی پیدا کرنا ہے۔',
-    keyConceptEn: selectedLesson.keyTakeawaysEn?.[0] || 'The main concept is applying this skill directly in your daily routine.',
-    takeawayUrdu: selectedLesson.keyTakeawaysUrdu?.[1] || selectedLesson.keyTakeawaysUrdu?.[0] || 'ایک وقت میں ایک چیز پر توجہ دیں اور مشق کریں۔',
-    takeawayEn: selectedLesson.keyTakeawaysEn?.[1] || selectedLesson.keyTakeawaysEn?.[0] || 'Focus on one specific action and practice it immediately.',
+    courseId,
+    courseTitleUrdu,
+    courseTitleEn,
+    lessonId,
+    lessonTitleUrdu,
+    lessonTitleEn,
+    keyConceptUrdu,
+    keyConceptEn,
+    takeawayUrdu,
+    takeawayEn,
     estimatedMinutes: learnMinutes
   };
 
   // -------------------------------------------------------------
-  // STEP 2: PRACTICE (مشق کریں)
+  // STEP 2: PRACTICE (مشق کریں - Connected to Lesson Practical Task)
   // -------------------------------------------------------------
-  // Pick from Practical Life Skills
   const skillLessonIndex = (journeyProgress.completedJourneyCount || 0) % (PRACTICAL_LIFE_LESSONS.length || 1);
   const selectedLifeLesson = PRACTICAL_LIFE_LESSONS[skillLessonIndex] || PRACTICAL_LIFE_LESSONS[0];
+  const lessonTask = personalizedResult.lesson?.practicalTask;
 
   const practiceStep = {
-    titleUrdu: selectedLifeLesson.titleUrdu,
-    titleEn: selectedLifeLesson.titleEn,
-    instructionUrdu: selectedLifeLesson.applyActionUrdu || selectedLifeLesson.practiceScenarioUrdu || 'آج کے سیکھے ہوئے ہنر کو اپنے فون یا کام کی جگہ پر 5 منٹ آزما کر دیکھیں۔',
-    instructionEn: selectedLifeLesson.applyActionEn || selectedLifeLesson.practiceScenarioEn || 'Apply the learned concept practically on your device or workspace for 5 minutes.',
-    practicalToolUrdu: selectedLifeLesson.tagUrdu || 'موبائل فون / روزمرہ معمول',
-    practicalToolEn: selectedLifeLesson.tagEn || 'Mobile Phone / Daily Routine',
+    titleUrdu: lessonTask?.titleUrdu || selectedLifeLesson.titleUrdu,
+    titleEn: lessonTask?.titleEn || selectedLifeLesson.titleEn,
+    instructionUrdu: lessonTask?.instructionsUrdu || selectedLifeLesson.applyActionUrdu || selectedLifeLesson.practiceScenarioUrdu || 'آج کے سیکھے ہوئے ہنر کو اپنے معمول میں 5 منٹ آزما کر دیکھیں۔',
+    instructionEn: lessonTask?.instructionsEn || selectedLifeLesson.applyActionEn || selectedLifeLesson.practiceScenarioEn || 'Apply the learned concept practically on your device or workspace for 5 minutes.',
+    practicalToolUrdu: lessonTask?.deliverableUrdu || selectedLifeLesson.tagUrdu || 'روزمرہ عمل',
+    practicalToolEn: lessonTask?.deliverableEn || selectedLifeLesson.tagEn || 'Daily Practice',
     estimatedMinutes: practiceMinutes,
     points: Math.round(totalPoints * 0.3)
   };

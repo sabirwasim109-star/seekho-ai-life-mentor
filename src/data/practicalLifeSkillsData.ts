@@ -233,6 +233,106 @@ export const PRACTICAL_LIFE_LESSONS: PracticalLifeLesson[] = [
   // 2. 🧠 ذہن کو استعمال کرنا (MINDSET & PSYCHOLOGY)
   // =========================================================================
   {
+    id: 'pls-mind-empty-mind',
+    categoryId: 'mind_psychology',
+    titleUrdu: 'خالی ذہن سب سے زیادہ شور مچاتا ہے',
+    titleEn: 'An Empty Mind Makes the Most Noise',
+    subtitleUrdu: 'اپنے ذہن کو بے مقصد مصروفیت کے بجائے ایک بامعنی سمت دینا',
+    subtitleEn: 'Giving your mind a purposeful direction rather than frantic aimless noise',
+    keyIdeaUrdu: 'خالی ذہن خاموشی کو بےکار اندیشوں، خوف اور موازنے سے بھر دیتا ہے۔ جب ذہن کو مقصد مل جائے تو خاموشی بھی سکون بن جاتی ہے۔',
+    keyIdeaEn: 'An idle mind fills silence with worries, comparisons, and trivial burdens. Give your mind purpose to turn silence into serenity.',
+    sourceOrBookUrdu: 'حقیقی زندگی اور ذہن کی تربیت (Mentorship & Mindset)',
+    sourceOrBookEn: 'Practical Mindset & Purposeful Living',
+    realLifeExampleUrdu: 'علی کے پاس شام کو ۳ گھنٹے فارغ ہوتے ہیں۔ وہ مسلسل موبائل اسکرول کرتا ہے، دوسروں کی زندگی سے اپنا موازنہ کرتا ہے اور پھر پریشان ہو جاتا ہے۔ اگر وہ روزانہ ۳۰ منٹ انگریزی یا اسکل، ۲۰ منٹ کتاب اور کچھ وقت خدمتِ خلق میں لگائے تو وہی وقت اس کی زندگی سنوار سکتا ہے۔',
+    realLifeExampleEn: 'Ali spends 3 idle evening hours scrolling social media and comparing his life with others, ending in frustration. Refocusing that into 30m of skill learning, 20m of reading, and family service transforms his life trajectory.',
+    learnContentUrdu: `خالی ذہن سب سے زیادہ شور مچاتا ہے۔ جب ذہن کے پاس کوئی بامقصد سمت نہیں ہوتی تو وہ خاموشی کو بےکار خیالات، اندیشوں، خوف، موازنے اور فرضی مسائل سے بھر دیتا ہے۔
+
+انسان بار بار ماضی کو سوچتا ہے، مستقبل کی فکر کرتا ہے اور معمولی باتوں کو اپنے لیے بڑا بوجھ بنا لیتا ہے۔
+
+ہر مصروف ذہن ضروری نہیں کہ بامقصد بھی ہو۔ کبھی کبھی ہمیں مزید تفریح یا مصروفیات کی نہیں، بلکہ ایک واضح مقصد کی ضرورت ہوتی ہے۔
+
+**اپنے ذہن کو وہ چیزیں دیں جو اسے سنواریں:**
+• 🎯 کوئی بامعنی مقصد
+• 🛠️ مفید اور تعمیری کام
+• 📚 نفع بخش علم اور ہنر
+• 🤲 عبادت اور دعا
+• 💡 تخلیقی سوچ
+• 🤝 دوسروں کی خدمت
+
+کیونکہ جب ذہن کے پاس سمت نہ ہو تو وہ ہر طرف بھٹکتا ہے، لیکن جب اسے مقصد مل جائے تو خاموشی بھی سکون بن جاتی ہے۔`,
+    learnContentEn: `An empty mind makes the most noise. When the mind lacks a clear purpose, it populates quietness with useless overthinking, anxieties, social comparisons, and imagined conflicts.
+
+Busy does not equal purposeful. What we often need is not more entertainment or superficial activity, but a grounded direction.
+
+Feed your mind constructive assets:
+• Meaningful goals
+• Useful, focused work
+• Beneficent knowledge and skills
+• Worship and grounding reflection
+• Creative endeavors
+• Service to family and community`,
+    keyTakeawaysUrdu: [
+      'مصروفیت اور بامقصد ہونے میں بنیادی فرق ہے (Busy ≠ Purposeful)۔',
+      'ذہن کو خالی جگہ پسند نہیں؛ اگر آپ اسے سمت نہیں دیں گے تو وہ اندیشے پیدا کرے گا۔',
+      'روزانہ ایک چھوٹا بامقصد کام منتخب کر کے مستقل مزاجی سے مکمل کریں۔'
+    ],
+    keyTakeawaysEn: [
+      'Being busy is not the same as being purposeful (Busy ≠ Purposeful).',
+      'The human mind abhors a vacuum; give it direction or it creates worry.',
+      'Pick one small, meaningful task daily and finish it with intention.'
+    ],
+    practiceScenarioUrdu: 'جب آپ کے پاس شام کو کچھ فارغ وقت ہو اور موبائل پر بلا مقصد اسکرولنگ کا دل کرے، تو دانشمندانہ رویہ کیا ہے؟',
+    practiceScenarioEn: 'When you find yourself with free evening time and the urge to doomscroll arises, what is the wiser path?',
+    practiceOptionsUrdu: [
+      '۲ گھنٹے بغیر سوچے اسکرولنگ کرتے رہنا اور پھر تھکن کے ساتھ سو جانا',
+      'فوری طور پر ۲۰ یا ۳۰ منٹ کا ایک بامقصد کام منتخب کرنا (کتاب، نئی اسکل، یا خدمت)',
+      'دوسروں کی زندگی کی ویڈیوز دیکھ کر حسد یا احساسِ کمتری میں مبتلا ہونا'
+    ],
+    practiceOptionsEn: [
+      'Mindlessly scroll for 2 hours and sleep with mental fatigue',
+      'Immediately choose a 20-30 min purposeful task (reading, skill, or family help)',
+      'Watch lifestyles of others and fall into comparison and despair'
+    ],
+    practiceCorrectIndex: 1,
+    practiceFeedbackUrdu: 'شاباش! فارغ وقت کو ایک بامقصد ہدف دینا ذہن کو سکون اور اعتماد دیتا ہے۔',
+    practiceFeedbackEn: 'Spot on! Channeling discretionary time into a tangible goal grounds the mind in peace.',
+    applyActionUrdu: 'آج اپنے فارغ وقت میں سے کم از کم ۲۰ منٹ کے لیے کوئی ایک بامقصد کام کریں: جیسے نئی اسکل، کتاب کا مطالعہ، ورزش یا کسی گھر والے کی مدد۔',
+    applyActionEn: 'Dedicate at least 20 minutes of your discretionary time today to one purposeful action: a new skill, reading, walk, or helping family.',
+    applyChecklistUrdu: [
+      'آج کے لیے ایک واضح بامقصد کام طے کریں',
+      'موبائل کے نوٹیفکیشن بند کر کے ۲۰ منٹ مکمل توجہ دیں',
+      'کام مکمل ہونے پر دل میں شکر اور سکون محسوس کریں'
+    ],
+    applyChecklistEn: [
+      'Choose one clear purposeful micro-goal for today',
+      'Mute distractions and focus uninterrupted for 20 minutes',
+      'Reflect on the sense of accomplishment afterwards'
+    ],
+    reflectPromptUrdu: 'جب آپ اکیلے اور فارغ ہوتے ہیں تو آپ کا ذہن عموماً کس طرف زیادہ بھٹکتا ہے؟',
+    reflectPromptEn: 'When you are idle and alone, where does your attention wander most?',
+    reflectOptionsUrdu: [
+      'ماضی کی باتوں اور پرانے پچھتاووں میں',
+      'مستقبل کے اندیشوں اور روزگار کی فکر میں',
+      'سوشل میڈیا پر دوسروں سے موازنے میں',
+      'بے مقصد اسکرولنگ اور وقت گزاری میں',
+      'میں کسی تعمیری اور مفید کام کی طرف لگ جاتا ہوں'
+    ],
+    reflectOptionsEn: [
+      'Dwelling on past regrets and memories',
+      'Anxieties about the future and livelihood',
+      'Comparing with others on social media',
+      'Aimless doomscrolling and killing time',
+      'I naturally redirect towards productive work'
+    ],
+    improveTipUrdu: 'ہر صبح ایک جملہ خود سے کہیں: "آج میں مصروف نہیں بلکہ بامقصد رہوں گا۔" روزانہ صرف ایک اہم کام مکمل کرنے کی عادت بنائیں۔',
+    improveTipEn: 'Tell yourself each morning: "Today I will be purposeful, not just busy." Master finishing one core priority daily.',
+    estimatedMinutes: 12,
+    points: 30,
+    tagUrdu: 'ذہنی تربیت و مقصدیت',
+    tagEn: 'Mental Clarity & Purpose',
+    iconName: 'Compass'
+  },
+  {
     id: 'pls-mind-1',
     categoryId: 'mind_psychology',
     titleUrdu: 'منفی خیالات اور ناکامی کے خوف پر قابو پانا',

@@ -1,17 +1,13 @@
 import express from "express";
 import path from "path";
-import { fileURLToPath } from "url";
 import { GoogleGenAI } from "@google/genai";
 import dotenv from "dotenv";
 
 dotenv.config();
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
 async function startServer() {
   const app = express();
-  const PORT = 3000;
+  const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
 
   app.use(express.json());
 
@@ -29,9 +25,9 @@ async function startServer() {
         return res.status(400).json({ error: "Message is required" });
       }
 
-      const isUrdu = language === "ur";
-      const courseName = currentCourse ? (isUrdu ? currentCourse.titleUrdu : currentCourse.titleEn) : "General Skill";
-      const lessonName = currentLesson ? (isUrdu ? currentLesson.titleUrdu : currentLesson.titleEn) : "";
+      const isUrdu = language === "ur" || language === "dual";
+      const courseName = currentCourse ? (currentCourse.titleUrdu ? `${currentCourse.titleUrdu} (${currentCourse.titleEn})` : currentCourse.title) : "General Skill";
+      const lessonName = currentLesson ? (currentLesson.titleUrdu ? `${currentLesson.titleUrdu} (${currentLesson.titleEn})` : currentLesson.title) : "";
       const ageGroup = userProfile?.ageGroup || "All ages";
 
       // Check if Gemini API key exists
@@ -56,7 +52,19 @@ Active Learner Context:
 - Occupation/Role: ${userProfile?.currentOccupation || "Learner"}
 - Selected Skill / Course: ${courseName}
 - Current Lesson: ${lessonName || "None selected"}
-- Preferred Language: ${language === "ur" ? "Urdu (اردو)" : "English"}
+- Language Mode: ${language === "dual" ? "Dual (Urdu Primary + English Summary below)" : language === "ur" ? "Urdu (اردو only)" : "English only"}
+
+LANGUAGE OUTPUT RULES (CRITICAL):
+- When Language Mode is "Dual (Urdu Primary + English Summary below)":
+  1. Write the main, comprehensive, warm, respectful explanation in authentic Urdu (اردو) first.
+  2. Then, append a clear horizontal separator "---" followed by an English takeaway section:
+     ---
+     **English Key Takeaways & Action:**
+     • **Summary:** [1-2 concise sentences summarizing the advice]
+     • **Today's Action:** [Actionable step in English]
+     • **Check Question:** [1 quick reflection question]
+- When Language Mode is "Urdu (اردو only)": Provide 100% authentic Urdu.
+- When Language Mode is "English only": Provide 100% clear English.
 
 CORE LIFE MENTOR CAPABILITIES & FORMATS:
 1. WHEN LEARNER ASKS "اب مجھے کیا کرنا چاہیے؟" ("WHAT SHOULD I DO NOW?"):
@@ -185,9 +193,13 @@ function generateSmartFallbackReply(
   chatHistory: any[] = []
 ): string {
   const query = (message || "").toLowerCase();
-  const isUrdu = language === "ur";
-  const name = userProfile?.name || (isUrdu ? "پیارے ساتھی" : "Learner");
+  const isUrduOnly = language === "ur";
+  const isDual = language === "dual";
+  const name = userProfile?.name || (isUrduOnly || isDual ? "پیارے ساتھی" : "Learner");
   const ageGroup = userProfile?.ageGroup || "All ages";
+
+  let urduPart = "";
+  let enPart = "";
 
   // Check if learner says "I didn't understand" / "مجھے سمجھ نہیں آئی"
   const notUnderstood = [
@@ -205,8 +217,7 @@ function generateSmartFallbackReply(
   ].some((pat) => query.includes(pat));
 
   if (notUnderstood) {
-    if (isUrdu) {
-      return `کوئی بات نہیں ${name}! بالکل پریشان نہ ہوں۔
+    urduPart = `کوئی بات نہیں ${name}! بالکل پریشان نہ ہوں۔
 
 سیکھنے کے دوران کسی بات کا پہلی بار سمجھ نہ آنا **بالکل قدرتی اور عام بات ہے**۔ آپ نے سوال پوچھا، یہ آپ کی ذہانت اور لگن کی نشانی ہے! شاباش! 🌱
 
@@ -219,13 +230,13 @@ function generateSmartFallbackReply(
 🔍 **آپ کی فہم کی جانچ (ایک آسان سوال):**
 کیا سوال پوچھنا سیکھنے کا بہترین طریقہ ہے؟
 (الف: جی ہاں، بالکل! / ب: نہیں)`;
-    } else {
-      return `No worries at all, ${name}! Please do not worry.
+
+    enPart = `No worries at all, ${name}! Please do not worry.
 
 It is **completely normal and wonderful** to ask for clarification when learning something new. 🌟
 
 📌 **Simple Everyday Example:**
-Think of it like having a trusted neighbor guide you step-by-step in your own language without any complicated technical jargon.
+Think of it like having a trusted mentor guide you step-by-step in your own language without any complicated technical jargon.
 
 🎯 **Today's Practical Task:**
 Write down 1 sentence describing how this skill can help you at home or work.
@@ -233,12 +244,8 @@ Write down 1 sentence describing how this skill can help you at home or work.
 🔍 **Quick Check Question:**
 Is asking questions the right way to master a skill?
 (A: Yes, absolutely! / B: No)`;
-    }
-  }
-
-  if (isUrdu) {
-    if (query.includes("موبائل") || query.includes("ایک گھنٹہ") || query.includes("canva") || query.includes("کینوا") || query.includes("ڈیزائن")) {
-      return `بہت خوب ${name}! موبائل اور کینوا کے ذریعے آپ روزمرہ ڈیزائننگ بہت آسانی سے سیکھ سکتے ہیں۔
+  } else if (query.includes("موبائل") || query.includes("ایک گھنٹہ") || query.includes("canva") || query.includes("کینوا") || query.includes("ڈیزائن") || query.includes("design")) {
+    urduPart = `بہت خوب ${name}! موبائل اور کینوا کے ذریعے آپ روزمرہ ڈیزائننگ بہت آسانی سے سیکھ سکتے ہیں۔
 
 **کینوا (Canva) آسان الفاظ میں:**
 کینوا موبائل کی مفت ایپ ہے جس میں شادی کارڈ، دکان کے اشتہار اور بینرز کے بنے بنائے سانچے ہوتے ہیں۔
@@ -252,10 +259,23 @@ Is asking questions the right way to master a skill?
 🔍 **آپ کی فہم کی جانچ (ایک آسان سوال):**
 کیا کینوا پر بنے بنائے ڈیزائن میں ترمیم ممکن ہے؟
 (الف: جی ہاں، بالکل آسان ہے / ب: نہیں)`;
-    }
 
-    if (query.includes("ai") || query.includes("مصنوعی ذہانت") || query.includes("chatgpt")) {
-      return `ماشاءاللہ ${name}! مصنوعی ذہانت (AI) ایک ڈیجیٹل مددگار ہے جس نے دنیا بھر کی معلومات پڑھی ہوئی ہیں۔
+    enPart = `Great question, ${name}!
+
+**Canva & Mobile Design:**
+Canva is a free tool with pre-made templates for shop posters, banners, and announcements.
+
+📌 **Simple Example:**
+Just like placing your photo inside a ready-made frame, you simply replace the text with your own words.
+
+🎯 **Today's Practical Task (10 mins):**
+Open Canva and create a simple flyer for an event or store.
+
+🔍 **Quick Check Question:**
+Can you customize templates in Canva?
+(A: Yes, very easily / B: No)`;
+  } else if (query.includes("ai") || query.includes("مصنوعی ذہانت") || query.includes("chatgpt")) {
+    urduPart = `ماشاءاللہ ${name}! مصنوعی ذہانت (AI) ایک ڈیجیٹل مددگار ہے جس نے دنیا بھر کی معلومات پڑھی ہوئی ہیں۔
 
 📌 **آسان مثال:**
 جیسے ایک سمجھدار دوست سے آپ پوچھیں کہ *"مجھے درخواست لکھ کر دیں"* اور وہ فوری لکھ دے، ویسے ہی AI اردو میں آپ کی مدد کرتا ہے۔
@@ -266,10 +286,20 @@ Is asking questions the right way to master a skill?
 🔍 **آپ کی فہم کی جانچ (ایک آسان سوال):**
 کیا AI سے اردو میں عام بات چیت کی جا سکتی ہے؟
 (الف: جی ہاں، بالکل / ب: نہیں)`;
-    }
 
-    if (query.includes("کاروبار") || query.includes("گاؤں") || query.includes("دکان")) {
-      return `خوش آمدید ${name}! کاروبار کا اصل راز اپنے محلے کے لوگوں کا کوئی حقیقی مسئلہ حل کرنا ہے۔
+    enPart = `Wonderful, ${name}! Artificial Intelligence (AI) is a digital assistant with vast knowledge.
+
+📌 **Simple Example:**
+Just like asking a friend to write a draft or solve a question, AI helps you instantly.
+
+🎯 **Today's Practical Task (5 mins):**
+Ask an AI tool: *"Give me 3 practical tips to improve handwriting."*
+
+🔍 **Quick Check Question:**
+Can you converse with AI in plain language?
+(A: Yes / B: No)`;
+  } else if (query.includes("کاروبار") || query.includes("گاؤں") || query.includes("دکان") || query.includes("business")) {
+    urduPart = `خوش آمدید ${name}! کاروبار کا اصل راز اپنے محلے کے لوگوں کا کوئی حقیقی مسئلہ حل کرنا ہے۔
 
 📌 **آسان مثال:**
 اگر گاؤں کے لوگوں کو بل جمع کرانے یا پرنٹ لینے دور جانا پڑتا ہے تو گاؤں میں چھوٹا ڈیجیٹل سروس پوائنٹ کھولنا ایک فوری نفع بخش کام ہے۔
@@ -280,9 +310,20 @@ Is asking questions the right way to master a skill?
 🔍 **آپ کی فہم کی جانچ (ایک آسان سوال):**
 گاہک کا اعتماد کس چیز سے بنتا ہے؟
 (الف: ایمانداری اور خوش اخلاقی سے / ب: بحث کرنے سے)`;
-    }
 
-    return `وعلیکم السلام و رحمتہ اللہ، ${name}! میں استاد سیکھو ہوں۔
+    enPart = `Welcome ${name}! The secret to a successful local business is solving a real everyday problem.
+
+📌 **Simple Example:**
+Opening a small digital services counter in your village where people can pay utility bills or print documents saves everyone time.
+
+🎯 **Today's Practical Task:**
+Create two columns in a notebook for Daily Income and Daily Expenses.
+
+🔍 **Quick Check Question:**
+What builds customer trust?
+(A: Honesty and kindness / B: Arguing)`;
+  } else {
+    urduPart = `وعلیکم السلام و رحمتہ اللہ، ${name}! میں استاد سیکھو ہوں۔
 
 آپ کی عمر (${ageGroup}) اور پس منظر کے مطابق ہم ہنر کو آسان اور عملی بناتے ہیں۔
 
@@ -300,25 +341,8 @@ Is asking questions the right way to master a skill?
 🔍 **آپ کی فہم کی جانچ (ایک آسان سوال):**
 ہنر میں مہارت کیسے حاصل ہوتی ہے؟
 (الف: روزانہ چھوٹی مشق سے / ب: صرف سوچنے سے)`;
-  } else {
-    if (query.includes("mobile") || query.includes("canva") || query.includes("design")) {
-      return `Great question, ${name}!
 
-**Canva & Mobile Design:**
-Canva is a free tool with pre-made templates for shop posters, banners, and announcements.
-
-📌 **Simple Example:**
-Just like placing your photo inside a ready-made frame, you simply replace the text with your own words.
-
-🎯 **Today's Practical Task (10 mins):**
-Open Canva and create a simple flyer for an event or store.
-
-🔍 **Quick Check Question:**
-Can you customize templates in Canva?
-(A: Yes, very easily / B: No)`;
-    }
-
-    return `Hello and welcome, ${name}! I am Teacher Seekho.
+    enPart = `Hello and welcome, ${name}! I am Teacher Seekho.
 
 📌 **Lifelong Learning Formula:**
 1. Learn 15–20 mins daily.
@@ -335,6 +359,23 @@ Set aside a 15-minute dedicated slot today for hands-on practice.
 How is skill mastery achieved?
 (A: Daily consistent practice / B: Daydreaming)`;
   }
+
+  if (isDual) {
+    return `${urduPart}
+
+---
+
+**English Summary & Key Action Steps:**
+• **Key Concept:** ${enPart.split('\n\n')[0]}
+• **Action:** Practice 15-20 minutes daily on your chosen skill.
+• **Takeaway:** Lifelong skills are built through small, consistent, honest actions.`;
+  }
+
+  if (isUrduOnly) {
+    return urduPart;
+  }
+
+  return enPart;
 }
 
 startServer();

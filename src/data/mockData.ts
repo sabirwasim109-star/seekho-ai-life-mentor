@@ -1,4 +1,5 @@
 import { Course, CommunityPost, AreaTopic, ElderWisdom, Opportunity, AgeGroup } from '../types';
+import { FOUNDATION_COURSES_DATA } from './foundationCoursesData';
 
 export const SKILL_CATEGORIES_DATA = [
   { id: 'AI & Technology', ur: 'مصنوعی ذہانت و ٹیکنالوجی', en: 'AI & Technology', icon: 'Cpu', count: 2 },
@@ -6561,7 +6562,8 @@ Simplicity and contentment are the ultimate safeguards of long-term financial fr
     },
     projectDescriptionUrdu: 'اپنے اور اپنے گھر کے لیے روزمرہ وقت کی منصوبہ بندی، باہمی گھریلو ذمہ داریوں اور پرسکون فیصلہ سازی کا رہنما چارٹر تیار کریں۔',
     projectDescriptionEn: 'Draft a personal daily schedule, family cooperation agreement, and calm problem-solving charter.'
-  }
+  },
+  ...FOUNDATION_COURSES_DATA
 ];
 
 export const COMMUNITY_POSTS_DATA: CommunityPost[] = [
@@ -6849,6 +6851,25 @@ export const AGE_GROUP_RECOMMENDATIONS: Record<AgeGroup, { titleUrdu: string; ti
     ],
     icon: 'GraduationCap',
   },
+  '26-35': {
+    titleUrdu: '۲۶ تا ۳۵ سال: روزگار، جدید ہنر اور کاروبار کی وسعت',
+    titleEn: 'Ages 26–35: Enterprise, Modern Career & Growth',
+    skillsUrdu: [
+      'کاروباری منصوبہ بندی اور ڈیجیٹل مارکیٹنگ',
+      'جدید ٹیکنالوجی اور AI ٹولز سے پیداواری صلاحیت',
+      'مالیاتی بجٹ اور محفوظ سرمایہ کاری',
+      'جدید نامیاتی زراعت و ہائیڈروپونکس',
+      'خاندانی کفالت اور کیریئر کی ترقی',
+    ],
+    skillsEn: [
+      'Business Planning & Digital Marketing',
+      'AI Productivity for Modern Work',
+      'Financial Budgeting & Savings',
+      'Modern High-Yield Agriculture',
+      'Family Support & Career Advancement',
+    ],
+    icon: 'Briefcase',
+  },
   '26-45': {
     titleUrdu: '۲۶ تا ۴۵ سال: کاروبار، مالیاتی شعور اور خاندان کی خوشحالی',
     titleEn: 'Ages 26–45: Business, Financial Mastery & Family Welfare',
@@ -6869,6 +6890,25 @@ export const AGE_GROUP_RECOMMENDATIONS: Record<AgeGroup, { titleUrdu: string; ti
       'Community Organizing & Civic Impact',
     ],
     icon: 'Briefcase',
+  },
+  '36-60': {
+    titleUrdu: '۳۶ تا ۶۰ سال: پختہ قیادت، ڈیجیٹل آسانی اور برادری رہنمائی',
+    titleEn: 'Ages 36–60: Digital Ease, Financial Planning & Guidance',
+    skillsUrdu: [
+      'اسمارٹ فون پر بلوں اور بینکنگ کا محفوظ طریقہ',
+      'گھریلو باغبانی اور صحت بخش غذا',
+      'نوجوان نسل کی رہنمائی اور تربیت',
+      'آن لائن فراڈ سے بچاؤ اور پرائیویسی',
+      'گاؤں اور محلے کے مسائل کا حل',
+    ],
+    skillsEn: [
+      'Safe Smartphone Banking & Digital Ease',
+      'Kitchen Gardening & Family Nutrition',
+      'Youth Mentoring & Guidance',
+      'Scam Prevention & Online Security',
+      'Community Guidance & Problem Solving',
+    ],
+    icon: 'Users',
   },
   '46-60': {
     titleUrdu: '۴۶ تا ۶۰ سال: ڈیجیٹل سہولت، صحت مند طرزِ زندگی اور مشورہ',
@@ -6934,6 +6974,62 @@ export const AGE_GROUP_RECOMMENDATIONS: Record<AgeGroup, { titleUrdu: string; ti
 };
 
 export const UI_TRANSLATIONS = {
+  dual: {
+    appName: 'سیکھو (Seekho)',
+    tagline: 'زندگی سیکھیں، بہتر بنائیں، عمل کریں (Learn, Improve, Act)',
+    visionStep1: 'سیکھیں (Learn)',
+    visionStep2: 'مشق کریں (Practice)',
+    visionStep3: 'خود کو سنواریں (Improve Self)',
+    visionStep4: 'خاندان کی مدد (Help Family)',
+    visionStep5: 'برادری کی خدمت (Help Community)',
+    visionStep6: 'ملک کی ترقی (Help Country)',
+    visionStep7: 'دنیا کے کام آئیں (Help the World)',
+    navHome: 'ہوم (Home)',
+    navMyLearning: 'میری تعلیم (My Learning)',
+    navSkills: 'مہارتیں (Skills)',
+    navAITeacher: 'AI استاد (AI Mentor)',
+    navCommunity: 'برادری (Community)',
+    navMyArea: 'میرا علاقہ (My Area)',
+    navProfile: 'پروفائل (Profile)',
+    greetingMorning: 'صبح بخیر (Good Morning)',
+    greetingAfternoon: 'دوپہر بخیر (Good Afternoon)',
+    greetingEvening: 'شام بخیر (Good Evening)',
+    searchPlaceholder: 'آج آپ کیا نیا سیکھنا چاہتے ہیں؟ (What do you want to learn today?)',
+    todaysLesson: 'آج کا سبق (Today’s Lesson)',
+    todaysPracticalTask: 'آج کا عملی کام (Today’s Task)',
+    myLearningProgress: 'میری تعلیمی پیش رفت (My Progress)',
+    recommendedSkillsForYou: 'میرے لیے بہترین Skills (Recommended Skills)',
+    askAITeacher: 'AI استاد سے پوچھیں (Ask AI Mentor)',
+    communityHighlight: 'برادری کا نمایاں کارنامہ (Community Highlight)',
+    elderKnowledgeTitle: 'ہمارے بزرگ، ہمارا علم (Elders’ Wisdom)',
+    pilotAreaLabel: 'پائلٹ ایریا: ڈوبے، برنالہ (Pilot: Dobay, Barnala)',
+    startLearning: 'سیکھنا شروع کریں (Start Learning)',
+    continueLesson: 'سبق جاری رکھیں (Continue Lesson)',
+    submitTask: 'عملی کام جمع کروائیں (Submit Task)',
+    takeQuiz: 'کوئز حل کریں (Take Quiz)',
+    completed: 'مکمل شدہ (Completed)',
+    inProgress: 'جاری (In Progress)',
+    streakDays: 'دنوں کا تسلسل (Day Streak)',
+    learningPoints: 'پوائنٹس (Points)',
+    enrolledCourses: 'زیرِ تعلیم کورسز (Enrolled Courses)',
+    completedProjects: 'عملی پروجیکٹس (Projects)',
+    allCategories: 'تمام شعبہ جات (All Categories)',
+    filterByAge: 'عمر کے لحاظ سے فلٹر (Filter by Age)',
+    elderTeacherRole: 'بزرگ ہمارے استاد اور رہنما ہیں (Elders as Mentors)',
+    fontSizeToggle: 'تحریر کا سائز (Font Size)',
+    switchLanguage: 'زبان / Language',
+    onboardingTitle: 'سیکھو میں خوش آمدید (Welcome to Seekho)',
+    onboardingSubtitle: 'آئیے آپ کے لیے بہترین تعلیمی راستہ منتخب کریں (Personalized Learning Journey)',
+    nameLabel: 'آپ کا مبارک نام (Your Name)',
+    ageGroupLabel: 'عمر کا گروپ (Age Group)',
+    locationLabel: 'شہر / گاؤں / علاقہ (City / Village)',
+    timeLabel: 'روزانہ وقت (Daily Time)',
+    goalsLabel: 'آپ کا بنیادی مقصد کیا ہے؟ (Your Main Goal)',
+    saveProfile: 'پروفائل محفوظ کریں اور شروع کریں (Save & Start)',
+    opportunitiesTitle: 'روزگار اور عملی مواقع (Opportunities & Pathways)',
+    opportunitiesNote: 'نوٹ: یہ تمام مواقع نمونے (Demo) کے طور پر فراہم کیے گئے ہیں۔',
+    safetyDisclaimer: 'سیکھو میں آپ کی رازداری اور بچوں کی حفاظت ہماری اولین ترجیح ہے۔ (Privacy & Safety First)',
+  },
   ur: {
     appName: 'سیکھو — Seekho',
     tagline: 'زندگی سیکھیں، بہتر بنائیں، عمل کریں',

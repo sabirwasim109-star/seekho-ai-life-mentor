@@ -1,8 +1,8 @@
-export type Language = 'ur' | 'en';
+export type Language = 'dual' | 'ur' | 'en';
 
 export type FontSize = 'normal' | 'large' | 'xlarge';
 
-export type AgeGroup = '10-15' | '16-25' | '26-45' | '46-60' | '61-70' | '70+';
+export type AgeGroup = '10-15' | '16-25' | '26-35' | '36-60' | '26-45' | '46-60' | '61-70' | '70+';
 
 export type SkillCategory =
   | 'AI & Technology'
@@ -141,10 +141,15 @@ export interface UserProfile {
   skills?: string[];
   interests: string[];
   goals: string;
+  learningGoals?: string[];
   timePerDay: string;
   preferredLanguage: Language;
   device: string;
   completedAssessment: boolean;
+  hasCompletedAssessment?: boolean;
+  currentLevel?: 'Beginner' | 'Intermediate' | 'Advanced';
+  assessmentScore?: number;
+  assessmentAnswers?: Record<string, any>;
   role?: string;
   currentOccupation?: string;
   streakDays: number;
@@ -1351,5 +1356,115 @@ export interface KnowledgeLibraryItem {
   tagsUrdu?: string[];
   tagsEn?: string[];
 }
+
+// ============================================================================
+// 7-STEP DYNAMIC SMART SEARCH & PRACTICAL LESSON GENERATOR TYPES
+// ============================================================================
+
+export interface DynamicLessonStep1Learn {
+  titleUrdu: string;
+  titleEn: string;
+  summaryUrdu: string;
+  summaryEn: string;
+  corePointsUrdu: string[];
+  corePointsEn: string[];
+  simplifiedNoteUrdu?: string;
+  simplifiedNoteEn?: string;
+}
+
+export interface DynamicLessonStep2Understand {
+  titleUrdu: string;
+  titleEn: string;
+  scenarioTitleUrdu: string;
+  scenarioTitleEn: string;
+  realWorldExampleUrdu: string;
+  realWorldExampleEn: string;
+  localContextUrdu: string;
+  localContextEn: string;
+}
+
+export interface DynamicLessonStep3Think {
+  titleUrdu: string;
+  titleEn: string;
+  reflectionQuestionUrdu: string;
+  reflectionQuestionEn: string;
+  promptUrdu: string;
+  promptEn: string;
+  suggestedAnglesUrdu: string[];
+  suggestedAnglesEn: string[];
+}
+
+export interface DynamicLessonPracticeOption {
+  id: string;
+  textUrdu: string;
+  textEn: string;
+  isCorrect: boolean;
+  explanationUrdu: string;
+  explanationEn: string;
+}
+
+export interface DynamicLessonStep4Practice {
+  titleUrdu: string;
+  titleEn: string;
+  challengeUrdu: string;
+  challengeEn: string;
+  interactiveQuestionUrdu: string;
+  interactiveQuestionEn: string;
+  options: DynamicLessonPracticeOption[];
+}
+
+export interface DynamicLessonStep5Action {
+  titleUrdu: string;
+  titleEn: string;
+  todayActionUrdu: string;
+  todayActionEn: string;
+  actionChecklistUrdu: string[];
+  actionChecklistEn: string[];
+  estimatedMinutes: number;
+}
+
+export interface DynamicLessonStep6Reflection {
+  titleUrdu: string;
+  titleEn: string;
+  promptUrdu: string;
+  promptEn: string;
+  sampleTakeawaysUrdu: string[];
+  sampleTakeawaysEn: string[];
+}
+
+export interface DynamicLessonStep7Impact {
+  titleUrdu: string;
+  titleEn: string;
+  selfImpactUrdu: string;
+  selfImpactEn: string;
+  familyImpactUrdu: string;
+  familyImpactEn: string;
+  societyImpactUrdu: string;
+  societyImpactEn: string;
+}
+
+export interface DynamicSearchLesson {
+  id: string;
+  query: string;
+  topicUrdu: string;
+  topicEn: string;
+  categoryUrdu: string;
+  categoryEn: string;
+  iconName: string;
+  matchedCourseId?: string;
+  matchedCourseTitleUrdu?: string;
+  matchedCourseTitleEn?: string;
+  matchedLibraryItemId?: string;
+  estimatedMinutes: number;
+  xpPoints: number;
+  step1Learn: DynamicLessonStep1Learn;
+  step2Understand: DynamicLessonStep2Understand;
+  step3Think: DynamicLessonStep3Think;
+  step4Practice: DynamicLessonStep4Practice;
+  step5Action: DynamicLessonStep5Action;
+  step6Reflection: DynamicLessonStep6Reflection;
+  step7Impact: DynamicLessonStep7Impact;
+}
+
 
 

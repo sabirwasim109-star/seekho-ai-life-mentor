@@ -30,6 +30,7 @@ import { COURSES_DATA, UI_TRANSLATIONS } from '../data/mockData';
 import { generatePersonalizedRecommendations } from '../data/assessmentData';
 import { MyActionPlanSection } from './MyActionPlanSection';
 import { MyLifeRoadmapSection } from './MyLifeRoadmapSection';
+import { PersonalLifeDirectionSection } from './PersonalLifeDirectionSection';
 
 interface PersonalRoadmapViewProps {
   language: Language;
@@ -68,10 +69,12 @@ export const PersonalRoadmapView: React.FC<PersonalRoadmapViewProps> = ({
       educationLevel: userProfile.educationLevel || 'Matric',
       currentOccupation: userProfile.role || 'طالب علم',
       currentSkills: userProfile.currentSkills || ['موبائل استعمال'],
-      interests: ['AI & Technology', 'Graphic Design', 'Business'],
+      interests: userProfile.learningGoals && userProfile.learningGoals.length > 0 
+        ? userProfile.learningGoals 
+        : (userProfile.interests || ['AI & Technology', 'Graphic Design', 'Business']),
       dailyTime: userProfile.timePerDay || '30 منٹ',
       device: userProfile.device || 'اسمارٹ فون',
-      primaryGoal: userProfile.goals || 'Skill سیکھنا',
+      primaryGoal: (userProfile.learningGoals && userProfile.learningGoals[0]) || userProfile.goals || 'Skill سیکھنا',
       learningStyle: 'مرحلہ وار آسان اسباق',
       sixMonthGoal: 'ایک نئی ڈیجیٹل اسکل پر عبور',
     }, userProfile.name);
@@ -96,7 +99,15 @@ export const PersonalRoadmapView: React.FC<PersonalRoadmapViewProps> = ({
 
   return (
     <div className="space-y-6 max-w-5xl mx-auto px-3 sm:px-6 py-3 pb-28">
-      {/* 0. Comprehensive Life Roadmap: 7 Pillars, Diagnostic, Weaknesses, Strengths, Next Step, Actions & Goals */}
+      {/* 0. Multi-Dimensional Personal Life Direction & Journey Progress */}
+      <PersonalLifeDirectionSection
+        language={language}
+        userProfile={userProfile}
+        onOpenAITeacher={onOpenAITeacherWithPrompt}
+        onSelectCourse={onSelectCourse}
+      />
+
+      {/* 0.1. Comprehensive Life Roadmap: 7 Pillars, Diagnostic, Weaknesses, Strengths, Next Step, Actions & Goals */}
       <MyLifeRoadmapSection
         language={language}
         userProfile={userProfile}

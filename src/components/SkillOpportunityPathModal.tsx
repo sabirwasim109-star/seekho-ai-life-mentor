@@ -29,6 +29,8 @@ import {
 } from 'lucide-react';
 import { Language, UserProfile, SkillOpportunityPathway } from '../types';
 import { SKILL_OPPORTUNITY_PATHWAYS_DATA, getPathwayByCourseOrSkill } from '../data/skillOpportunityData';
+import { AudioReaderButton } from './AudioSpeechControls';
+import { stopSpeaking } from '../utils/speech';
 
 interface SkillOpportunityPathModalProps {
   isOpen: boolean;
@@ -157,15 +159,31 @@ export const SkillOpportunityPathModal: React.FC<SkillOpportunityPathModalProps>
             </div>
           </div>
 
-          <button
-            id="close-pathway-modal-btn"
-            type="button"
-            onClick={onClose}
-            className="p-2 text-white/80 hover:text-white hover:bg-white/10 rounded-xl transition"
-            aria-label="Close"
-          >
-            <X className="w-6 h-6" />
-          </button>
+          <div className="flex items-center gap-2">
+            <AudioReaderButton
+              id={`pathway-tts-${currentPathway.id}`}
+              text={`${isUrdu ? currentPathway.skillTitleUrdu : currentPathway.skillTitleEn}. ${isUrdu ? currentPathway.categoryUrdu : currentPathway.categoryEn}. ${isUrdu ? 'پہلا قدم:' : 'First Step:'} ${isUrdu ? currentPathway.stages.learn.actionUrdu : currentPathway.stages.learn.actionEn}. ${isUrdu ? 'عملی پروجیکٹ:' : 'Portfolio Project:'} ${isUrdu ? currentPathway.stages.build.projectDeliverableUrdu : currentPathway.stages.build.projectDeliverableEn}. ${isUrdu ? 'مواقع اور ارننگ:' : 'Opportunity:'} ${isUrdu ? currentPathway.stages.earn.titleUrdu : currentPathway.stages.earn.titleEn}`}
+              language={language}
+              variant="header"
+              size="md"
+              showLabel={true}
+              labelUr="پڑھ کے سنائیں"
+              labelEn="Listen"
+            />
+
+            <button
+              id="close-pathway-modal-btn"
+              type="button"
+              onClick={() => {
+                stopSpeaking();
+                onClose();
+              }}
+              className="p-2 text-white/80 hover:text-white hover:bg-white/10 rounded-xl transition"
+              aria-label="Close"
+            >
+              <X className="w-6 h-6" />
+            </button>
+          </div>
         </div>
 
         {/* Skill Selector Carousel / Horizontal Scroll */}

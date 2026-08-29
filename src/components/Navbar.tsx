@@ -25,6 +25,7 @@ import { SeekhoLogo } from './SeekhoLogo';
 interface NavbarProps {
   language: Language;
   onToggleLanguage: () => void;
+  onChangeLanguage?: (lang: Language) => void;
   userProfile: UserProfile;
   textScale?: number;
   onSetTextScale?: (scale: number) => void;
@@ -39,6 +40,7 @@ interface NavbarProps {
 export const Navbar: React.FC<NavbarProps> = ({
   language,
   onToggleLanguage,
+  onChangeLanguage,
   userProfile,
   textScale = 1.0,
   onSetTextScale = (_scale: number) => {},
@@ -49,8 +51,24 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenProfileTab,
   onOpenLibrary,
 }) => {
-  const t = UI_TRANSLATIONS[language];
+  const t = UI_TRANSLATIONS[language] || UI_TRANSLATIONS.dual;
   const { user, signInWithGoogle } = useAuth();
+  const [showLangMenu, setShowLangMenu] = useState(false);
+
+  const handleSelectLanguage = (lang: Language) => {
+    if (onChangeLanguage) {
+      onChangeLanguage(lang);
+    } else {
+      onToggleLanguage();
+    }
+    setShowLangMenu(false);
+  };
+
+  const getLangBadgeLabel = () => {
+    if (language === 'dual') return '🌐 دونوں (Dual)';
+    if (language === 'ur') return 'اردو (Urdu)';
+    return 'English (EN)';
+  };
 
   return (
     <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-xs transition-colors">
@@ -137,16 +155,100 @@ export const Navbar: React.FC<NavbarProps> = ({
             </button>
           </div>
 
-          {/* Language Switch Button (Urdu / English) */}
-          <button
-            id="nav-lang-toggle-btn"
-            onClick={onToggleLanguage}
-            className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200/90 text-slate-800 text-xs sm:text-sm font-bold border border-slate-300 transition-all shadow-2xs"
-            title="Switch Language"
-          >
-            <Languages className="w-4 h-4 text-slate-600" />
-            <span>{t.switchLanguage}</span>
-          </button>
+          {/* Language Switcher Control (Dual / Urdu / English) */}
+          <div className="relative">
+            {/* Desktop / Tablet Segmented Pill */}
+            <div className="hidden sm:inline-flex items-center bg-slate-100/90 rounded-xl p-1 border border-slate-300 shadow-2xs font-arabic">
+              <button
+                id="nav-lang-dual-btn"
+                onClick={() => handleSelectLanguage('dual')}
+                className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all flex items-center gap-1 ${
+                  language === 'dual'
+                    ? 'bg-emerald-800 text-white shadow-xs'
+                    : 'text-slate-700 hover:text-slate-900 hover:bg-slate-200/70'
+                }`}
+                title="Dual Language (اردو + English)"
+              >
+                <span>🌐 دونوں (Dual)</span>
+              </button>
+
+              <button
+                id="nav-lang-ur-btn"
+                onClick={() => handleSelectLanguage('ur')}
+                className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all ${
+                  language === 'ur'
+                    ? 'bg-emerald-800 text-white shadow-xs'
+                    : 'text-slate-700 hover:text-slate-900 hover:bg-slate-200/70'
+                }`}
+                title="Urdu Only (صرف اردو)"
+              >
+                <span>اردو</span>
+              </button>
+
+              <button
+                id="nav-lang-en-btn"
+                onClick={() => handleSelectLanguage('en')}
+                className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all ${
+                  language === 'en'
+                    ? 'bg-emerald-800 text-white shadow-xs'
+                    : 'text-slate-700 hover:text-slate-900 hover:bg-slate-200/70'
+                }`}
+                title="English Only"
+              >
+                <span>English</span>
+              </button>
+            </div>
+
+            {/* Mobile Compact Dropdown Trigger */}
+            <button
+              id="nav-lang-mobile-btn"
+              onClick={() => setShowLangMenu(!showLangMenu)}
+              className="sm:hidden flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200/90 text-slate-800 text-xs font-bold border border-slate-300 transition-all shadow-2xs font-arabic"
+              title="زبان تبدیل کریں / Switch Language"
+            >
+              <Languages className="w-3.5 h-3.5 text-emerald-800" />
+              <span>{getLangBadgeLabel()}</span>
+            </button>
+
+            {/* Mobile Dropdown Menu */}
+            {showLangMenu && (
+              <div 
+                className="sm:hidden absolute top-full mt-1.5 right-0 z-50 bg-white rounded-2xl shadow-xl border border-slate-200 p-1.5 min-w-[170px] space-y-1 font-arabic animate-fade-in"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="px-2.5 py-1 text-[11px] font-bold text-slate-400 border-b border-slate-100">
+                  زبان کا انتخاب / Select Mode
+                </div>
+                <button
+                  onClick={() => handleSelectLanguage('dual')}
+                  className={`w-full text-start px-2.5 py-2 rounded-xl text-xs font-bold flex items-center justify-between ${
+                    language === 'dual' ? 'bg-emerald-50 text-emerald-900 border border-emerald-300' : 'text-slate-700 hover:bg-slate-50'
+                  }`}
+                >
+                  <span>🌐 دونوں (Dual Language)</span>
+                  {language === 'dual' && <CheckCircle2 className="w-3.5 h-3.5 text-emerald-700" />}
+                </button>
+                <button
+                  onClick={() => handleSelectLanguage('ur')}
+                  className={`w-full text-start px-2.5 py-2 rounded-xl text-xs font-bold flex items-center justify-between ${
+                    language === 'ur' ? 'bg-emerald-50 text-emerald-900 border border-emerald-300' : 'text-slate-700 hover:bg-slate-50'
+                  }`}
+                >
+                  <span>اردو (Urdu Only)</span>
+                  {language === 'ur' && <CheckCircle2 className="w-3.5 h-3.5 text-emerald-700" />}
+                </button>
+                <button
+                  onClick={() => handleSelectLanguage('en')}
+                  className={`w-full text-start px-2.5 py-2 rounded-xl text-xs font-bold flex items-center justify-between ${
+                    language === 'en' ? 'bg-emerald-50 text-emerald-900 border border-emerald-300' : 'text-slate-700 hover:bg-slate-50'
+                  }`}
+                >
+                  <span>English (English Only)</span>
+                  {language === 'en' && <CheckCircle2 className="w-3.5 h-3.5 text-emerald-700" />}
+                </button>
+              </div>
+            )}
+          </div>
 
           {/* Streak Badge */}
           <div className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-50 border border-amber-200 text-amber-900 text-xs font-bold" title={t.streakDays}>

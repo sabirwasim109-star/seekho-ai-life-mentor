@@ -20,18 +20,23 @@ import {
   AlertTriangle,
   Info,
   Mail,
-  Scale
+  Scale,
+  Award,
+  Layers,
+  ArrowDown
 } from 'lucide-react';
 import { Language } from '../types';
+import { PlayStoreFeatureGraphic } from './PlayStoreFeatureGraphic';
+import { SeekhoLogo } from './SeekhoLogo';
 
 interface VisionModalProps {
   language: Language;
   onClose: () => void;
-  initialTab?: 'about' | 'purpose' | 'privacy' | 'trust' | 'contact';
+  initialTab?: 'about' | 'purpose' | 'playstore' | 'privacy' | 'trust' | 'contact';
 }
 
 export const VisionModal: React.FC<VisionModalProps> = ({ language, onClose, initialTab = 'about' }) => {
-  const [activeTab, setActiveTab] = useState<'about' | 'purpose' | 'privacy' | 'trust' | 'contact'>(initialTab);
+  const [activeTab, setActiveTab] = useState<'about' | 'purpose' | 'playstore' | 'privacy' | 'trust' | 'contact'>(initialTab);
 
   const isUrdu = language === 'ur';
 
@@ -104,50 +109,71 @@ export const VisionModal: React.FC<VisionModalProps> = ({ language, onClose, ini
   const stepsUrdu = [
     {
       num: '۱',
+      stage: 'مرحلہ ۱',
       title: 'سیکھیں (Learn)',
       icon: Sparkles,
+      color: 'from-cyan-500 to-blue-600',
+      badge: 'bg-cyan-100 text-cyan-900 border-cyan-300',
       desc: 'صرف ڈگریاں نہیں، بلکہ وہ حقیقی اور مفید علم حاصل کریں جس سے زندگی میں روشنی اور صلاحیت پیدا ہو۔',
       action: 'روزانہ 15-30 منٹ موبائل یا کمپیوٹر سے مفید اسباق پڑھیں یا سنیں۔',
     },
     {
       num: '۲',
+      stage: 'مرحلہ ۲',
       title: 'مشق کریں (Practice)',
       icon: Trophy,
+      color: 'from-amber-500 to-orange-600',
+      badge: 'bg-amber-100 text-amber-900 border-amber-300',
       desc: 'علم بغیر عمل کے نامکمل ہے۔ جو سیکھیں، فوراً اپنے ہاتھ سے اس کا پریکٹیکل کریں۔',
       action: 'ہر سبق کے بعد دیا گیا عملی ٹاسک اور کوئز حل کریں۔',
     },
     {
       num: '۳',
+      stage: 'مرحلہ ۳',
       title: 'خود کو سنواریں (Improve Yourself)',
       icon: User,
+      color: 'from-emerald-500 to-teal-600',
+      badge: 'bg-emerald-100 text-emerald-900 border-emerald-300',
       desc: 'دیانت، سچائی، حسنِ اخلاق، وقت کی قدر اور مثبت سوچ کے ذریعے اپنے کردار کو مضبوط بنائیں۔',
       action: 'اپنی عادات کا روزانہ محاسبہ کریں اور ایک نئی اچھی عادت اپنائیں۔',
     },
     {
       num: '۴',
+      stage: 'مرحلہ ۴',
       title: 'خاندان کی مدد کریں (Help Your Family)',
       icon: Home,
+      color: 'from-indigo-500 to-purple-600',
+      badge: 'bg-indigo-100 text-indigo-900 border-indigo-300',
       desc: 'اپنے علم اور ہنر سے اپنے گھر کے خرچ، بچت، بچوں کی تربیت اور گھریلو مسائل میں مثبت کردار ادا کریں۔',
       action: 'اپنے گھر والوں کو کوئی نیا ہنر سکھائیں یا ان کا ہاتھ بٹائیں۔',
     },
     {
       num: '۵',
+      stage: 'مرحلہ ۵',
       title: 'برادری کی خدمت کریں (Help Your Community)',
       icon: Users,
+      color: 'from-rose-500 to-pink-600',
+      badge: 'bg-rose-100 text-rose-900 border-rose-300',
       desc: 'اپنے محلے اور گاؤں کے مسائل (جیسے پانی، صفائی، تعلیم، درخت لگانا) میں عملی حصہ لیں۔',
       action: 'سیکھو پر کمیونٹی پروجیکٹ شروع کریں یا کسی مقامی مہم میں رضاکار بنیں۔',
     },
     {
       num: '۶',
+      stage: 'مرحلہ ۶',
       title: 'ملک کی ترقی میں حصہ ڈالیں (Help Your Country)',
       icon: Building2,
+      color: 'from-teal-600 to-emerald-700',
+      badge: 'bg-teal-100 text-teal-900 border-teal-300',
       desc: 'ایک ذمہ دار، باوقار اور قانون پسند شہری کے طور پر ملکی معیشت اور وقار کو بلند کریں۔',
       action: 'مقامی پیداوار کو فروغ دیں اور مثبت سماجی خدمات انجام دیں۔',
     },
     {
       num: '۷',
+      stage: 'مرحلہ ۷',
       title: 'پوری دنیا کے کام آئیں (Help the World)',
       icon: Globe,
+      color: 'from-blue-600 to-indigo-800',
+      badge: 'bg-blue-100 text-blue-900 border-blue-300',
       desc: 'انسانیت کے لیے نفع بخش بنیں۔ امن، ماحولیات کے تحفظ اور عالمی بھلائی میں اپنا حصہ ڈالیں۔',
       action: 'اپنا تیار کردہ علم اور حل انٹرنیٹ پر دنیا بھر کے انسانوں کے ساتھ بانٹیں۔',
     },
@@ -156,50 +182,71 @@ export const VisionModal: React.FC<VisionModalProps> = ({ language, onClose, ini
   const stepsEn = [
     {
       num: '1',
+      stage: 'Stage 1',
       title: 'Learn',
       icon: Sparkles,
+      color: 'from-cyan-500 to-blue-600',
+      badge: 'bg-cyan-100 text-cyan-900 border-cyan-300',
       desc: 'Acquire practical, empowering knowledge that directly enriches life and builds true capability.',
       action: 'Spend 15-30 focused minutes daily exploring engaging micro-lessons.',
     },
     {
       num: '2',
+      stage: 'Stage 2',
       title: 'Practice',
       icon: Trophy,
+      color: 'from-amber-500 to-orange-600',
+      badge: 'bg-amber-100 text-amber-900 border-amber-300',
       desc: 'Knowledge without execution is dormant. Immediately apply every concept with hands-on practice.',
       action: 'Complete daily tasks, interactive quizzes, and micro-deliverables.',
     },
     {
       num: '3',
+      stage: 'Stage 3',
       title: 'Improve Yourself',
       icon: User,
+      color: 'from-emerald-500 to-teal-600',
+      badge: 'bg-emerald-100 text-emerald-900 border-emerald-300',
       desc: 'Refine your character, integrity, discipline, emotional resilience, and personal work ethic.',
       action: 'Adopt positive daily habits and self-assess progress continuously.',
     },
     {
       num: '4',
+      stage: 'Stage 4',
       title: 'Help Your Family',
       icon: Home,
+      color: 'from-indigo-500 to-purple-600',
+      badge: 'bg-indigo-100 text-indigo-900 border-indigo-300',
       desc: 'Uplift your household through financial wisdom, digital literacy, and shared mentorship.',
       action: 'Help a family member learn a useful tool or solve a household challenge.',
     },
     {
       num: '5',
+      stage: 'Stage 5',
       title: 'Help Your Community',
       icon: Users,
+      color: 'from-rose-500 to-pink-600',
+      badge: 'bg-rose-100 text-rose-900 border-rose-300',
       desc: 'Address local challenges—clean water, plantation, youth mentoring, roads, and village welfare.',
       action: 'Join or initiate local volunteer projects in your area.',
     },
     {
       num: '6',
+      stage: 'Stage 6',
       title: 'Help Your Country',
       icon: Building2,
+      color: 'from-teal-600 to-emerald-700',
+      badge: 'bg-teal-100 text-teal-900 border-teal-300',
       desc: 'Act as a dignified, constructive citizen fostering local innovation and economic vitality.',
       action: 'Support local enterprises and digital exports that build national self-reliance.',
     },
     {
       num: '7',
+      stage: 'Stage 7',
       title: 'Help the World',
       icon: Globe,
+      color: 'from-blue-600 to-indigo-800',
+      badge: 'bg-blue-100 text-blue-900 border-blue-300',
       desc: 'Contribute positively to humanity, planetary environmental conservation, and global knowledge.',
       action: 'Publish useful projects and open-source local solutions for global learners.',
     },
@@ -210,31 +257,34 @@ export const VisionModal: React.FC<VisionModalProps> = ({ language, onClose, ini
 
   return (
     <div className="fixed inset-0 z-50 bg-slate-900/85 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
-      <div className="bg-white w-full max-w-3xl rounded-3xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[92vh]">
+      <div className="bg-white w-full max-w-4xl rounded-3xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[92vh]">
         {/* Header */}
-        <div className="p-5 sm:p-6 bg-gradient-to-r from-emerald-800 via-teal-900 to-slate-900 text-white flex items-start justify-between gap-4">
-          <div>
-            <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-              <span className="text-xs px-2.5 py-0.5 rounded-full bg-emerald-400/20 text-emerald-300 font-bold border border-emerald-400/30 font-arabic">
-                {isUrdu ? 'سیکھو — تعارف، وژن و رازداری' : 'About, Vision & Privacy'}
-              </span>
-              <span className="text-xs px-2.5 py-0.5 rounded-full bg-amber-400/20 text-amber-300 font-bold border border-amber-400/30 font-arabic">
-                {isUrdu ? 'زندگی سیکھیں، بہتر بنائیں، عمل کریں' : 'Learn Life, Improve, Act'}
-              </span>
+        <div className="p-5 sm:p-6 bg-gradient-to-r from-slate-950 via-slate-900 to-[#0B132B] text-white flex items-start justify-between gap-4 border-b border-cyan-500/20">
+          <div className="flex items-center gap-3.5">
+            <SeekhoLogo className="w-12 h-12 shadow-md shadow-cyan-500/20" />
+            <div>
+              <div className="flex items-center gap-2 mb-1 flex-wrap">
+                <span className="text-xs px-2.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 font-bold border border-cyan-400/30 font-arabic">
+                  {isUrdu ? 'سیکھو — تعارف، وژن و برانڈ' : 'Seekho Vision & Brand'}
+                </span>
+                <span className="text-xs px-2.5 py-0.5 rounded-full bg-amber-400/20 text-amber-300 font-bold border border-amber-400/30 font-arabic">
+                  {isUrdu ? 'علم • سوچ • عمل • ارتقاء' : 'Learn • Think • Act • Transform'}
+                </span>
+              </div>
+              <h2 className="text-xl sm:text-2xl font-black text-white font-arabic">
+                {isUrdu ? 'سیکھو — Seekho' : 'Seekho — Lifelong AI Life Mentor'}
+              </h2>
+              <p className="text-xs sm:text-sm text-slate-300 font-arabic leading-relaxed">
+                {isUrdu
+                  ? 'علم سے عمل اور اثر تک — مستقبل کا ہنر مند اور باکردار انسان بنیں۔'
+                  : 'From Knowledge to Action & Impact — Lifelong Practical Learning & Character.'}
+              </p>
             </div>
-            <h2 className="text-xl sm:text-2xl font-black text-white font-arabic">
-              {isUrdu ? 'سیکھو — Seekho' : 'Seekho — A Lifelong AI Life Mentor'}
-            </h2>
-            <p className="text-xs sm:text-sm text-emerald-100 mt-1 font-arabic leading-relaxed">
-              {isUrdu
-                ? 'سیکھو ایک AI Life Mentor ہے جو علم کو عملی زندگی، مہارت، کردار اور روزمرہ عمل سے جوڑتا ہے۔'
-                : 'Seekho is an AI Life Mentor connecting knowledge with practical life, skills, character, and daily action.'}
-            </p>
           </div>
 
           <button
             onClick={onClose}
-            className="p-2 rounded-full bg-black/20 hover:bg-black/40 text-white transition shrink-0"
+            className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition shrink-0"
             aria-label="Close"
           >
             <X className="w-5 h-5" />
@@ -253,6 +303,18 @@ export const VisionModal: React.FC<VisionModalProps> = ({ language, onClose, ini
           >
             <BookOpen className="w-4 h-4 text-emerald-700" />
             <span>{isUrdu ? 'تعارف و وژن' : 'About & Vision'}</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('playstore')}
+            className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold transition flex items-center gap-1.5 shrink-0 ${
+              activeTab === 'playstore'
+                ? 'bg-white text-cyan-950 shadow-xs border border-cyan-200'
+                : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
+            }`}
+          >
+            <Award className="w-4 h-4 text-cyan-600" />
+            <span>{isUrdu ? 'Play Store برانڈنگ و تھیم' : 'Play Store Branding'}</span>
           </button>
 
           <button
@@ -356,52 +418,118 @@ export const VisionModal: React.FC<VisionModalProps> = ({ language, onClose, ini
               </div>
 
               {/* 7-Step Lifelong Learning Roadmap */}
-              <div className="space-y-3 pt-2 border-t border-slate-100">
+              <div className="space-y-4 pt-2 border-t border-slate-100">
                 <div className="flex items-center justify-between">
                   <h3 className="text-sm sm:text-base font-black text-slate-900 flex items-center gap-2">
                     <Globe className="w-4 h-4 text-teal-700" />
-                    <span>{isUrdu ? '۷ رکنی تعلیمی و سماجی روڈ میپ' : 'The 7-Step Learning & Social Roadmap'}</span>
+                    <span>{isUrdu ? '۷ رکنی تعلیمی و سماجی روڈ میپ (Impact Circle)' : 'The 7-Stage Impact Circle Roadmap'}</span>
                   </h3>
                   <span className="text-[11px] text-slate-500 hidden sm:inline">
-                    {isUrdu ? 'فرد سے انسانیت تک کا سفر' : 'From Individual to Humanity'}
+                    {isUrdu ? 'فرد سے انسانیت تک کا سفر' : 'From Self to Global Humanity'}
                   </span>
                 </div>
 
-                <div className="space-y-2.5">
+                <div className="space-y-3 relative">
                   {steps.map((st, idx) => {
                     const Icon = st.icon;
+                    const isLast = idx === steps.length - 1;
 
                     return (
-                      <div
-                        key={idx}
-                        className="bg-slate-50 hover:bg-emerald-50/40 p-3.5 rounded-2xl border border-slate-200 transition flex flex-col sm:flex-row sm:items-start gap-3"
-                      >
-                        <div className="w-8 h-8 rounded-xl bg-emerald-700 text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-xs">
-                          <Icon className="w-4 h-4" />
-                        </div>
-
-                        <div className="flex-1 space-y-1">
-                          <div className="flex items-center gap-2">
-                            <span className="text-xs font-black text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-md">
-                              {st.num}
-                            </span>
-                            <h4 className="text-xs sm:text-sm font-bold text-slate-900">
-                              {st.title}
-                            </h4>
+                      <div key={idx} className="relative">
+                        <div
+                          className="bg-white hover:bg-slate-50/80 p-4 rounded-2xl border border-slate-200/90 shadow-2xs hover:shadow-xs transition flex flex-col sm:flex-row sm:items-start gap-3.5"
+                        >
+                          <div className={`w-10 h-10 rounded-2xl bg-gradient-to-br ${st.color} text-white flex items-center justify-center font-bold text-sm shrink-0 shadow-md`}>
+                            <Icon className="w-5 h-5" />
                           </div>
 
-                          <p className="text-xs text-slate-600 leading-relaxed">
-                            {st.desc}
-                          </p>
+                          <div className="flex-1 space-y-1.5">
+                            <div className="flex items-center justify-between gap-2 flex-wrap">
+                              <div className="flex items-center gap-2">
+                                <span className={`text-[11px] font-black px-2 py-0.5 rounded-lg border ${st.badge}`}>
+                                  {st.stage}
+                                </span>
+                                <h4 className="text-sm sm:text-base font-black text-slate-900">
+                                  {st.title}
+                                </h4>
+                              </div>
+                              <span className="text-xs font-bold text-slate-400">
+                                #{st.num}
+                              </span>
+                            </div>
 
-                          <div className="text-[11px] font-medium text-emerald-900 bg-white p-2 rounded-xl border border-slate-200 flex items-center gap-1.5">
-                            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                            <span><strong>{isUrdu ? 'عملی طریقہ:' : 'Action:'}</strong> {st.action}</span>
+                            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                              {st.desc}
+                            </p>
+
+                            <div className="text-xs font-medium text-emerald-950 bg-emerald-50/70 p-2.5 rounded-xl border border-emerald-200/70 flex items-center gap-2">
+                              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                              <span><strong>{isUrdu ? 'عملی طریقہ (Action):' : 'Action:'}</strong> {st.action}</span>
+                            </div>
                           </div>
                         </div>
+
+                        {!isLast && (
+                          <div className="flex items-center justify-center my-1 text-slate-300">
+                            <ArrowDown className="w-3.5 h-3.5" />
+                          </div>
+                        )}
                       </div>
                     );
                   })}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* TAB: PLAY STORE BRANDING & CYBER-LAB SHOWCASE */}
+          {activeTab === 'playstore' && (
+            <div className="space-y-6 font-arabic">
+              <div className="space-y-2">
+                <h3 className="text-base sm:text-lg font-black text-slate-900 flex items-center gap-2">
+                  <Award className="w-5 h-5 text-cyan-600" />
+                  <span>{isUrdu ? 'Google Play Store فیچر گرافک و بصری شناخت' : 'Play Store Visual Identity & Feature Graphic'}</span>
+                </h3>
+                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                  {isUrdu
+                    ? 'جدید سائبر-لیب تھیم (3D Glassmorphism, Microchip Circuits, Neon Cyan & Warm Gold) کے ساتھ پلے اسٹور ریڈی ڈیزائن۔'
+                    : 'Modern Cyber-Lab Theme with 3D Glassmorphism, microchip AI circuits, neon cyan, and warm gold lighting accents.'}
+                </p>
+              </div>
+
+              {/* 1024x500 Feature Graphic Display */}
+              <PlayStoreFeatureGraphic language={language} />
+
+              {/* Icon & Design Anatomy */}
+              <div className="bg-slate-50 p-5 rounded-3xl border border-slate-200 space-y-4">
+                <h4 className="text-sm sm:text-base font-bold text-slate-900">
+                  {isUrdu ? 'ایپ آئیکون کے کلیدی عناصر (Symbol Anatomy):' : 'App Icon Key Elements:'}
+                </h4>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+                  <div className="bg-white p-3.5 rounded-2xl border border-slate-200 space-y-1">
+                    <span className="font-bold text-cyan-800 block">
+                      {isUrdu ? '۱. ڈیجیٹل اسکرین / کھلی کتاب' : '1. Open Digital Book/Screen'}
+                    </span>
+                    <p className="text-slate-600">
+                      {isUrdu ? 'ڈیجیٹل لٹریسی، علم اور جدید لیب کی بنیاد۔' : 'Digital literacy, practical wisdom, and educational foundation.'}
+                    </p>
+                  </div>
+                  <div className="bg-white p-3.5 rounded-2xl border border-slate-200 space-y-1">
+                    <span className="font-bold text-emerald-800 block">
+                      {isUrdu ? '۲. مائیکرو چپ اور AI سرکٹ' : '2. Microchip & AI Traces'}
+                    </span>
+                    <p className="text-slate-600">
+                      {isUrdu ? 'مستقبل کی ٹیکنالوجی، مصنوعی ذہانت اور عملی ہنر۔' : 'Future tech, AI mentor intelligence, and computer literacy.'}
+                    </p>
+                  </div>
+                  <div className="bg-white p-3.5 rounded-2xl border border-slate-200 space-y-1">
+                    <span className="font-bold text-amber-800 block">
+                      {isUrdu ? '۳. اوپر اٹھتا تیر اور امپیکٹ دائرے' : '3. Upward Arrow & Impact Circle'}
+                    </span>
+                    <p className="text-slate-600">
+                      {isUrdu ? 'فرد سے خاندان، برادری اور دنیا تک ترقی کا سفر۔' : 'Expanding growth from individual to family, society, and the world.'}
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -641,7 +769,7 @@ export const VisionModal: React.FC<VisionModalProps> = ({ language, onClose, ini
 
           <button
             onClick={onClose}
-            className="px-6 py-2.5 rounded-xl bg-emerald-800 hover:bg-emerald-900 text-white font-bold text-xs sm:text-sm shadow-xs w-full sm:w-auto font-arabic transition"
+            className="px-6 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs sm:text-sm shadow-xs w-full sm:w-auto font-arabic transition"
           >
             {isUrdu ? 'سمجھ گیا / جاری رکھیں' : 'Got it / Continue'}
           </button>
@@ -650,5 +778,6 @@ export const VisionModal: React.FC<VisionModalProps> = ({ language, onClose, ini
     </div>
   );
 };
+
 
 

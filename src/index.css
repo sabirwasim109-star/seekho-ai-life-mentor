@@ -5,23 +5,171 @@
     --font-arabic: 'Noto Sans Arabic', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     --font-nastaliq: 'Noto Nastaliq Urdu', 'Noto Sans Arabic', serif;
     --font-english: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    
+    /* Standardized Global Urdu Typography Scales */
+    --urdu-page-title-size: 30px;
+    --urdu-section-title-size: 25px;
+    --urdu-question-size: 25px;
+    --urdu-body-size: 19px;
+    --urdu-sub-size: 16.5px;
+    --urdu-btn-size: 18.5px;
+    --urdu-label-size: 16px;
+    --urdu-badge-size: 14.5px;
+    
+    /* Standardized Line Heights */
+    --urdu-body-line-height: 1.85;
+    --urdu-para-line-height: 1.92;
+    --urdu-question-line-height: 1.6;
+    --urdu-heading-line-height: 1.5;
   }
 
   body {
     font-family: var(--font-arabic);
-    line-height: 1.7;
+    font-size: var(--urdu-body-size);
+    line-height: var(--urdu-body-line-height);
     -webkit-tap-highlight-color: transparent;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
   }
 
   [dir="ltr"] {
     font-family: var(--font-english);
-    line-height: 1.5;
+    line-height: 1.6;
+  }
+
+  [dir="rtl"] {
+    font-family: var(--font-arabic);
+    letter-spacing: 0px !important;
   }
 
   [dir="rtl"] .urdu-nastaliq {
     font-family: var(--font-nastaliq);
     line-height: 2.2;
   }
+
+  /* Accessibility Font Size Scaling (Normal, Large, Extra Large) */
+  body.font-size-large {
+    --urdu-page-title-size: 34px;
+    --urdu-section-title-size: 28px;
+    --urdu-question-size: 28px;
+    --urdu-body-size: 21px;
+    --urdu-sub-size: 18px;
+    --urdu-btn-size: 20.5px;
+    --urdu-label-size: 17.5px;
+    --urdu-badge-size: 16px;
+    --urdu-body-line-height: 1.95;
+    --urdu-para-line-height: 2.02;
+  }
+
+  body.font-size-xlarge {
+    --urdu-page-title-size: 38px;
+    --urdu-section-title-size: 31px;
+    --urdu-question-size: 32px;
+    --urdu-body-size: 23px;
+    --urdu-sub-size: 20px;
+    --urdu-btn-size: 22.5px;
+    --urdu-label-size: 19.5px;
+    --urdu-badge-size: 17.5px;
+    --urdu-body-line-height: 2.1;
+    --urdu-para-line-height: 2.15;
+  }
+}
+
+/* Reusable Standardized Urdu Typography Tokens */
+.urdu-page-title {
+  font-family: var(--font-arabic);
+  font-size: var(--urdu-page-title-size);
+  line-height: var(--urdu-heading-line-height);
+  font-weight: 900;
+  letter-spacing: normal;
+}
+
+.urdu-section-title {
+  font-family: var(--font-arabic);
+  font-size: var(--urdu-section-title-size);
+  line-height: var(--urdu-heading-line-height);
+  font-weight: 800;
+  letter-spacing: normal;
+}
+
+.urdu-question {
+  font-family: var(--font-arabic);
+  font-size: var(--urdu-question-size);
+  line-height: var(--urdu-question-line-height);
+  font-weight: 900;
+  letter-spacing: normal;
+  text-wrap: balance;
+}
+
+.urdu-body {
+  font-family: var(--font-arabic);
+  font-size: var(--urdu-body-size);
+  line-height: var(--urdu-body-line-height);
+  letter-spacing: normal;
+}
+
+.urdu-body-para {
+  font-family: var(--font-arabic);
+  font-size: var(--urdu-body-size);
+  line-height: var(--urdu-para-line-height);
+  letter-spacing: normal;
+}
+
+.urdu-secondary,
+.urdu-sub {
+  font-family: var(--font-arabic);
+  font-size: var(--urdu-sub-size);
+  line-height: 1.75;
+  letter-spacing: normal;
+}
+
+.urdu-label {
+  font-family: var(--font-arabic);
+  font-size: var(--urdu-label-size);
+  line-height: 1.5;
+  font-weight: 700;
+  letter-spacing: normal;
+}
+
+.urdu-btn,
+.urdu-button {
+  font-family: var(--font-arabic);
+  font-size: var(--urdu-btn-size);
+  line-height: 1.4;
+  font-weight: 800;
+  min-height: 50px;
+  letter-spacing: normal;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.urdu-input {
+  font-family: var(--font-arabic);
+  font-size: var(--urdu-body-size);
+  line-height: 1.5;
+  min-height: 50px;
+  padding: 0.75rem 1rem;
+}
+
+.urdu-input::placeholder {
+  font-size: var(--urdu-sub-size);
+  font-family: var(--font-arabic);
+}
+
+.urdu-badge {
+  font-family: var(--font-arabic);
+  font-size: var(--urdu-badge-size);
+  line-height: 1.4;
+  font-weight: 700;
+  letter-spacing: normal;
+}
+
+.urdu-option-card {
+  min-height: 54px;
+  font-family: var(--font-arabic);
+  font-size: var(--urdu-body-size);
+  line-height: 1.6;
 }
 
 /* Custom scrollbar for mobile friendly smooth scroll */

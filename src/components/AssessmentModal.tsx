@@ -229,14 +229,14 @@ export const AssessmentModal: React.FC<AssessmentModalProps> = ({
         {/* Top Header Bar */}
         <div id="assessment-header" className="flex items-center justify-between px-5 sm:px-8 py-4 border-b border-slate-100 bg-gradient-to-r from-emerald-800 via-emerald-900 to-teal-950 text-white shrink-0">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-emerald-500/20 border border-emerald-400/30 flex items-center justify-center text-emerald-300 shadow-inner">
-              <Sparkles className="w-5 h-5 animate-pulse" />
+            <div className="w-11 h-11 rounded-2xl bg-emerald-500/20 border border-emerald-400/30 flex items-center justify-center text-emerald-300 shadow-inner shrink-0">
+              <Sparkles className="w-6 h-6 animate-pulse" />
             </div>
             <div>
-              <h2 className="text-lg sm:text-xl font-bold tracking-tight">
+              <h2 className="text-lg sm:text-2xl font-black tracking-normal font-arabic">
                 {isUrdu ? 'سیکھو اسکل اسیسمنٹ اور روڈ میپ' : 'Seekho Skill Assessment & Roadmap'}
               </h2>
-              <p className="text-xs text-emerald-200/90 font-medium">
+              <p className="text-[13px] sm:text-[14px] text-emerald-200 font-medium font-arabic mt-0.5">
                 {showResultsView
                   ? isUrdu
                     ? 'آپ کی ضروریات کے مطابق تجویز کردہ ٹاپ ۳ ہنر'
@@ -250,10 +250,10 @@ export const AssessmentModal: React.FC<AssessmentModalProps> = ({
           <button
             id="close-assessment-modal-btn"
             onClick={onClose}
-            className="p-2 text-white/80 hover:text-white hover:bg-white/10 rounded-full transition-colors"
+            className="p-2.5 text-white/80 hover:text-white hover:bg-white/10 rounded-full transition-colors shrink-0"
             title={isUrdu ? 'بند کریں' : 'Close'}
           >
-            <X className="w-5 h-5" />
+            <X className="w-6 h-6" />
           </button>
         </div>
 
@@ -279,14 +279,14 @@ export const AssessmentModal: React.FC<AssessmentModalProps> = ({
               {/* Step 1: Age Group */}
               {currentStep === 1 && (
                 <div id="step-age-group" className="space-y-5 animate-fade-in">
-                  <div className="space-y-1">
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">
+                  <div className="space-y-2">
+                    <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-[13px] sm:text-[14px] font-bold bg-emerald-100 text-emerald-800 font-arabic">
                       {isUrdu ? 'سوال نمبر ۱' : 'Question 1'}
                     </span>
-                    <h3 className="text-xl sm:text-2xl font-bold text-slate-900">
+                    <h3 className="urdu-question text-[22px] sm:text-[25px] font-black text-slate-900 font-arabic leading-[1.6]">
                       {isUrdu ? 'آپ کا عمر کا گروپ کیا ہے؟' : 'What is your age group?'}
                     </h3>
-                    <p className="text-sm text-slate-600">
+                    <p className="urdu-secondary text-[15px] sm:text-[16px] text-slate-600 font-arabic leading-[1.7]">
                       {isUrdu 
                         ? 'سیکھو پر ۱۰ سال سے لے کر ۷۰+ سال تک ہر عمر کے لیے آسانی سے سمجھ آنے والے کورسز موجود ہیں۔'
                         : 'Seekho offers accessible, practical courses designed for learners of all ages.'}
@@ -309,14 +309,14 @@ export const AssessmentModal: React.FC<AssessmentModalProps> = ({
                           id={`age-opt-${opt.id}`}
                           type="button"
                           onClick={() => setAgeGroup(opt.id as AgeGroup)}
-                          className={`p-4 rounded-2xl border-2 text-center transition-all flex flex-col items-center justify-center gap-1.5 ${
+                          className={`min-h-[70px] p-4 rounded-2xl border-2 text-center transition-all flex flex-col items-center justify-center gap-1.5 ${
                             isSelected
-                              ? 'border-emerald-600 bg-emerald-50/80 text-emerald-950 shadow-md font-bold'
+                              ? 'border-emerald-600 bg-emerald-50/85 text-emerald-950 shadow-md font-bold'
                               : 'border-slate-200 hover:border-emerald-300 hover:bg-slate-50 text-slate-700 font-medium'
                           }`}
                         >
-                          <span className="text-base sm:text-lg">{isUrdu ? opt.ur : opt.en}</span>
-                          {isSelected && <CheckCircle2 className="w-5 h-5 text-emerald-600 mt-1" />}
+                          <span className="text-[17px] sm:text-[18px] font-bold font-arabic">{isUrdu ? opt.ur : opt.en}</span>
+                          {isSelected && <CheckCircle2 className="w-5 h-5 text-emerald-600 mt-0.5" />}
                         </button>
                       );
                     })}
@@ -327,14 +327,14 @@ export const AssessmentModal: React.FC<AssessmentModalProps> = ({
               {/* Step 2: Education Level */}
               {currentStep === 2 && (
                 <div id="step-education" className="space-y-5 animate-fade-in">
-                  <div className="space-y-1">
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">
+                  <div className="space-y-2">
+                    <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-[13px] sm:text-[14px] font-bold bg-emerald-100 text-emerald-800 font-arabic">
                       {isUrdu ? 'سوال نمبر ۲' : 'Question 2'}
                     </span>
-                    <h3 className="text-xl sm:text-2xl font-bold text-slate-900">
+                    <h3 className="urdu-question text-[22px] sm:text-[25px] font-black text-slate-900 font-arabic leading-[1.6]">
                       {isUrdu ? 'آپ کی تعلیمی سطح کیا ہے؟' : 'What is your education level?'}
                     </h3>
-                    <p className="text-sm text-slate-600">
+                    <p className="urdu-secondary text-[15px] sm:text-[16px] text-slate-600 font-arabic leading-[1.7]">
                       {isUrdu 
                         ? 'کورسز کو آپ کی تعلیمی سطح کے مطابق آسان اور قابل فہم بنایا جائے گا۔'
                         : 'We customize explanations to match your educational comfort.'}
@@ -357,13 +357,13 @@ export const AssessmentModal: React.FC<AssessmentModalProps> = ({
                           id={`edu-opt-${opt.id}`}
                           type="button"
                           onClick={() => setEducationLevel(opt.id)}
-                          className={`p-4 rounded-2xl border-2 text-start transition-all flex items-center justify-between ${
+                          className={`min-h-[58px] p-4 rounded-2xl border-2 text-start transition-all flex items-center justify-between gap-3 ${
                             isSelected
-                              ? 'border-emerald-600 bg-emerald-50/80 text-emerald-950 shadow-md font-bold'
+                              ? 'border-emerald-600 bg-emerald-50/85 text-emerald-950 shadow-md font-bold'
                               : 'border-slate-200 hover:border-emerald-300 hover:bg-slate-50 text-slate-700 font-medium'
                           }`}
                         >
-                          <span className="text-base">{isUrdu ? opt.ur : opt.en}</span>
+                          <span className="text-[17px] sm:text-[18px] font-bold font-arabic leading-[1.6]">{isUrdu ? opt.ur : opt.en}</span>
                           {isSelected && <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />}
                         </button>
                       );
@@ -375,14 +375,14 @@ export const AssessmentModal: React.FC<AssessmentModalProps> = ({
               {/* Step 3: Current Occupation */}
               {currentStep === 3 && (
                 <div id="step-occupation" className="space-y-5 animate-fade-in">
-                  <div className="space-y-1">
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">
+                  <div className="space-y-2">
+                    <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-[13px] sm:text-[14px] font-bold bg-emerald-100 text-emerald-800 font-arabic">
                       {isUrdu ? 'سوال نمبر ۳' : 'Question 3'}
                     </span>
-                    <h3 className="text-xl sm:text-2xl font-bold text-slate-900">
+                    <h3 className="urdu-question text-[22px] sm:text-[25px] font-black text-slate-900 font-arabic leading-[1.6]">
                       {isUrdu ? 'آپ کا موجودہ پیشہ یا مصروفیت کیا ہے؟' : 'What is your current occupation?'}
                     </h3>
-                    <p className="text-sm text-slate-600">
+                    <p className="urdu-secondary text-[15px] sm:text-[16px] text-slate-600 font-arabic leading-[1.7]">
                       {isUrdu 
                         ? 'آپ کے کام سے مطابقت رکھنے والے عملی ہنر تجویز کیے جائیں گے۔'
                         : 'We will recommend skills directly relevant to your daily routine.'}
@@ -409,14 +409,14 @@ export const AssessmentModal: React.FC<AssessmentModalProps> = ({
                           id={`occ-opt-${opt.id}`}
                           type="button"
                           onClick={() => setCurrentOccupation(opt.id)}
-                          className={`p-3.5 rounded-2xl border-2 text-start transition-all flex flex-col justify-between gap-2 ${
+                          className={`min-h-[75px] p-4 rounded-2xl border-2 text-start transition-all flex flex-col justify-between gap-2.5 ${
                             isSelected
-                              ? 'border-emerald-600 bg-emerald-50/80 text-emerald-950 shadow-md font-bold'
+                              ? 'border-emerald-600 bg-emerald-50/85 text-emerald-950 shadow-md font-bold'
                               : 'border-slate-200 hover:border-emerald-300 hover:bg-slate-50 text-slate-700 font-medium'
                           }`}
                         >
                           <IconComp className={`w-5 h-5 ${isSelected ? 'text-emerald-600' : 'text-slate-500'}`} />
-                          <span className="text-sm">{isUrdu ? opt.ur : opt.en}</span>
+                          <span className="text-[16px] sm:text-[17px] font-bold font-arabic leading-snug">{isUrdu ? opt.ur : opt.en}</span>
                         </button>
                       );
                     })}
@@ -427,21 +427,21 @@ export const AssessmentModal: React.FC<AssessmentModalProps> = ({
               {/* Step 4: Existing Skills (Multi-select from existing categories) */}
               {currentStep === 4 && (
                 <div id="step-existing-skills" className="space-y-5 animate-fade-in">
-                  <div className="space-y-1">
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">
+                  <div className="space-y-2">
+                    <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-[13px] sm:text-[14px] font-bold bg-emerald-100 text-emerald-800 font-arabic">
                       {isUrdu ? 'سوال نمبر ۴' : 'Question 4'}
                     </span>
-                    <h3 className="text-xl sm:text-2xl font-bold text-slate-900">
+                    <h3 className="urdu-question text-[22px] sm:text-[25px] font-black text-slate-900 font-arabic leading-[1.6]">
                       {isUrdu ? 'آپ کے پاس پہلے سے کون سے ہنر موجود ہیں؟' : 'What existing skills do you already have?'}
                     </h3>
-                    <p className="text-sm text-slate-600">
+                    <p className="urdu-secondary text-[15px] sm:text-[16px] text-slate-600 font-arabic leading-[1.7]">
                       {isUrdu 
-                        ? 'ایک سے زیادہ منتخب کر سکتے ہیں (تاکہ ہم اس پر اگلا اگلا مرحلہ تجویز کریں)۔'
+                        ? 'ایک سے زیادہ منتخب کر سکتے ہیں (تاکہ ہم اس پر اگلا مرحلہ تجویز کریں)۔'
                         : 'Select multiple categories that you are already familiar with.'}
                     </p>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-72 overflow-y-auto p-1">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-80 overflow-y-auto p-1">
                     {EXISTING_SKILL_CATEGORIES.map((cat) => {
                       const isSelected = existingSkills.includes(cat.nameUrdu) || existingSkills.includes(cat.nameEn) || existingSkills.includes(cat.id);
                       return (
@@ -450,20 +450,20 @@ export const AssessmentModal: React.FC<AssessmentModalProps> = ({
                           id={`existing-skill-${cat.id}`}
                           type="button"
                           onClick={() => toggleExistingSkill(cat.nameUrdu)}
-                          className={`p-3.5 rounded-2xl border-2 text-start transition-all flex items-center gap-3 ${
+                          className={`min-h-[64px] p-4 rounded-2xl border-2 text-start transition-all flex items-center gap-3.5 ${
                             isSelected
-                              ? 'border-emerald-600 bg-emerald-50 text-emerald-950 font-bold shadow-sm'
+                              ? 'border-emerald-600 bg-emerald-50 text-emerald-950 font-black shadow-sm'
                               : 'border-slate-200 hover:border-emerald-300 hover:bg-slate-50 text-slate-700'
                           }`}
                         >
-                          <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${cat.badgeColor}`}>
-                            {renderSkillIcon(cat.iconName, 'w-4 h-4')}
+                          <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${cat.badgeColor}`}>
+                            {renderSkillIcon(cat.iconName, 'w-5 h-5')}
                           </div>
                           <div className="flex-1 min-w-0">
-                            <p className="text-sm font-bold truncate">{isUrdu ? cat.nameUrdu : cat.nameEn}</p>
-                            <p className="text-xs text-slate-500 truncate">{isUrdu ? cat.descUrdu : cat.descEn}</p>
+                            <p className="text-[16px] sm:text-[17.5px] font-bold truncate font-arabic">{isUrdu ? cat.nameUrdu : cat.nameEn}</p>
+                            <p className="text-[13px] sm:text-[14px] text-slate-500 truncate font-arabic mt-0.5">{isUrdu ? cat.descUrdu : cat.descEn}</p>
                           </div>
-                          <div className={`w-5 h-5 rounded-md border flex items-center justify-center ${isSelected ? 'bg-emerald-600 border-emerald-600 text-white' : 'border-slate-300'}`}>
+                          <div className={`w-5 h-5 rounded-md border flex items-center justify-center shrink-0 ${isSelected ? 'bg-emerald-600 border-emerald-600 text-white' : 'border-slate-300'}`}>
                             {isSelected && <Check className="w-3.5 h-3.5 stroke-[3]" />}
                           </div>
                         </button>
@@ -476,21 +476,21 @@ export const AssessmentModal: React.FC<AssessmentModalProps> = ({
               {/* Step 5: Interests (Multi-select from exact requested list) */}
               {currentStep === 5 && (
                 <div id="step-interests" className="space-y-5 animate-fade-in">
-                  <div className="space-y-1">
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">
+                  <div className="space-y-2">
+                    <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-[13px] sm:text-[14px] font-bold bg-emerald-100 text-emerald-800 font-arabic">
                       {isUrdu ? 'سوال نمبر ۵' : 'Question 5'}
                     </span>
-                    <h3 className="text-xl sm:text-2xl font-bold text-slate-900">
+                    <h3 className="urdu-question text-[22px] sm:text-[25px] font-black text-slate-900 font-arabic leading-[1.6]">
                       {isUrdu ? 'آپ کو کن موضوعات میں دلچسپی ہے؟' : 'What are your learning interests?'}
                     </h3>
-                    <p className="text-sm text-slate-600">
+                    <p className="urdu-secondary text-[15px] sm:text-[16px] text-slate-600 font-arabic leading-[1.7]">
                       {isUrdu 
                         ? 'ایک یا ایک سے زیادہ موضوعات منتخب کریں۔ اگر آپ کی عمر زیادہ ہے تو بھی آپ ٹیکنالوجی یا AI بلا جھجھک چن سکتے ہیں۔'
                         : 'Select multiple topics that interest you. All ages are welcome to explore AI, Tech, or Trades.'}
                     </p>
                   </div>
 
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 max-h-72 overflow-y-auto p-1">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 max-h-80 overflow-y-auto p-1">
                     {INTERESTS_OPTIONS.map((opt) => {
                       const isSelected = selectedInterests.includes(opt.id);
                       return (
@@ -499,20 +499,20 @@ export const AssessmentModal: React.FC<AssessmentModalProps> = ({
                           id={`interest-opt-${opt.id}`}
                           type="button"
                           onClick={() => toggleInterest(opt.id)}
-                          className={`p-3.5 rounded-2xl border-2 text-start transition-all flex items-center justify-between gap-2 ${
+                          className={`min-h-[58px] p-3.5 sm:p-4 rounded-2xl border-2 text-start transition-all flex items-center justify-between gap-2.5 ${
                             isSelected
-                              ? 'border-emerald-600 bg-emerald-50 text-emerald-950 font-bold shadow-sm'
+                              ? 'border-emerald-600 bg-emerald-50 text-emerald-950 font-black shadow-sm'
                               : 'border-slate-200 hover:border-emerald-300 hover:bg-slate-50 text-slate-700'
                           }`}
                         >
-                          <div className="flex items-center gap-2 truncate">
-                            {renderSkillIcon(opt.icon, 'w-4 h-4 text-emerald-700')}
-                            <span className="text-xs sm:text-sm font-semibold truncate">
+                          <div className="flex items-center gap-2.5 truncate">
+                            {renderSkillIcon(opt.icon, 'w-5 h-5 text-emerald-700 shrink-0')}
+                            <span className="text-[15px] sm:text-[16.5px] font-bold truncate font-arabic">
                               {isUrdu ? opt.nameUrdu : opt.nameEn}
                             </span>
                           </div>
-                          <div className={`w-4 h-4 rounded border flex items-center justify-center shrink-0 ${isSelected ? 'bg-emerald-600 border-emerald-600 text-white' : 'border-slate-300'}`}>
-                            {isSelected && <Check className="w-3 h-3 stroke-[3]" />}
+                          <div className={`w-5 h-5 rounded-md border flex items-center justify-center shrink-0 ${isSelected ? 'bg-emerald-600 border-emerald-600 text-white' : 'border-slate-300'}`}>
+                            {isSelected && <Check className="w-3.5 h-3.5 stroke-[3]" />}
                           </div>
                         </button>
                       );
@@ -524,14 +524,14 @@ export const AssessmentModal: React.FC<AssessmentModalProps> = ({
               {/* Step 6: Daily Learning Time */}
               {currentStep === 6 && (
                 <div id="step-daily-time" className="space-y-5 animate-fade-in">
-                  <div className="space-y-1">
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">
+                  <div className="space-y-2">
+                    <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-[13px] sm:text-[14px] font-bold bg-emerald-100 text-emerald-800 font-arabic">
                       {isUrdu ? 'سوال نمبر ۶' : 'Question 6'}
                     </span>
-                    <h3 className="text-xl sm:text-2xl font-bold text-slate-900">
+                    <h3 className="urdu-question text-[22px] sm:text-[25px] font-black text-slate-900 font-arabic leading-[1.6]">
                       {isUrdu ? 'آپ روزانہ سیکھنے کے لیے کتنا وقت دے سکتے ہیں؟' : 'How much daily learning time do you have?'}
                     </h3>
-                    <p className="text-sm text-slate-600">
+                    <p className="urdu-secondary text-[15px] sm:text-[16px] text-slate-600 font-arabic leading-[1.7]">
                       {isUrdu 
                         ? 'روزانہ صرف ۱۵ سے ۳۰ منٹ کی مسلسل مشق سے زبردست نتائج حاصل کیے جا سکتے ہیں۔'
                         : 'Even 15 to 30 minutes daily creates significant real-world results.'}
@@ -552,14 +552,14 @@ export const AssessmentModal: React.FC<AssessmentModalProps> = ({
                           id={`time-opt-${opt.id.replace(/\s+/g, '-')}`}
                           type="button"
                           onClick={() => setDailyTime(opt.id)}
-                          className={`p-4 rounded-2xl border-2 text-center transition-all flex flex-col items-center justify-center gap-1 ${
+                          className={`min-h-[75px] p-4 rounded-2xl border-2 text-center transition-all flex flex-col items-center justify-center gap-1.5 ${
                             isSelected
-                              ? 'border-emerald-600 bg-emerald-50/80 text-emerald-950 shadow-md font-bold'
+                              ? 'border-emerald-600 bg-emerald-50/85 text-emerald-950 shadow-md font-bold'
                               : 'border-slate-200 hover:border-emerald-300 hover:bg-slate-50 text-slate-700 font-medium'
                           }`}
                         >
                           <Clock className={`w-5 h-5 ${isSelected ? 'text-emerald-600' : 'text-slate-400'}`} />
-                          <span className="text-sm sm:text-base">{isUrdu ? opt.ur : opt.en}</span>
+                          <span className="text-[16px] sm:text-[17.5px] font-bold font-arabic">{isUrdu ? opt.ur : opt.en}</span>
                         </button>
                       );
                     })}
@@ -570,21 +570,21 @@ export const AssessmentModal: React.FC<AssessmentModalProps> = ({
               {/* Step 7: Main Goal & Profile Confirmation */}
               {currentStep === 7 && (
                 <div id="step-main-goal" className="space-y-5 animate-fade-in">
-                  <div className="space-y-1">
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">
+                  <div className="space-y-2">
+                    <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-[13px] sm:text-[14px] font-bold bg-emerald-100 text-emerald-800 font-arabic">
                       {isUrdu ? 'سوال نمبر ۷' : 'Question 7'}
                     </span>
-                    <h3 className="text-xl sm:text-2xl font-bold text-slate-900">
+                    <h3 className="urdu-question text-[22px] sm:text-[25px] font-black text-slate-900 font-arabic leading-[1.6]">
                       {isUrdu ? 'آپ کا بنیادی مقصد کیا ہے؟' : 'What is your primary goal?'}
                     </h3>
-                    <p className="text-sm text-slate-600">
+                    <p className="urdu-secondary text-[15px] sm:text-[16px] text-slate-600 font-arabic leading-[1.7]">
                       {isUrdu 
                         ? 'آپ کا مقصد منتخب کریں تاکہ اس کے مطابق ذاتی روڈ میپ بنایا جا سکے۔'
                         : 'Select your main motivation to customize your personal roadmap.'}
                     </p>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-56 overflow-y-auto p-1">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-64 overflow-y-auto p-1">
                     {[
                       { id: 'Learn a new skill', ur: 'نیا ہنر سیکھنا (Learn a new skill)', en: 'Learn a new skill' },
                       { id: 'Find better work', ur: 'بہتر روزگار یا کام تلاش کرنا (Find better work)', en: 'Find better work' },
@@ -601,43 +601,43 @@ export const AssessmentModal: React.FC<AssessmentModalProps> = ({
                           id={`goal-opt-${opt.id.replace(/\s+/g, '-')}`}
                           type="button"
                           onClick={() => setPrimaryGoal(opt.id)}
-                          className={`p-3.5 rounded-2xl border-2 text-start transition-all flex items-center justify-between ${
+                          className={`min-h-[58px] p-4 rounded-2xl border-2 text-start transition-all flex items-center justify-between gap-3 ${
                             isSelected
                               ? 'border-emerald-600 bg-emerald-50 text-emerald-950 font-bold shadow-sm'
                               : 'border-slate-200 hover:border-emerald-300 hover:bg-slate-50 text-slate-700'
                           }`}
                         >
-                          <span className="text-sm">{isUrdu ? opt.ur : opt.en}</span>
-                          {isSelected && <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />}
+                          <span className="text-[16px] sm:text-[17.5px] font-bold font-arabic leading-[1.6]">{isUrdu ? opt.ur : opt.en}</span>
+                          {isSelected && <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />}
                         </button>
                       );
                     })}
                   </div>
 
                   {/* Compact Name & Village Confirmation */}
-                  <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="p-4 sm:p-5 rounded-2xl bg-slate-50 border border-slate-200 grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 mb-1">
-                        {isUrdu ? 'آپ کا نام (سرٹیفکیٹ کے لیے)' : 'Your Name (for certificates)'}
+                      <label className="urdu-label text-[14px] sm:text-[15px] font-bold text-slate-800 mb-1.5 font-arabic block">
+                        {isUrdu ? 'آپ کا مبارک نام (سرٹیفکیٹ کے لیے):' : 'Your Name (for certificates):'}
                       </label>
                       <input
                         type="text"
                         value={learnerName}
                         onChange={(e) => setLearnerName(e.target.value)}
                         placeholder={isUrdu ? 'مثال: محمد علی' : 'e.g. Ali Khan'}
-                        className="w-full px-3 py-2 rounded-xl bg-white border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                        className="urdu-input w-full min-h-[50px] px-4 py-2.5 rounded-2xl bg-white border border-slate-300 text-[16px] sm:text-[17px] font-arabic focus:outline-none focus:ring-2 focus:ring-emerald-500"
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 mb-1">
-                        {isUrdu ? 'آپ کا علاقہ / گاؤں' : 'Your Village / Area'}
+                      <label className="urdu-label text-[14px] sm:text-[15px] font-bold text-slate-800 mb-1.5 font-arabic block">
+                        {isUrdu ? 'آپ کا علاقہ / گاؤں:' : 'Your Village / Area:'}
                       </label>
                       <input
                         type="text"
                         value={learnerVillage}
                         onChange={(e) => setLearnerVillage(e.target.value)}
                         placeholder={isUrdu ? 'مثال: ڈوبے، برنالہ' : 'e.g. Barnala, AJK'}
-                        className="w-full px-3 py-2 rounded-xl bg-white border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                        className="urdu-input w-full min-h-[50px] px-4 py-2.5 rounded-2xl bg-white border border-slate-300 text-[16px] sm:text-[17px] font-arabic focus:outline-none focus:ring-2 focus:ring-emerald-500"
                       />
                     </div>
                   </div>
@@ -645,15 +645,15 @@ export const AssessmentModal: React.FC<AssessmentModalProps> = ({
               )}
 
               {/* Bottom Navigation Buttons */}
-              <div id="assessment-nav-actions" className="flex items-center justify-between pt-4 border-t border-slate-100">
+              <div id="assessment-nav-actions" className="flex items-center justify-between pt-4 border-t border-slate-100 gap-3">
                 {currentStep > 1 ? (
                   <button
                     id="prev-step-btn"
                     type="button"
                     onClick={() => setCurrentStep((prev) => Math.max(1, prev - 1))}
-                    className="px-5 py-2.5 rounded-xl border border-slate-300 text-slate-700 hover:bg-slate-100 text-sm font-bold flex items-center gap-2 transition-all"
+                    className="urdu-btn min-h-[50px] px-6 py-3 rounded-2xl border border-slate-300 text-slate-700 hover:bg-slate-100 text-[16px] sm:text-[17px] font-bold flex items-center gap-2 transition-all font-arabic"
                   >
-                    <BackArrowIcon className="w-4 h-4" />
+                    <BackArrowIcon className="w-5 h-5" />
                     <span>{isUrdu ? 'پیچھے' : 'Back'}</span>
                   </button>
                 ) : (
@@ -665,21 +665,21 @@ export const AssessmentModal: React.FC<AssessmentModalProps> = ({
                     id="next-step-btn"
                     type="button"
                     onClick={() => setCurrentStep((prev) => Math.min(TOTAL_QUESTIONS, prev + 1))}
-                    className="px-6 py-2.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-sm font-bold flex items-center gap-2 shadow-lg shadow-emerald-900/10 transition-all"
+                    className="urdu-btn min-h-[50px] px-8 py-3.5 rounded-2xl bg-emerald-700 hover:bg-emerald-800 text-white text-[17px] sm:text-[18px] font-black flex items-center gap-2.5 shadow-md shadow-emerald-900/10 transition-all font-arabic"
                   >
                     <span>{isUrdu ? 'اگلا سوال' : 'Next'}</span>
-                    <ArrowIcon className="w-4 h-4" />
+                    <ArrowIcon className="w-5 h-5" />
                   </button>
                 ) : (
                   <button
                     id="generate-recommendations-btn"
                     type="button"
                     onClick={handleCalculateRecommendations}
-                    className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white text-sm font-bold flex items-center gap-2 shadow-lg shadow-emerald-900/20 transition-all"
+                    className="urdu-btn min-h-[50px] px-8 py-3.5 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white text-[17px] sm:text-[18px] font-black flex items-center gap-2.5 shadow-lg shadow-emerald-900/20 transition-all font-arabic"
                   >
-                    <Sparkles className="w-4 h-4 animate-pulse" />
+                    <Sparkles className="w-5 h-5 animate-pulse" />
                     <span>{isUrdu ? 'نتائج اور روڈ میپ دیکھیں' : 'See Recommendations & Roadmap'}</span>
-                    <ArrowIcon className="w-4 h-4" />
+                    <ArrowIcon className="w-5 h-5" />
                   </button>
                 )}
               </div>
@@ -692,17 +692,17 @@ export const AssessmentModal: React.FC<AssessmentModalProps> = ({
             <div id="assessment-results-view" className="space-y-8 animate-fade-in">
               
               {/* Personalized Greeting Header */}
-              <div id="results-welcome-card" className="p-5 rounded-3xl bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 border border-emerald-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2">
-                    <span className="px-3 py-1 rounded-full text-xs font-bold bg-emerald-700 text-white">
+              <div id="results-welcome-card" className="p-5 sm:p-6 rounded-3xl bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 border border-emerald-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div className="space-y-1.5">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="px-3.5 py-1 rounded-full text-[13px] sm:text-[14px] font-black bg-emerald-700 text-white font-arabic">
                       {isUrdu ? 'تجویز کردہ ٹاپ ۳ ہنر' : 'Top 3 Recommended Skills'}
                     </span>
-                    <span className="text-xs font-semibold text-emerald-900">
+                    <span className="text-[13px] sm:text-[14px] font-bold text-emerald-900 font-arabic">
                       {ageGroup} {isUrdu ? 'سال' : 'years'} • {dailyTime}
                     </span>
                   </div>
-                  <h3 className="text-lg sm:text-xl font-bold text-slate-900">
+                  <h3 className="text-[20px] sm:text-[23px] font-black text-slate-900 font-arabic leading-[1.5]">
                     {learnerName ? `${learnerName}! ` : ''}
                     {isUrdu 
                       ? 'آپ کی دلچسپی، وقت اور مقصد کے مطابق بہترین ہنر تیار ہیں'
@@ -715,7 +715,7 @@ export const AssessmentModal: React.FC<AssessmentModalProps> = ({
                     setShowResultsView(false);
                     setCurrentStep(1);
                   }}
-                  className="text-xs font-bold text-emerald-800 hover:text-emerald-950 underline shrink-0"
+                  className="text-[14px] sm:text-[15px] font-bold text-emerald-800 hover:text-emerald-950 underline shrink-0 font-arabic"
                 >
                   {isUrdu ? 'دوبارہ اسیسمنٹ کریں' : 'Retake Assessment'}
                 </button>
@@ -725,12 +725,12 @@ export const AssessmentModal: React.FC<AssessmentModalProps> = ({
               {/* SECTION A: TOP 3 RECOMMENDED SKILLS */}
               {/* ========================================================================= */}
               <div id="top-3-recommendations-section" className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <h4 className="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
-                    <Award className="w-5 h-5 text-emerald-600" />
+                <div className="flex items-center justify-between gap-2 flex-wrap">
+                  <h4 className="urdu-section-title text-[20px] sm:text-[23px] font-black text-slate-900 flex items-center gap-2 font-arabic">
+                    <Award className="w-6 h-6 text-emerald-600 shrink-0" />
                     <span>{isUrdu ? 'آپ کے لیے منتخب کردہ ۳ بہترین ہنر' : 'Top 3 Recommended Skills for You'}</span>
                   </h4>
-                  <span className="text-xs text-slate-500 font-medium">
+                  <span className="urdu-secondary text-[14px] sm:text-[15px] text-slate-500 font-medium font-arabic">
                     {isUrdu ? 'کسی بھی ہنر پر کلک کر کے فوری شروع کریں' : 'Click any skill to start learning'}
                   </span>
                 </div>
@@ -743,18 +743,18 @@ export const AssessmentModal: React.FC<AssessmentModalProps> = ({
                         key={skill.id}
                         id={`rec-skill-card-${skill.id}`}
                         onClick={() => setSelectedSkillForDetails(skill)}
-                        className={`cursor-pointer rounded-3xl border-2 p-4 sm:p-5 flex flex-col justify-between transition-all relative ${
+                        className={`cursor-pointer rounded-3xl border-2 p-5 flex flex-col justify-between transition-all relative ${
                           isSelected
-                            ? 'border-emerald-600 bg-emerald-50/40 shadow-lg ring-2 ring-emerald-500/20'
+                            ? 'border-emerald-600 bg-emerald-50/50 shadow-lg ring-2 ring-emerald-500/20'
                             : 'border-slate-200 hover:border-emerald-300 hover:bg-slate-50/70 bg-white'
                         }`}
                       >
                         {/* Rank & Level Badge (Beginner / Intermediate / Advanced) */}
                         <div className="flex items-center justify-between mb-3">
-                          <span className="w-7 h-7 rounded-xl bg-emerald-700 text-white text-xs font-bold flex items-center justify-center shadow-sm">
+                          <span className="w-8 h-8 rounded-xl bg-emerald-700 text-white text-[14px] font-black flex items-center justify-center shadow-sm">
                             #{index + 1}
                           </span>
-                          <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-900 border border-emerald-200">
+                          <span className="text-[13px] sm:text-[14px] font-bold px-3 py-1 rounded-full bg-emerald-50 text-emerald-900 border border-emerald-200 font-arabic">
                             {isUrdu 
                               ? (skill.difficulty === 'Beginner' ? 'ابتدائی (Beginner)' : skill.difficulty === 'Intermediate' ? 'درمیانی (Intermediate)' : 'اعلیٰ (Advanced)') 
                               : `${skill.difficulty} Level`}
@@ -762,30 +762,30 @@ export const AssessmentModal: React.FC<AssessmentModalProps> = ({
                         </div>
 
                         {/* 1. Skill Title & Category */}
-                        <div className="space-y-2 mb-4">
-                          <div className="flex items-center gap-2.5">
-                            <div className="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center shrink-0">
+                        <div className="space-y-2.5 mb-4">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center shrink-0">
                               {renderSkillIcon(skill.icon, 'w-5 h-5')}
                             </div>
-                            <h5 className="text-base font-bold text-slate-900 leading-snug">
+                            <h5 className="text-[17px] sm:text-[19px] font-black text-slate-900 leading-snug font-arabic">
                               {isUrdu ? skill.titleUrdu : skill.titleEn}
                             </h5>
                           </div>
 
                           {/* 3. Why Suitable Description with specific prompt phrase */}
-                          <div className="p-3 rounded-2xl bg-white/95 border border-slate-200 text-xs text-slate-700 leading-relaxed">
-                            <p className="font-bold text-emerald-950 mb-1 flex items-center gap-1.5 font-arabic">
-                              <Sparkles className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                          <div className="p-3.5 rounded-2xl bg-white/95 border border-slate-200 text-xs text-slate-700 leading-relaxed space-y-1">
+                            <p className="text-[14px] sm:text-[15px] font-bold text-emerald-950 flex items-center gap-1.5 font-arabic">
+                              <Sparkles className="w-4 h-4 text-emerald-600 shrink-0" />
                               <span>{isUrdu ? 'یہ Skill آپ کے لیے اس لیے مناسب ہے کہ...' : 'Why this skill is recommended for you:'}</span>
                             </p>
-                            <p className="text-slate-800 leading-relaxed font-arabic">
+                            <p className="urdu-body text-[14px] sm:text-[15.5px] text-slate-800 leading-[1.75] font-arabic">
                               {isUrdu ? skill.whySuitableUrdu : skill.whySuitableEn}
                             </p>
                           </div>
 
                           {/* Estimated Time */}
-                          <div className="flex items-center gap-1.5 text-xs text-slate-600 font-semibold pt-1">
-                            <Clock className="w-3.5 h-3.5 text-emerald-600" />
+                          <div className="flex items-center gap-2 text-[13px] sm:text-[14px] text-slate-600 font-bold pt-1 font-arabic">
+                            <Clock className="w-4 h-4 text-emerald-600 shrink-0" />
                             <span>{isUrdu ? 'تخمینی وقت:' : 'Est. time:'} {isUrdu ? skill.estimatedTimeUrdu : skill.estimatedTimeEn}</span>
                           </div>
                         </div>
@@ -798,7 +798,7 @@ export const AssessmentModal: React.FC<AssessmentModalProps> = ({
                             e.stopPropagation();
                             handleStartLearning(skill);
                           }}
-                          className="w-full py-2.5 px-4 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs sm:text-sm font-bold flex items-center justify-center gap-2 shadow-md shadow-emerald-900/10 transition-all mt-2 font-arabic"
+                          className="urdu-btn w-full min-h-[48px] py-3 px-4 rounded-2xl bg-emerald-700 hover:bg-emerald-800 text-white text-[16px] sm:text-[17px] font-bold flex items-center justify-center gap-2 shadow-md shadow-emerald-900/10 transition-all mt-2 font-arabic"
                         >
                           <Play className="w-4 h-4 fill-white" />
                           <span>{isUrdu ? 'سیکھنا شروع کریں' : 'Start Learning'}</span>
@@ -814,11 +814,11 @@ export const AssessmentModal: React.FC<AssessmentModalProps> = ({
               {/* ========================================================================= */}
               <div id="personal-roadmap-section" className="space-y-4 pt-4 border-t border-slate-200">
                 <div className="space-y-1">
-                  <h4 className="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
-                    <Target className="w-5 h-5 text-emerald-600" />
+                  <h4 className="urdu-section-title text-[20px] sm:text-[23px] font-black text-slate-900 flex items-center gap-2 font-arabic">
+                    <Target className="w-6 h-6 text-emerald-600 shrink-0" />
                     <span>{isUrdu ? 'آپ کا ذاتی Learning Roadmap' : 'Your Personal Learning Roadmap'}</span>
                   </h4>
-                  <p className="text-xs sm:text-sm text-slate-600">
+                  <p className="urdu-secondary text-[15px] sm:text-[16px] text-slate-600 font-arabic leading-[1.7]">
                     {isUrdu
                       ? 'مرحلہ وار رہنمائی: بنیاد سے لے کر عملی پروجیکٹ اور دوسروں کی مدد تک'
                       : 'Step-by-step path: From fundamentals to hands-on project and helping others.'}
@@ -871,17 +871,17 @@ export const AssessmentModal: React.FC<AssessmentModalProps> = ({
                     <div
                       key={s.step}
                       id={`roadmap-step-card-${idx + 1}`}
-                      className={`p-3.5 rounded-2xl border-2 flex flex-col justify-between gap-2 transition-all ${s.color}`}
+                      className={`p-4 rounded-2xl border-2 flex flex-col justify-between gap-2.5 transition-all ${s.color}`}
                     >
                       <div>
-                        <span className="text-[10px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-md bg-white/80 border border-current">
+                        <span className="text-[11px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md bg-white/80 border border-current">
                           {s.step}
                         </span>
-                        <h6 className="text-sm font-bold mt-2 leading-tight">
+                        <h6 className="text-[15px] sm:text-[16px] font-bold mt-2 leading-snug font-arabic">
                           {isUrdu ? s.nameUrdu : s.nameEn}
                         </h6>
                       </div>
-                      <p className="text-xs text-slate-700 leading-relaxed">
+                      <p className="text-[13px] sm:text-[14px] text-slate-700 leading-[1.65] font-arabic">
                         {isUrdu ? s.descUrdu : s.descEn}
                       </p>
                     </div>
@@ -893,16 +893,16 @@ export const AssessmentModal: React.FC<AssessmentModalProps> = ({
               {/* SECTION C: COMMUNITY PURPOSE */}
               {/* ========================================================================= */}
               <div id="community-purpose-section" className="space-y-4 pt-4 border-t border-slate-200">
-                <div className="space-y-1">
-                  <span className="px-3 py-1 rounded-full text-xs font-bold bg-teal-100 text-teal-900">
+                <div className="space-y-1.5">
+                  <span className="px-3.5 py-1 rounded-full text-[13px] sm:text-[14px] font-bold bg-teal-100 text-teal-900 font-arabic">
                     {isUrdu ? 'خدمتِ خلق اور برکت' : 'Social Purpose & Impact'}
                   </span>
-                  <h4 className="text-base sm:text-lg font-bold text-slate-900">
+                  <h4 className="text-[18px] sm:text-[21px] font-black text-slate-900 font-arabic leading-[1.5]">
                     {isUrdu
                       ? 'اپنی Skill کو صرف اپنے لیے نہیں، دوسروں کے فائدے کے لیے بھی استعمال کریں۔'
                       : 'Use your skill not just for yourself, but for the benefit of others as well.'}
                   </h4>
-                  <p className="text-xs sm:text-sm text-slate-600">
+                  <p className="urdu-secondary text-[15px] sm:text-[16px] text-slate-600 font-arabic leading-[1.7]">
                     {isUrdu
                       ? 'منتخب کریں کہ آپ اس ہنر سے کس دائرے میں سب سے پہلے مدد کرنا چاہتے ہیں:'
                       : 'Choose how you plan to utilize your newly learned skill for community impact:'}
@@ -914,24 +914,24 @@ export const AssessmentModal: React.FC<AssessmentModalProps> = ({
                   <div
                     id="purpose-choice-family"
                     onClick={() => setSelectedCommunityChoice('family')}
-                    className={`cursor-pointer p-4 rounded-2xl border-2 transition-all flex flex-col justify-between gap-2 ${
+                    className={`cursor-pointer p-4 sm:p-5 rounded-2xl border-2 transition-all flex flex-col justify-between gap-2.5 ${
                       selectedCommunityChoice === 'family'
                         ? 'border-emerald-600 bg-emerald-50/70 shadow-md ring-2 ring-emerald-400/20'
                         : 'border-slate-200 hover:border-slate-300 bg-white'
                     }`}
                   >
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2.5">
                         <Heart className="w-5 h-5 text-rose-600" />
-                        <h6 className="text-sm font-bold text-slate-900">
+                        <h6 className="text-[16px] sm:text-[17px] font-bold text-slate-900 font-arabic">
                           {isUrdu ? 'اپنے خاندان کی مدد' : 'Help my family'}
                         </h6>
                       </div>
                       {selectedCommunityChoice === 'family' && (
-                        <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                        <CheckCircle2 className="w-5 h-5 text-emerald-600" />
                       )}
                     </div>
-                    <p className="text-xs text-slate-600 leading-relaxed">
+                    <p className="text-[14px] sm:text-[15px] text-slate-600 leading-[1.7] font-arabic">
                       {isUrdu
                         ? 'گھر کے اخراجات کا انتظام، بچوں کی پڑھائی میں مدد اور خاندانی ضروریات میں خود انحصاری۔'
                         : 'Manage household budget, support children with studies, and foster family stability.'}
@@ -942,24 +942,24 @@ export const AssessmentModal: React.FC<AssessmentModalProps> = ({
                   <div
                     id="purpose-choice-village"
                     onClick={() => setSelectedCommunityChoice('village')}
-                    className={`cursor-pointer p-4 rounded-2xl border-2 transition-all flex flex-col justify-between gap-2 ${
+                    className={`cursor-pointer p-4 sm:p-5 rounded-2xl border-2 transition-all flex flex-col justify-between gap-2.5 ${
                       selectedCommunityChoice === 'village'
                         ? 'border-emerald-600 bg-emerald-50/70 shadow-md ring-2 ring-emerald-400/20'
                         : 'border-slate-200 hover:border-slate-300 bg-white'
                     }`}
                   >
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2.5">
                         <Building2 className="w-5 h-5 text-teal-600" />
-                        <h6 className="text-sm font-bold text-slate-900">
+                        <h6 className="text-[16px] sm:text-[17px] font-bold text-slate-900 font-arabic">
                           {isUrdu ? 'اپنے گاؤں/علاقے کی مدد' : 'Help my village/area'}
                         </h6>
                       </div>
                       {selectedCommunityChoice === 'village' && (
-                        <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                        <CheckCircle2 className="w-5 h-5 text-emerald-600" />
                       )}
                     </div>
-                    <p className="text-xs text-slate-600 leading-relaxed">
+                    <p className="text-[14px] sm:text-[15px] text-slate-600 leading-[1.7] font-arabic">
                       {isUrdu
                         ? 'پڑوسیوں کے مسائل حل کرنا، سرکاری درخواستیں لکھنا اور مقامی دکانوں کا ہاتھ بٹانا۔'
                         : 'Draft community petitions, assist local shops, and solve neighborhood challenges.'}
@@ -970,24 +970,24 @@ export const AssessmentModal: React.FC<AssessmentModalProps> = ({
                   <div
                     id="purpose-choice-society"
                     onClick={() => setSelectedCommunityChoice('society')}
-                    className={`cursor-pointer p-4 rounded-2xl border-2 transition-all flex flex-col justify-between gap-2 ${
+                    className={`cursor-pointer p-4 sm:p-5 rounded-2xl border-2 transition-all flex flex-col justify-between gap-2.5 ${
                       selectedCommunityChoice === 'society'
                         ? 'border-emerald-600 bg-emerald-50/70 shadow-md ring-2 ring-emerald-400/20'
                         : 'border-slate-200 hover:border-slate-300 bg-white'
                     }`}
                   >
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2.5">
                         <Users className="w-5 h-5 text-indigo-600" />
-                        <h6 className="text-sm font-bold text-slate-900">
+                        <h6 className="text-[16px] sm:text-[17px] font-bold text-slate-900 font-arabic">
                           {isUrdu ? 'معاشرے کی خدمت' : 'Serve society'}
                         </h6>
                       </div>
                       {selectedCommunityChoice === 'society' && (
-                        <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                        <CheckCircle2 className="w-5 h-5 text-emerald-600" />
                       )}
                     </div>
-                    <p className="text-xs text-slate-600 leading-relaxed">
+                    <p className="text-[14px] sm:text-[15px] text-slate-600 leading-[1.7] font-arabic">
                       {isUrdu
                         ? 'ضرورت مندوں کو مفت ہنر سکھانا، دیانت دار اخلاق پھیلانا اور مثبت تبدیلی کا حصہ بننا۔'
                         : 'Mentor underprivileged learners, spread ethical values, and foster social progress.'}
@@ -998,16 +998,16 @@ export const AssessmentModal: React.FC<AssessmentModalProps> = ({
 
               {/* Bottom Quick Action: Start Selected Top Skill */}
               {selectedSkillForDetails && (
-                <div id="results-bottom-action-bar" className="pt-4 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3 bg-slate-50 p-4 rounded-2xl">
-                  <div className="flex items-center gap-2">
-                    <Sparkles className="w-5 h-5 text-emerald-600" />
-                    <span className="text-xs sm:text-sm font-bold text-slate-900">
+                <div id="results-bottom-action-bar" className="pt-4 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3.5 bg-slate-50 p-4 sm:p-5 rounded-2xl">
+                  <div className="flex items-center gap-2.5">
+                    <Sparkles className="w-5 h-5 text-emerald-600 shrink-0" />
+                    <span className="text-[15px] sm:text-[16.5px] font-bold text-slate-900 font-arabic">
                       {isUrdu 
                         ? `منتخب شدہ: "${selectedSkillForDetails.titleUrdu}"` 
                         : `Selected: "${selectedSkillForDetails.titleEn}"`}
                     </span>
                   </div>
-                  <div className="flex items-center gap-2 w-full sm:w-auto">
+                  <div className="flex items-center gap-2.5 w-full sm:w-auto">
                     {onOpenAITeacherWithPrompt && (
                       <button
                         id="ask-ai-teacher-about-skill-btn"
@@ -1020,7 +1020,7 @@ export const AssessmentModal: React.FC<AssessmentModalProps> = ({
                               : `I want to learn "${selectedSkillForDetails.titleEn}". What are the top 5 practical daily uses?`
                           );
                         }}
-                        className="flex-1 sm:flex-none px-4 py-2 rounded-xl border border-emerald-300 text-emerald-900 hover:bg-emerald-100 text-xs font-bold transition-all"
+                        className="urdu-btn flex-1 sm:flex-none min-h-[48px] px-5 py-2.5 rounded-2xl border border-emerald-300 text-emerald-900 hover:bg-emerald-100 text-[15px] sm:text-[16px] font-bold transition-all font-arabic"
                       >
                         {isUrdu ? 'AI استاد سے رہنمائی لیں' : 'Ask AI Teacher'}
                       </button>
@@ -1029,9 +1029,9 @@ export const AssessmentModal: React.FC<AssessmentModalProps> = ({
                       id="confirm-start-learning-btn"
                       type="button"
                       onClick={() => handleStartLearning(selectedSkillForDetails)}
-                      className="flex-1 sm:flex-none px-5 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs sm:text-sm font-bold flex items-center justify-center gap-1.5 shadow-md shadow-emerald-900/10 transition-all"
+                      className="urdu-btn flex-1 sm:flex-none min-h-[48px] px-6 py-2.5 rounded-2xl bg-emerald-700 hover:bg-emerald-800 text-white text-[16px] sm:text-[17px] font-bold flex items-center justify-center gap-2 shadow-md shadow-emerald-900/10 transition-all font-arabic"
                     >
-                      <Play className="w-3.5 h-3.5 fill-white" />
+                      <Play className="w-4 h-4 fill-white" />
                       <span>{isUrdu ? 'سیکھنا شروع کریں' : 'Start Learning'}</span>
                     </button>
                   </div>

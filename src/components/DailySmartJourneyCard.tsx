@@ -134,42 +134,42 @@ export const DailySmartJourneyCard: React.FC<DailySmartJourneyCardProps> = ({
       {/* HEADER SECTION */}
       {/* ------------------------------------------------------------- */}
       <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-5 border-b border-white/10">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3.5">
           <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-amber-500 to-amber-300 text-slate-950 flex items-center justify-center font-black shadow-lg shrink-0">
             <Compass className="w-6 h-6 fill-slate-950" />
           </div>
           <div>
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-amber-400/20 text-amber-300 border border-amber-400/30">
+              <span className="urdu-badge px-3 py-0.5 rounded-full bg-amber-400/20 text-amber-300 border border-amber-400/30">
                 {language === 'ur' ? 'روزانہ اسمارٹ سفر' : 'Daily Smart Journey'}
               </span>
               {journeyData.difficultyLevel === 'advanced' && (
-                <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-purple-500/20 text-purple-300 border border-purple-400/30 flex items-center gap-1">
-                  <Flame className="w-3 h-3 text-purple-400" />
+                <span className="urdu-badge px-3 py-0.5 rounded-full bg-purple-500/20 text-purple-300 border border-purple-400/30 flex items-center gap-1">
+                  <Flame className="w-3.5 h-3.5 text-purple-400" />
                   {language === 'ur' ? 'ماہرانہ سطح' : 'Advanced Level'}
                 </span>
               )}
               {isAlreadyCompletedToday && (
-                <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 flex items-center gap-1">
-                  <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+                <span className="urdu-badge px-3 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 flex items-center gap-1">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
                   {language === 'ur' ? 'آج کا سفر مکمل' : 'Completed Today'}
                 </span>
               )}
             </div>
-            <h3 className="text-xl sm:text-2xl font-black text-white font-arabic mt-0.5">
+            <h3 className="text-2xl sm:text-3xl font-black text-white font-arabic mt-1">
               {language === 'ur' ? 'میرا آج کا سفر' : 'My Daily Journey'}
             </h3>
           </div>
         </div>
 
         {/* Total Points & Status */}
-        <div className="flex items-center gap-2 self-start sm:self-auto">
-          <span className="text-xs font-bold px-3 py-1.5 rounded-xl bg-white/10 text-emerald-200 border border-white/15 flex items-center gap-1.5 font-arabic">
-            <Clock className="w-3.5 h-3.5 text-amber-400" />
+        <div className="flex items-center gap-2.5 self-start sm:self-auto">
+          <span className="text-sm font-bold px-3.5 py-2 rounded-xl bg-white/10 text-emerald-200 border border-white/15 flex items-center gap-1.5 font-arabic">
+            <Clock className="w-4 h-4 text-amber-400" />
             {journeyData.totalEstimatedMinutes} {language === 'ur' ? 'منٹ' : 'mins'}
           </span>
-          <span className="text-xs font-black px-3 py-1.5 rounded-xl bg-amber-400 text-slate-950 flex items-center gap-1 font-arabic shadow-md">
-            <Award className="w-3.5 h-3.5" />
+          <span className="text-sm font-black px-3.5 py-2 rounded-xl bg-amber-400 text-slate-950 flex items-center gap-1.5 font-arabic shadow-md">
+            <Award className="w-4 h-4" />
             +{journeyData.totalPoints} {language === 'ur' ? 'پوائنٹس' : 'pts'}
           </span>
         </div>
