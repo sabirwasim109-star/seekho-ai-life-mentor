@@ -95,55 +95,47 @@ export function getBestVoice(targetLang: 'ur' | 'en' | 'ar'): SpeechSynthesisVoi
   const voices = window.speechSynthesis.getVoices();
   if (!voices || voices.length === 0) return null;
 
+  const femaleKeywords = ['female', 'woman', 'zira', 'heera', 'kalpana', 'geeta', 'swara', 'puja', 'priya', 'kavita', 'susan', 'helen', 'hazel', 'sara', 'veena', 'neha', 'pooja', 'madhuri', 'kiran', 'aditi', 'lekha', 'anjali', 'meera', 'tania', 'monica', 'victoria', 'samantha', 'karen', 'moira', 'fiona', 'tessa'];
+  const isFemaleVoice = (v: SpeechSynthesisVoice) => femaleKeywords.some(kw => v.name.toLowerCase().includes(kw));
+
   if (targetLang === 'ur' || targetLang === 'ar') {
-    // 1. Explicit Pakistani or Urdu Male Voice
     const urduMaleVoice = voices.find(v => 
       (v.lang.startsWith('ur') || v.lang.includes('PK') || v.lang.includes('IN') || v.lang.startsWith('hi')) &&
-      (v.name.toLowerCase().includes('male') || v.name.toLowerCase().includes('man') || v.name.toLowerCase().includes('rizwan') || v.name.toLowerCase().includes('naeem') || v.name.toLowerCase().includes('faizan') || v.name.toLowerCase().includes('salman') || v.name.toLowerCase().includes('hemant') || v.name.toLowerCase().includes('rahul')) &&
-      !v.name.toLowerCase().includes('female') && !v.name.toLowerCase().includes('woman')
+      (v.name.toLowerCase().includes('male') || v.name.toLowerCase().includes('man') || v.name.toLowerCase().includes('rizwan') || v.name.toLowerCase().includes('naeem') || v.name.toLowerCase().includes('faizan') || v.name.toLowerCase().includes('salman')) &&
+      !isFemaleVoice(v)
     );
     if (urduMaleVoice) return urduMaleVoice;
 
-    // 2. Any Urdu or Pakistan-tagged voice not explicitly female
     const urduVoice = voices.find(v => 
       (v.lang.startsWith('ur') || v.lang.includes('PK') || v.lang.includes('Urdu')) &&
-      !v.name.toLowerCase().includes('female') && !v.name.toLowerCase().includes('woman')
+      !isFemaleVoice(v)
     );
     if (urduVoice) return urduVoice;
 
-    // 3. South Asian Male Voice (Hindi / Urdu / Arabic)
     const southAsianMale = voices.find(v => 
       (v.lang.startsWith('hi') || v.lang.startsWith('ar') || v.lang.includes('India') || v.lang.includes('Pakistan') || v.lang.includes('South Asia')) &&
-      (v.name.toLowerCase().includes('male') || v.name.toLowerCase().includes('man') || !v.name.toLowerCase().includes('female') && !v.name.toLowerCase().includes('woman'))
+      !isFemaleVoice(v)
     );
     if (southAsianMale) return southAsianMale;
 
-    // 4. Any Hindi or Arabic voice fallback
-    const fallbackUrdu = voices.find(v => (v.lang.startsWith('hi') || v.lang.startsWith('ar')) && !v.name.toLowerCase().includes('female'));
+    const fallbackUrdu = voices.find(v => (v.lang.startsWith('hi') || v.lang.startsWith('ar') || v.lang.startsWith('ur')) && !isFemaleVoice(v));
     if (fallbackUrdu) return fallbackUrdu;
-
-    const anyFallback = voices.find(v => v.lang.startsWith('hi') || v.lang.startsWith('ar') || v.lang.startsWith('ur'));
-    if (anyFallback) return anyFallback;
   }
 
   if (targetLang === 'en') {
-    // 1. English Male Voice
     const enMale = voices.find(v => 
       v.lang.startsWith('en') && 
       (v.name.toLowerCase().includes('male') || v.name.toLowerCase().includes('man') || v.name.toLowerCase().includes('david') || v.name.toLowerCase().includes('daniel') || v.name.toLowerCase().includes('ryan') || v.name.toLowerCase().includes('oliver') || v.name.toLowerCase().includes('george')) &&
-      !v.name.toLowerCase().includes('female')
+      !isFemaleVoice(v)
     );
     if (enMale) return enMale;
 
-    // 2. Any non-female English voice
-    const enVoice = voices.find(v => v.lang.startsWith('en') && !v.name.toLowerCase().includes('female') && !v.name.toLowerCase().includes('woman'));
+    const enVoice = voices.find(v => v.lang.startsWith('en') && !isFemaleVoice(v));
     if (enVoice) return enVoice;
-
-    const anyEn = voices.find(v => v.lang.startsWith('en'));
-    if (anyEn) return anyEn;
   }
 
-  return voices[0] || null;
+  const anyNonFemale = voices.find(v => !isFemaleVoice(v));
+  return anyNonFemale || voices[0] || null;
 }
 
 export interface SpeakOptions {

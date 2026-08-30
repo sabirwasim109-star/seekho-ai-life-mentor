@@ -23,6 +23,8 @@ import { PersonalGrowthModal } from './components/PersonalGrowthModal';
 import { SkillOpportunityPathModal } from './components/SkillOpportunityPathModal';
 import { MindTrainingLessonModal } from './components/MindTrainingLessonModal';
 import { KnowledgeLibraryView } from './components/KnowledgeLibraryView';
+import { QuranicWisdomView } from './components/QuranicWisdomView';
+import { FamilyAndSocietyView } from './components/FamilyAndSocietyView';
 import { PersonalRoadmapView } from './components/PersonalRoadmapView';
 import { WelcomeScreen } from './components/WelcomeScreen';
 import { RecommendedSkill, DynamicSearchLesson } from './types';
@@ -927,6 +929,8 @@ export const App: React.FC = () => {
         onOpenOpportunities={() => handleNavigateToTab('opportunities')}
         onOpenProfileTab={() => handleNavigateToTab('profile')}
         onOpenLibrary={() => handleNavigateToTab('library')}
+        onOpenQuranicWisdom={() => handleNavigateToTab('quranic_wisdom')}
+        onOpenFamilySociety={() => handleNavigateToTab('family_society')}
         onOpenSettings={() => setShowSettingsModal(true)}
       />
 
@@ -997,6 +1001,28 @@ export const App: React.FC = () => {
             onCompletePurposeAction={handleCompletePurposeAction}
             onLogCommunityDeed={handleLogCommunityDeed}
             onTriggerSmartSearch={handleTriggerSmartSearch}
+            onOpenQuranicWisdom={() => handleNavigateToTab('quranic_wisdom')}
+            onOpenFamilySociety={() => handleNavigateToTab('family_society')}
+          />
+        )}
+
+        {activeTab === 'family_society' && (
+          <FamilyAndSocietyView
+            language={language}
+            userProfile={userProfile}
+            onOpenAITeacherWithPrompt={handleOpenAITeacherWithPrompt}
+            onRewardPoints={(points, msgUrdu, msgEn) => {
+              const newPoints = (userProfile.points || 0) + points;
+              const newStreak = (userProfile.streakDays || 1);
+              setUserProfile((prev) => ({
+                ...prev,
+                points: newPoints,
+              }));
+              updateUserProfile({
+                points: newPoints,
+              });
+              showToast(language === 'ur' ? msgUrdu : msgEn);
+            }}
           />
         )}
 
@@ -1008,6 +1034,26 @@ export const App: React.FC = () => {
             onOpenAITeacherWithPrompt={handleOpenAITeacherWithPrompt}
             onRetakeAssessment={handleOpenAssessment}
             onCompleteDailyPlanDay={handleCompleteDailyPlanDay}
+          />
+        )}
+
+        {activeTab === 'quranic_wisdom' && (
+          <QuranicWisdomView
+            language={language}
+            userProfile={userProfile}
+            onOpenAITeacherWithPrompt={handleOpenAITeacherWithPrompt}
+            onRewardPoints={(points, msgUrdu, msgEn) => {
+              const newPoints = (userProfile.points || 0) + points;
+              const newStreak = (userProfile.streakDays || 1);
+              setUserProfile((prev) => ({
+                ...prev,
+                points: newPoints,
+              }));
+              updateUserProfile({
+                points: newPoints,
+              });
+              showToast(language === 'ur' ? msgUrdu : msgEn);
+            }}
           />
         )}
 
@@ -1056,6 +1102,7 @@ export const App: React.FC = () => {
             userProfile={userProfile}
             onSelectCourse={handleOpenCourse}
             onOpenSkillPathway={handleOpenSkillPathway}
+            onOpenAITeacherWithPrompt={handleOpenAITeacherWithPrompt}
           />
         )}
 

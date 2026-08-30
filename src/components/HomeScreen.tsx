@@ -29,6 +29,7 @@ import { COURSES_DATA, COMMUNITY_POSTS_DATA, AGE_GROUP_RECOMMENDATIONS, UI_TRANS
 import { KNOWLEDGE_CATEGORIES_META } from '../data/knowledgeLibraryData';
 import { INITIAL_LEARNER_SKILLS, LearnerSkillItem } from '../data/portfolioData';
 import { SAMPLE_OPPORTUNITIES, SampleOpportunity } from '../data/opportunitiesData';
+import { speakText } from '../utils/speech';
 import { VisionBanner } from './VisionBanner';
 import { MyActionPlanSection } from './MyActionPlanSection';
 import { IslamicGuidanceCard } from './IslamicGuidanceCard';
@@ -75,6 +76,8 @@ interface HomeScreenProps {
   onCompletePurposeAction?: (actionId: string, points: number, title: string) => void;
   onLogCommunityDeed?: (deedId: string, points: number, note: string) => void;
   onTriggerSmartSearch?: (query: string) => void;
+  onOpenQuranicWisdom?: () => void;
+  onOpenFamilySociety?: () => void;
 }
 
 const SEARCH_SUGGESTIONS = [
@@ -124,6 +127,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   onCompletePurposeAction,
   onLogCommunityDeed,
   onTriggerSmartSearch,
+  onOpenQuranicWisdom,
+  onOpenFamilySociety,
 }) => {
   const t = UI_TRANSLATIONS[language];
   const [searchQuery, setSearchQuery] = useState('');
@@ -483,20 +488,19 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
         <button
           type="button"
           onClick={() => {
-            if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
-            window.speechSynthesis.cancel();
             const intro = language === 'ur'
               ? 'السلام علیکم میرے معزز ساتھی! میں آپ کا سیکھو رہنما ہوں۔ علم سے عمل، ہنر سے اثر اور آخرت کی کامیابی کے اس سفر میں، میں ہر قدم پر آپ کے ساتھ ہوں۔ بتائیں آج ہم کیا نیا سیکھیں گے؟'
               : 'Assalam-o-Alaikum my dear friend! I am your Seekho mentor. On this journey from knowledge to action, skills to impact, and success in the Hereafter, I am with you every step.';
-            const utt = new SpeechSynthesisUtterance(intro);
-            utt.lang = language === 'ur' ? 'ur-PK' : 'en-US';
-            utt.rate = 0.88;
-            utt.pitch = 0.88;
-            window.speechSynthesis.speak(utt);
+            speakText(intro, {
+              id: 'seekho-mentor-guide-voice',
+              language,
+              rate: 0.86,
+              pitch: 0.84, // Deeper, warm male mentor pitch
+            });
           }}
           className="px-5 py-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs sm:text-sm shadow-md transition font-arabic flex items-center gap-2 shrink-0"
         >
-          <span>🔊</span>
+          <span>🎙️</span>
           <span>{language === 'ur' ? 'رہنما کی آواز سنیں' : 'Listen Mentor'}</span>
         </button>
       </div>
@@ -529,7 +533,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
 
         {/* Card 2: 🧠 فکر و تدبر اور قرآنی بصیرت */}
         <div
-          onClick={() => onOpenIslamicModal ? onOpenIslamicModal(0) : onNavigateToTab('library')}
+          onClick={() => onOpenQuranicWisdom ? onOpenQuranicWisdom() : onNavigateToTab('quranic_wisdom')}
           className="bg-white hover:bg-amber-50/40 rounded-3xl p-6 sm:p-8 border border-slate-200/90 shadow-sm hover:shadow-md transition-all cursor-pointer flex flex-col justify-between group space-y-4"
         >
           <div className="space-y-3">
@@ -553,7 +557,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
 
         {/* Card 3: 🌍 دائرہ اثر: خاندان و معاشرہ */}
         <div
-          onClick={() => onNavigateToTab('community')}
+          onClick={() => onOpenFamilySociety ? onOpenFamilySociety() : onNavigateToTab('family_society')}
           className="bg-white hover:bg-teal-50/40 rounded-3xl p-6 sm:p-8 border border-slate-200/90 shadow-sm hover:shadow-md transition-all cursor-pointer flex flex-col justify-between group space-y-4"
         >
           <div className="space-y-3">

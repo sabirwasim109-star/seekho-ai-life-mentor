@@ -16,6 +16,7 @@ import {
   User as UserIcon,
   Cloud,
   Library,
+  HeartHandshake,
   Settings
 } from 'lucide-react';
 import { Language, UserProfile } from '../types';
@@ -36,6 +37,8 @@ interface NavbarProps {
   onOpenOpportunities?: () => void;
   onOpenProfileTab?: () => void;
   onOpenLibrary?: () => void;
+  onOpenQuranicWisdom?: () => void;
+  onOpenFamilySociety?: () => void;
   onOpenSettings?: () => void;
 }
 
@@ -52,6 +55,8 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenOpportunities,
   onOpenProfileTab,
   onOpenLibrary,
+  onOpenQuranicWisdom,
+  onOpenFamilySociety,
   onOpenSettings = () => {},
 }) => {
   const t = UI_TRANSLATIONS[language] || UI_TRANSLATIONS.dual;
@@ -96,6 +101,32 @@ export const Navbar: React.FC<NavbarProps> = ({
 
         {/* Action Controls: Vision, Font Scaling, Lang Switch, Assessment, Streak */}
         <div className="flex items-center gap-1.5 sm:gap-2.5">
+          {/* Quranic Wisdom & Thinking Button */}
+          {onOpenQuranicWisdom && (
+            <button
+              id="nav-quranic-wisdom-btn"
+              onClick={onOpenQuranicWisdom}
+              title={language === 'ur' ? 'فکر و تدبر اور قرآنی بصیرت' : 'Quranic Mindset & Thinking'}
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-950 text-xs font-black border border-amber-300/80 transition-all font-arabic shadow-2xs"
+            >
+              <Compass className="w-3.5 h-3.5 text-amber-700" />
+              <span className="hidden sm:inline">{language === 'ur' ? 'فکر و تدبر' : 'Quranic Wisdom'}</span>
+            </button>
+          )}
+
+          {/* Family & Society Ethics Button */}
+          {onOpenFamilySociety && (
+            <button
+              id="nav-family-society-btn"
+              onClick={onOpenFamilySociety}
+              title={language === 'ur' ? 'دانش و اخلاق — خاندان و معاشرہ' : 'Ethics, Family & Society'}
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-teal-50 hover:bg-teal-100 text-teal-950 text-xs font-black border border-teal-300/80 transition-all font-arabic shadow-2xs"
+            >
+              <HeartHandshake className="w-3.5 h-3.5 text-teal-700" />
+              <span className="hidden sm:inline">{language === 'ur' ? 'اخلاق و معاشرت' : 'Family & Society'}</span>
+            </button>
+          )}
+
           {/* Knowledge Library Button */}
           {onOpenLibrary && (
             <button

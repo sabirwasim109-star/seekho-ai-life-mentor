@@ -10,7 +10,7 @@ import {
 import { Language } from '../types';
 import { UI_TRANSLATIONS } from '../data/mockData';
 
-export type NavTab = 'home' | 'journey' | 'mylearning' | 'skills' | 'aiteacher' | 'community' | 'myarea' | 'profile' | 'opportunities' | 'elders' | 'portfolio' | 'library';
+export type NavTab = 'home' | 'journey' | 'mylearning' | 'skills' | 'aiteacher' | 'community' | 'family_society' | 'myarea' | 'profile' | 'opportunities' | 'elders' | 'portfolio' | 'library' | 'quranic_wisdom';
 
 interface BottomNavigationProps {
   activeTab: NavTab;

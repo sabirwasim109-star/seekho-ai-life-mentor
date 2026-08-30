@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { 
   Search, 
-  Filter, 
   Sparkles, 
   BookOpen, 
   Clock, 
@@ -10,7 +9,6 @@ import {
   Layers,
   Cpu,
   Laptop,
-  Languages as LangIcon,
   Briefcase,
   Globe,
   Palette,
@@ -18,385 +16,631 @@ import {
   Wrench,
   HeartHandshake,
   Users,
-  Compass
+  Compass,
+  ArrowRight,
+  ArrowLeft,
+  CheckCircle2,
+  Check,
+  Flame,
+  Volume2,
+  HelpCircle,
+  TrendingUp,
+  ShieldCheck,
+  Smartphone,
+  Scissors,
+  PlusCircle,
+  FolderKanban
 } from 'lucide-react';
-import { AgeGroup, Course, Language, UserProfile } from '../types';
-import { COURSES_DATA, SKILL_CATEGORIES_DATA, UI_TRANSLATIONS } from '../data/mockData';
+import { Course, Language, UserProfile } from '../types';
+import { COURSES_DATA } from '../data/mockData';
+import { 
+  SKILLS_MASTER_DATA, 
+  SKILL_CATEGORIES_MASTER, 
+  REAL_WORLD_PROJECT_TEMPLATES, 
+  DAILY_PRACTICAL_CHALLENGES, 
+  SkillMasterItem,
+  searchSkillsMaster
+} from '../data/skillsMasterData';
+import { SkillDiscoveryModal } from './SkillDiscoveryModal';
+import { SkillMasterDetailModal } from './SkillMasterDetailModal';
+import { speakText, stopSpeaking } from '../utils/speech';
 
 interface SkillsCatalogViewProps {
   language: Language;
   userProfile: UserProfile;
   onSelectCourse: (course: Course) => void;
   onOpenSkillPathway?: (skillId?: string, categoryKey?: string) => void;
+  onOpenAITeacherWithPrompt?: (prompt?: string) => void;
 }
+
+const CONVERSATIONAL_SEARCH_PROMPTS = [
+  { ur: 'گھر بیٹھے کیا سیکھ سکتا ہوں؟', en: 'What can I learn from home?' },
+  { ur: 'میرے پاس صرف موبائل ہے', en: 'I only have a mobile phone' },
+  { ur: 'مجھے سلائی آتی ہے، اس سے کیسے کماؤں؟', en: 'How to earn with sewing skills?' },
+  { ur: 'AI کیسے سیکھوں؟', en: 'How to learn AI?' },
+  { ur: 'بغیر ڈگری کے کون سا ہنر سیکھوں؟', en: 'Skills to learn without a degree' },
+  { ur: 'میں 50 سال کا ہوں، کیا سیکھ سکتا ہوں؟', en: 'I am 50+, what can I learn?' },
+];
 
 export const SkillsCatalogView: React.FC<SkillsCatalogViewProps> = ({
   language,
   userProfile,
   onSelectCourse,
   onOpenSkillPathway,
+  onOpenAITeacherWithPrompt,
 }) => {
-  const t = UI_TRANSLATIONS[language];
+  const isUrdu = language === 'ur';
+  const ArrowIcon = isUrdu ? ArrowLeft : ArrowRight;
+
+  const [activeSubTab, setActiveSubTab] = useState<'all_skills' | 'projects' | 'earning' | 'challenges' | 'portfolio'>('all_skills');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [selectedLevel, setSelectedLevel] = useState<'all' | 'Beginner' | 'Intermediate' | 'Advanced' | 'Professional'>('all');
-  const [selectedAgeGroup, setSelectedAgeGroup] = useState<AgeGroup | 'all'>('all');
+  const [selectedLevel, setSelectedLevel] = useState<'all' | 'beginner' | 'intermediate' | 'advanced'>('all');
+  const [selectedDevice, setSelectedDevice] = useState<'all' | 'mobile' | 'computer' | 'tools'>('all');
 
-  const ageGroups: { id: AgeGroup | 'all'; labelUrdu: string; labelEn: string }[] = [
-    { id: 'all', labelUrdu: 'تمام عمریں', labelEn: 'All Ages' },
-    { id: '10-15', labelUrdu: '۱۰ تا ۱۵ سال', labelEn: '10–15 yrs' },
-    { id: '16-25', labelUrdu: '۱۶ تا ۲۵ سال', labelEn: '16–25 yrs' },
-    { id: '26-45', labelUrdu: '۲۶ تا ۴۵ سال', labelEn: '26–45 yrs' },
-    { id: '46-60', labelUrdu: '۴۶ تا ۶۰ سال', labelEn: '46–60 yrs' },
-    { id: '61-70', labelUrdu: '۶۱ تا ۷۰ سال', labelEn: '61–70 yrs' },
-    { id: '70+', labelUrdu: '۷۰ سال سے زائد', labelEn: '70+ yrs' },
-  ];
+  // Modals state
+  const [showDiscoveryModal, setShowDiscoveryModal] = useState<boolean>(false);
+  const [selectedSkillForDetail, setSelectedSkillForDetail] = useState<SkillMasterItem | null>(null);
 
-  const levels: { id: 'all' | 'Beginner' | 'Intermediate' | 'Advanced' | 'Professional'; labelUrdu: string; labelEn: string }[] = [
-    { id: 'all', labelUrdu: 'تمام (All)', labelEn: 'All' },
-    { id: 'Beginner', labelUrdu: 'ابتدائی (Beginner)', labelEn: 'Beginner' },
-    { id: 'Intermediate', labelUrdu: 'درمیانہ (Intermediate)', labelEn: 'Intermediate' },
-    { id: 'Advanced', labelUrdu: 'اعلیٰ (Advanced)', labelEn: 'Advanced' },
-    { id: 'Professional', labelUrdu: 'پروفیشنل پروجیکٹ (Professional)', labelEn: 'Professional' },
-  ];
+  // Daily Challenge completed state
+  const [completedChallenges, setCompletedChallenges] = useState<Record<string, boolean>>(() => {
+    try {
+      const saved = localStorage.getItem('seekho_completed_daily_challenges');
+      if (saved) return JSON.parse(saved);
+    } catch {
+      // ignore
+    }
+    return {};
+  });
 
-  // Helper for level badge color and label
-  const getLevelBadge = (level: string) => {
-    switch (level) {
-      case 'Beginner':
-        return {
-          bg: 'bg-emerald-100 text-emerald-800 border-emerald-300',
-          badgeUrdu: 'ابتدائی (Beginner)',
-          badgeEn: 'Beginner'
-        };
-      case 'Intermediate':
-        return {
-          bg: 'bg-sky-100 text-sky-800 border-sky-300',
-          badgeUrdu: 'درمیانہ (Intermediate)',
-          badgeEn: 'Basic / Intermediate'
-        };
-      case 'Advanced':
-        return {
-          bg: 'bg-purple-100 text-purple-800 border-purple-300',
-          badgeUrdu: 'اعلیٰ (Advanced)',
-          badgeEn: 'Advanced'
-        };
-      case 'Professional':
-        return {
-          bg: 'bg-amber-100 text-amber-900 border-amber-300',
-          badgeUrdu: 'پروفیشنل پروجیکٹ (Pro)',
-          badgeEn: 'Professional Project'
-        };
-      default:
-        return {
-          bg: 'bg-slate-100 text-slate-800 border-slate-300',
-          badgeUrdu: level,
-          badgeEn: level
-        };
+  const handleVoiceIntro = (speed = 0.86) => {
+    const text = isUrdu
+      ? 'اپنا ہنر پہچانیں، سیکھیں، کمائیں اور دوسروں کے کام آئیں۔ چاہے آپ نے زیادہ تعلیم حاصل کی ہو یا بالکل نہ کی ہو، یہاں آپ اپنی دلچسپی اور صلاحیت کے مطابق ہنر سیکھ سکتے ہیں، عملی کام کر سکتے ہیں اور حلال روزگار کے نئے راستے تلاش کر سکتے ہیں۔'
+      : 'Discover your skill, learn, earn, and benefit humanity. Whether you have formal schooling or not, learn practical skills for halal livelihood.';
+    
+    stopSpeaking();
+    speakText(text, { language: 'ur', rate: speed, pitch: 0.84 });
+  };
+
+  const handleToggleChallenge = (chalId: string) => {
+    const nextState = !completedChallenges[chalId];
+    const updated = { ...completedChallenges, [chalId]: nextState };
+    setCompletedChallenges(updated);
+    try {
+      localStorage.setItem('seekho_completed_daily_challenges', JSON.stringify(updated));
+    } catch {
+      // ignore
     }
   };
 
-  // Helper to render category icon
-  const getCategoryIcon = (catId: string) => {
-    switch (catId) {
-      case 'AI & Technology':
-        return <Cpu className="w-4 h-4" />;
-      case 'Computer & Digital Skills':
-        return <Laptop className="w-4 h-4" />;
-      case 'Communication & Languages':
-        return <LangIcon className="w-4 h-4" />;
-      case 'Business & Freelancing':
-        return <Briefcase className="w-4 h-4" />;
-      case 'Creative Skills':
-        return <Palette className="w-4 h-4" />;
-      case 'Agriculture & Local Skills':
-        return <Sprout className="w-4 h-4" />;
-      case 'Technical Trades':
-        return <Wrench className="w-4 h-4" />;
-      case 'Life Skills':
-        return <Compass className="w-4 h-4" />;
-      case 'Character & Leadership':
-        return <HeartHandshake className="w-4 h-4" />;
-      case 'Community Development':
-        return <Users className="w-4 h-4" />;
-      default:
-        return <Sparkles className="w-4 h-4" />;
-    }
-  };
-
-  const filteredCourses = COURSES_DATA.filter((course) => {
-    const matchesSearch = searchQuery === '' ||
-      course.titleUrdu.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      course.titleEn.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      course.descriptionUrdu.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      course.descriptionEn.toLowerCase().includes(searchQuery.toLowerCase());
-
-    const matchesCategory = !selectedCategory || course.category === selectedCategory;
-    const matchesLevel = selectedLevel === 'all' || course.difficulty === selectedLevel;
-    const matchesAge = selectedAgeGroup === 'all' || course.ageGroups.includes(selectedAgeGroup);
-
-    return matchesSearch && matchesCategory && matchesLevel && matchesAge;
+  // Filter skills
+  const filteredSkills = searchSkillsMaster(searchQuery).filter((skill) => {
+    const matchesCategory = !selectedCategory || skill.categoryKey === selectedCategory;
+    const matchesDevice = selectedDevice === 'all' || skill.requiredDevice === selectedDevice || skill.requiredDevice === 'any';
+    return matchesCategory && matchesDevice;
   });
 
   return (
-    <div className="space-y-6 pb-24 max-w-6xl mx-auto px-3 sm:px-6 pt-2">
-      {/* Page Header */}
-      <div className="bg-white p-5 sm:p-6 rounded-3xl border border-slate-200 shadow-xs">
+    <div className="space-y-6 pb-24 max-w-6xl mx-auto px-3 sm:px-6 pt-2" dir={isUrdu ? 'rtl' : 'ltr'}>
+      {/* 1. MASTER HERO SECTION */}
+      <div className="bg-gradient-to-br from-slate-900 via-teal-950 to-slate-900 text-white rounded-3xl p-6 sm:p-8 shadow-xl border border-emerald-500/30 relative overflow-hidden space-y-6">
+        <div className="space-y-3 max-w-3xl">
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="px-3.5 py-1 rounded-full bg-amber-400 text-slate-950 text-xs font-black font-arabic shadow-xs">
+              💼 {isUrdu ? 'روزگار اور ہنر (Livelihood & Skills)' : 'Livelihood & Practical Skills'}
+            </span>
+            <span className="px-3 py-1 rounded-full bg-emerald-900/80 text-emerald-300 border border-emerald-500/30 text-xs font-bold font-arabic">
+              {isUrdu ? 'ہر انسان کے لیے آسان اور مفت' : 'Accessible for every human'}
+            </span>
+          </div>
+
+          <h1 className="text-2xl sm:text-4xl font-black text-white font-arabic leading-snug tracking-tight">
+            {isUrdu 
+              ? '”اپنا ہنر پہچانیں، سیکھیں، کمائیں اور دوسروں کے کام آئیں“' 
+              : '“Discover Your Craft, Learn, Earn & Serve Others”'}
+          </h1>
+
+          <p className="text-sm sm:text-base text-slate-200 font-arabic leading-relaxed opacity-95">
+            {isUrdu 
+              ? 'چاہے آپ نے زیادہ تعلیم حاصل کی ہو یا بالکل نہ کی ہو، یہاں آپ اپنی دلچسپی اور صلاحیت کے مطابق ہنر سیکھ سکتے ہیں، عملی کام کر سکتے ہیں اور حلال روزگار کے نئے راستے تلاش کر سکتے ہیں۔'
+              : 'Whether you have formal education or not, discover skills suited to your interests and strengths, do practical work, and find new avenues of halal livelihood.'}
+          </p>
+        </div>
+
+        {/* Hero Controls & Voice Player */}
+        <div className="pt-2 border-t border-white/10 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+          <div className="flex items-center gap-2 flex-wrap">
+            <button
+              onClick={() => handleVoiceIntro(0.86)}
+              className="py-2.5 px-4 rounded-2xl bg-white/15 hover:bg-white/25 text-white text-xs sm:text-sm font-black font-arabic transition flex items-center gap-2 backdrop-blur-xs"
+            >
+              <span>🎙️</span>
+              <span>{isUrdu ? 'رہنما کی آواز سنیں' : 'Listen Mentor Voice'}</span>
+            </button>
+            <button
+              onClick={() => handleVoiceIntro(0.72)}
+              className="py-2.5 px-3 rounded-2xl bg-white/10 hover:bg-white/20 text-slate-200 text-xs font-bold font-arabic transition"
+            >
+              <span>🐢 {isUrdu ? 'آہستہ سنیں' : 'Slow'}</span>
+            </button>
+          </div>
+
+          {/* Primary Action Button: "میرا ہنر کون سا ہے؟" */}
+          <button
+            id="btn-open-discovery-diagnostic"
+            onClick={() => setShowDiscoveryModal(true)}
+            className="py-3 px-6 rounded-2xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-sm sm:text-base font-arabic shadow-lg transition flex items-center justify-center gap-2 group"
+          >
+            <Sparkles className="w-5 h-5 text-slate-950 group-hover:rotate-12 transition-transform" />
+            <span>{isUrdu ? 'میرا ہنر کون سا ہے؟ (ٹیسٹ شروع کریں)' : 'Discover My Skill (Start Test)'}</span>
+            <ArrowIcon className="w-4 h-4" />
+          </button>
+        </div>
+      </div>
+
+      {/* 2. CONVERSATIONAL SEARCH BOX */}
+      <div className="bg-white p-5 sm:p-6 rounded-3xl border border-slate-200 shadow-xs space-y-4">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div>
-            <h1 className="text-xl sm:text-2xl font-black text-slate-900">
-              {language === 'ur' ? 'مہارت اور کورس لائبریری' : 'Skill & Course Library'}
-            </h1>
-            <p className="text-xs sm:text-sm text-slate-500 mt-1">
-              {language === 'ur'
-                ? '10 بنیادی شعبہ جات: آرٹیفیشل انٹیلیجنس، ڈیجیٹل اسکلز، کاروبار، زراعت، اخلاقیات اور کمیونٹی سروس'
-                : '10 fundamental domains spanning AI, Digital Skills, Business, Agriculture, Ethics, and Community Service.'}
+          <div className="space-y-1">
+            <h2 className="text-lg font-black text-slate-900 font-arabic flex items-center gap-2">
+              <Search className="w-5 h-5 text-emerald-700" />
+              <span>{isUrdu ? 'ہنر، پیشہ، مسئلہ یا سوال تلاش کریں' : 'Search Skills, Profession, or Questions'}</span>
+            </h2>
+            <p className="text-xs text-slate-500 font-arabic">
+              {isUrdu ? 'مثلاً: ”گھر بیٹھے کیا سیکھوں؟“، ”صرف موبائل ہے“، ”سلائی سے کمائی“' : 'Search in natural Urdu or English queries'}
             </p>
           </div>
 
-          {/* Search Box */}
-          <div className="relative w-full md:w-80">
+          {/* Search Input */}
+          <div className="relative w-full md:w-96">
             <input
-              id="skills-search-input"
+              id="skills-master-search-input"
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder={language === 'ur' ? 'مہارت یا کورس تلاش کریں...' : 'Search skills or courses...'}
-              className="w-full bg-slate-50 text-slate-900 placeholder:text-slate-400 pl-10 pr-10 py-2.5 rounded-xl border border-slate-300 text-xs sm:text-sm focus:border-emerald-500 focus:outline-none"
+              placeholder={isUrdu ? 'ہنر یا سوال لکھیں...' : 'Search skills, tools, or ideas...'}
+              className="w-full bg-slate-50 text-slate-900 placeholder:text-slate-400 pl-10 pr-10 py-3 rounded-2xl border border-slate-300 text-sm focus:border-emerald-500 focus:outline-none font-arabic font-medium"
             />
-            <Search className="w-4 h-4 text-slate-400 absolute top-1/2 -translate-y-1/2 left-3 rtl:left-auto rtl:right-3" />
+            <Search className="w-4 h-4 text-slate-400 absolute top-1/2 -translate-y-1/2 left-3.5 rtl:left-auto rtl:right-3.5" />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery('')}
+                className="absolute top-1/2 -translate-y-1/2 right-3 rtl:right-auto rtl:left-3 text-xs text-slate-400 hover:text-slate-700 p-1"
+              >
+                ✕
+              </button>
+            )}
           </div>
         </div>
 
-        {/* Skill to Opportunity Path Banner Highlight */}
-        {onOpenSkillPathway && (
-          <div className="mt-4 p-3.5 bg-gradient-to-r from-emerald-800 to-teal-800 text-white rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-xs">
-            <div className="flex items-center gap-2.5">
-              <div className="p-2 bg-white/10 rounded-xl">
-                <Sparkles className="w-5 h-5 text-amber-300" />
-              </div>
-              <div>
-                <span className="text-xs font-black text-amber-300">
-                  {language === 'ur' ? 'ہنر سے موقع کا راستہ (Learn → Build → Apply → Earn)' : 'Skill to Opportunity Path (Learn → Build → Apply → Earn)'}
-                </span>
-                <p className="text-[11px] text-emerald-100 font-medium">
-                  {language === 'ur'
-                    ? 'جانیں کہ آپ کی سیکھی ہوئی مہارت کس طرح عملی پروجیکٹ اور حلال روزگار میں تبدیل ہو سکتی ہے'
-                    : 'Discover how your skill turns into real projects and halal opportunities.'}
-                </p>
-              </div>
-            </div>
+        {/* Quick Conversational Prompt Pills */}
+        <div className="flex items-center gap-2 overflow-x-auto pb-1 text-xs font-arabic font-bold">
+          <span className="text-slate-400 shrink-0 text-[11px]">{isUrdu ? 'فوری سوالات:' : 'Quick search:'}</span>
+          {CONVERSATIONAL_SEARCH_PROMPTS.map((prompt, idx) => (
             <button
-              id="open-skill-pathway-global-btn"
-              type="button"
-              onClick={() => onOpenSkillPathway()}
-              className="px-4 py-2 bg-amber-400 hover:bg-amber-300 text-slate-950 text-xs font-black rounded-xl transition shadow-xs whitespace-nowrap self-stretch sm:self-auto text-center"
+              key={idx}
+              onClick={() => setSearchQuery(isUrdu ? prompt.ur : prompt.en)}
+              className="px-3 py-1.5 rounded-full bg-slate-100 hover:bg-emerald-100 text-slate-700 hover:text-emerald-900 border border-slate-200 transition shrink-0 whitespace-nowrap"
             >
-              {language === 'ur' ? 'راستہ دیکھیں' : 'Explore Pathways'}
+              {isUrdu ? prompt.ur : prompt.en}
             </button>
-          </div>
-        )}
-
-        {/* Level and Age Group Filters */}
-        <div className="mt-4 pt-4 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          {/* Level Filter */}
-          <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
-            <span className="text-xs font-bold text-slate-700 whitespace-nowrap flex items-center gap-1">
-              <Layers className="w-3.5 h-3.5" />
-              {language === 'ur' ? 'لیول:' : 'Level:'}
-            </span>
-            {levels.map((lvl) => (
-              <button
-                key={lvl.id}
-                onClick={() => setSelectedLevel(lvl.id)}
-                className={`px-3 py-1 rounded-xl text-xs font-bold whitespace-nowrap transition ${
-                  selectedLevel === lvl.id
-                    ? 'bg-emerald-700 text-white shadow-2xs'
-                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                }`}
-              >
-                {language === 'ur' ? lvl.labelUrdu : lvl.labelEn}
-              </button>
-            ))}
-          </div>
-
-          {/* Age Group Filter */}
-          <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
-            <span className="text-xs font-bold text-slate-700 whitespace-nowrap flex items-center gap-1">
-              <Filter className="w-3.5 h-3.5" />
-              {language === 'ur' ? 'عمر:' : 'Age:'}
-            </span>
-            {ageGroups.map((ag) => (
-              <button
-                key={ag.id}
-                onClick={() => setSelectedAgeGroup(ag.id)}
-                className={`px-2.5 py-1 rounded-xl text-xs font-bold whitespace-nowrap transition ${
-                  selectedAgeGroup === ag.id
-                    ? 'bg-emerald-700 text-white shadow-2xs'
-                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                }`}
-              >
-                {language === 'ur' ? ag.labelUrdu : ag.labelEn}
-              </button>
-            ))}
-          </div>
+          ))}
         </div>
       </div>
 
-      {/* 10 Canonical Categories Grid Selector */}
-      <div className="space-y-2.5">
-        <div className="flex items-center justify-between">
-          <h2 className="text-xs sm:text-sm font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
-            <Layers className="w-4 h-4 text-emerald-700" />
-            <span>{language === 'ur' ? '۱۰ بنیادی کیٹیگریز (Skill Categories)' : '10 Skill Categories'}</span>
-          </h2>
-          {selectedCategory && (
+      {/* 3. MODULE NAVIGATION TABS */}
+      <div className="bg-white p-2 sm:p-2.5 rounded-2xl border border-slate-200 shadow-xs flex items-center overflow-x-auto gap-2 text-xs sm:text-sm font-arabic font-bold text-slate-600">
+        {[
+          { id: 'all_skills', labelUrdu: '📚 تمام ہنر و کیٹلاگ', labelEn: 'All Skills Library', icon: BookOpen },
+          { id: 'projects', labelUrdu: '🚀 حقیقی دنیا کے پروجیکٹس', labelEn: 'Real-World Projects', icon: Sparkles },
+          { id: 'earning', labelUrdu: '💼 روزگار و کمائی کے ۸ راستے', labelEn: '8 Income Pathways', icon: Briefcase },
+          { id: 'challenges', labelUrdu: '⚡ ۲۰ منٹ عملی چیلنج', labelEn: '20-Min Challenge', icon: Flame },
+          { id: 'portfolio', labelUrdu: '📊 میری پیش رفت و پورٹ فولیو', labelEn: 'My Portfolio', icon: FolderKanban },
+        ].map((tab) => {
+          const Icon = tab.icon;
+          const isActive = activeSubTab === tab.id;
+          return (
+            <button
+              key={tab.id}
+              onClick={() => setActiveSubTab(tab.id as any)}
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl whitespace-nowrap transition-all ${
+                isActive 
+                  ? 'bg-emerald-800 text-white shadow-xs font-black' 
+                  : 'hover:bg-slate-100 text-slate-700'
+              }`}
+            >
+              <Icon className={`w-4 h-4 ${isActive ? 'text-amber-300' : 'text-slate-500'}`} />
+              <span>{isUrdu ? tab.labelUrdu : tab.labelEn}</span>
+            </button>
+          );
+        })}
+      </div>
+
+      {/* SUB-VIEW 1: ALL SKILLS & CATEGORIES */}
+      {activeSubTab === 'all_skills' && (
+        <div className="space-y-6 animate-in fade-in">
+          {/* Category Filter Cards */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
             <button
               onClick={() => setSelectedCategory(null)}
-              className="text-xs text-emerald-700 font-bold hover:underline"
+              className={`p-4 rounded-2xl border transition-all text-right flex flex-col justify-between space-y-2 font-arabic ${
+                selectedCategory === null 
+                  ? 'bg-emerald-800 text-white border-emerald-900 shadow-md font-black' 
+                  : 'bg-white hover:bg-slate-50 text-slate-800 border-slate-200'
+              }`}
             >
-              {language === 'ur' ? 'تمام کیٹیگریز دیکھیں' : 'Show All Categories'}
+              <div className="flex items-center justify-between">
+                <span className="text-xl">🌟</span>
+                <span className="text-[10px] px-2 py-0.5 rounded-full bg-white/20">{SKILLS_MASTER_DATA.length} {isUrdu ? 'ہنر' : 'Skills'}</span>
+              </div>
+              <div>
+                <h3 className="text-sm sm:text-base font-black leading-tight">
+                  {isUrdu ? 'تمام شعبہ جات' : 'All Categories'}
+                </h3>
+              </div>
             </button>
-          )}
-        </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2.5">
-          {SKILL_CATEGORIES_DATA.map((cat, idx) => {
-            const isSelected = selectedCategory === cat.id;
-
-            return (
-              <button
-                key={cat.id}
-                onClick={() => setSelectedCategory(isSelected ? null : cat.id)}
-                className={`p-3 rounded-2xl border text-start transition flex items-center gap-2.5 group ${
-                  isSelected
-                    ? 'bg-emerald-800 text-white border-emerald-900 shadow-md font-bold'
-                    : 'bg-white hover:bg-emerald-50/50 border-slate-200 text-slate-800'
-                }`}
-              >
-                <div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 ${
-                  isSelected ? 'bg-white/20 text-white' : 'bg-emerald-50 text-emerald-700 group-hover:bg-emerald-100'
-                }`}>
-                  {getCategoryIcon(cat.id)}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="text-[10px] text-slate-400 group-hover:text-emerald-600 font-bold">
-                    {idx + 1}
+            {SKILL_CATEGORIES_MASTER.map((cat) => {
+              const isSelected = selectedCategory === cat.id;
+              return (
+                <button
+                  key={cat.id}
+                  onClick={() => setSelectedCategory(isSelected ? null : cat.id)}
+                  className={`p-4 rounded-2xl border transition-all text-right flex flex-col justify-between space-y-2 font-arabic ${
+                    isSelected 
+                      ? 'bg-emerald-800 text-white border-emerald-900 shadow-md font-black' 
+                      : 'bg-white hover:bg-slate-50 text-slate-800 border-slate-200'
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="text-xl">
+                      {cat.id === 'digital' ? '💻' : cat.id === 'traditional' ? '🛠️' : cat.id === 'business' ? '💼' : cat.id === 'professional' ? '🎓' : '⚡'}
+                    </span>
+                    <span className={`text-[10px] px-2 py-0.5 rounded-full ${isSelected ? 'bg-white/20' : 'bg-slate-100 text-slate-600'}`}>
+                      {cat.count} {isUrdu ? 'ہنر' : 'Skills'}
+                    </span>
                   </div>
-                  <div className="text-xs font-bold leading-tight truncate">
-                    {language === 'ur' ? cat.ur : cat.id}
+                  <div>
+                    <h3 className="text-sm sm:text-base font-black leading-tight">
+                      {isUrdu ? cat.titleUrdu : cat.titleEn}
+                    </h3>
                   </div>
-                </div>
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Courses Cards Grid */}
-      <div className="space-y-3">
-        <div className="flex items-center justify-between">
-          <h2 className="text-base sm:text-lg font-bold text-slate-900">
-            {language === 'ur' ? `دستیاب کورسز (${filteredCourses.length})` : `Available Courses (${filteredCourses.length})`}
-          </h2>
-          <span className="text-xs text-slate-500 font-medium">
-            {language === 'ur' ? 'ہر کورس میں سبق، کوئز اور عملی مشق شامل ہے' : 'Every course includes lessons, quiz, and practical tasks'}
-          </span>
-        </div>
-
-        {filteredCourses.length === 0 ? (
-          <div className="bg-white rounded-2xl p-8 text-center border border-slate-200 space-y-2">
-            <p className="text-slate-500 text-sm">
-              {language === 'ur' ? 'کوئی کورس نہیں ملا، براہ کرم فلٹر تبدیل کریں۔' : 'No courses matched your filters.'}
-            </p>
-            <button
-              onClick={() => { setSelectedCategory(null); setSelectedLevel('all'); setSelectedAgeGroup('all'); setSearchQuery(''); }}
-              className="text-xs font-bold text-emerald-700 bg-emerald-50 px-4 py-2 rounded-xl"
-            >
-              {language === 'ur' ? 'تمام فلٹرز ری سیٹ کریں' : 'Reset All Filters'}
-            </button>
+                </button>
+              );
+            })}
           </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {filteredCourses.map((course) => (
+
+          {/* Device & Difficulty Pills */}
+          <div className="flex items-center justify-between gap-3 flex-wrap bg-white p-3 rounded-2xl border border-slate-200 text-xs font-arabic">
+            <div className="flex items-center gap-2">
+              <span className="text-slate-500 font-bold">{isUrdu ? 'سامان / آلہ:' : 'Device:'}</span>
+              {[
+                { id: 'all', labelUrdu: 'تمام', labelEn: 'All' },
+                { id: 'mobile', labelUrdu: '📱 صرف موبائل', labelEn: 'Mobile Only' },
+                { id: 'computer', labelUrdu: '💻 کمپیوٹر / لیپ ٹاپ', labelEn: 'Computer' },
+                { id: 'tools', labelUrdu: '🛠️ اوزار / ہاتھ کا کام', labelEn: 'Tools / Trades' },
+              ].map((dev) => (
+                <button
+                  key={dev.id}
+                  onClick={() => setSelectedDevice(dev.id as any)}
+                  className={`px-3 py-1 rounded-xl transition ${
+                    selectedDevice === dev.id 
+                      ? 'bg-emerald-100 text-emerald-900 font-black' 
+                      : 'bg-slate-50 text-slate-600 hover:bg-slate-100'
+                  }`}
+                >
+                  {isUrdu ? dev.labelUrdu : dev.labelEn}
+                </button>
+              ))}
+            </div>
+
+            <span className="text-slate-500 font-medium">
+              {filteredSkills.length} {isUrdu ? 'ہنر دستیاب ہیں' : 'skills available'}
+            </span>
+          </div>
+
+          {/* High-Craft Skills Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
+            {filteredSkills.map((skill) => (
               <div
-                key={course.id}
-                className="bg-white rounded-2xl border border-slate-200/90 shadow-xs hover:shadow-md transition overflow-hidden flex flex-col justify-between group"
+                key={skill.id}
+                onClick={() => setSelectedSkillForDetail(skill)}
+                className="bg-white rounded-3xl p-5 sm:p-6 border border-slate-200/90 shadow-sm hover:shadow-md hover:border-emerald-300 transition-all cursor-pointer flex flex-col justify-between group space-y-4"
               >
-                {/* Course Header Banner */}
-                <div className={`p-4 bg-gradient-to-r ${course.coverGradient} text-white relative`}>
-                  <div className="flex items-center justify-between gap-2 text-xs mb-2">
-                    <span className="bg-white/20 backdrop-blur-md px-2.5 py-0.5 rounded-full font-medium truncate">
-                      {language === 'ur' ? course.categoryUrdu : course.category}
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="px-3 py-1 rounded-full bg-slate-100 text-slate-700 text-xs font-bold font-arabic">
+                      {isUrdu ? skill.categoryTitleUrdu : skill.categoryTitleEn}
                     </span>
-                    <span className="bg-white/30 backdrop-blur-md px-2.5 py-0.5 rounded-full font-bold border border-white/30 shrink-0">
-                      {language === 'ur' 
-                        ? (course.difficulty === 'Beginner' ? 'لیول: ابتدائی' : course.difficulty === 'Intermediate' ? 'لیول: درمیانہ' : course.difficulty === 'Advanced' ? 'لیول: اعلیٰ' : 'لیول: پروفیشنل')
-                        : `Level: ${course.difficulty}`}
+                    <span className="px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-900 text-xs font-black font-arabic">
+                      {isUrdu ? skill.badgeUrdu : skill.badgeEn}
                     </span>
                   </div>
-                  <h3 className="text-base sm:text-lg font-bold text-white leading-snug">
-                    {language === 'ur' ? course.titleUrdu : course.titleEn}
+
+                  <h3 className="text-xl sm:text-2xl font-black text-slate-900 group-hover:text-emerald-800 font-arabic transition">
+                    {isUrdu ? skill.titleUrdu : skill.titleEn}
                   </h3>
+
+                  <p className="text-sm sm:text-[15px] text-slate-600 font-arabic leading-[1.8]">
+                    {isUrdu ? skill.taglineUrdu : skill.taglineEn}
+                  </p>
+
+                  {/* 4-Stage Pathway Pill */}
+                  <div className="pt-2 flex items-center gap-1.5 text-[11px] font-bold font-arabic text-emerald-800 bg-emerald-50/60 p-2.5 rounded-2xl border border-emerald-100">
+                    <span>سیکھیں</span>
+                    <span>←</span>
+                    <span>مشق</span>
+                    <span>←</span>
+                    <span>بنائیں</span>
+                    <span>←</span>
+                    <span>کمائیں</span>
+                    <span>←</span>
+                    <span>سکھائیں</span>
+                  </div>
                 </div>
 
-                {/* Course Description and Metrics */}
-                <div className="p-4 flex-1 flex flex-col justify-between space-y-3.5">
-                  <div className="space-y-2">
-                    {/* Level Pill in Card Body */}
-                    <div className="flex items-center gap-1.5">
-                      <span className={`text-[11px] font-bold px-2.5 py-0.5 rounded-md border ${getLevelBadge(course.difficulty).bg}`}>
-                        {language === 'ur' ? getLevelBadge(course.difficulty).badgeUrdu : getLevelBadge(course.difficulty).badgeEn}
+                <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-arabic text-slate-500">
+                  <div className="flex items-center gap-2">
+                    <Clock className="w-4 h-4 text-emerald-600" />
+                    <span>{isUrdu ? `سیکھنے کا وقت: ${skill.timeToLearnDays} دن` : `${skill.timeToLearnDays} Days`}</span>
+                  </div>
+                  <div className="flex items-center gap-1 text-emerald-700 font-black group-hover:translate-x-1 transition-transform">
+                    <span>{isUrdu ? '۱۸ مرحلہ وار گائیڈ کھولیں' : 'Open 18-Step Guide'}</span>
+                    <ArrowIcon className="w-4 h-4" />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* SUB-VIEW 2: REAL-WORLD PROJECTS */}
+      {activeSubTab === 'projects' && (
+        <div className="space-y-6 animate-in fade-in">
+          <div className="bg-emerald-50/70 p-5 rounded-3xl border border-emerald-200 space-y-2">
+            <h3 className="text-xl font-black text-emerald-950 font-arabic">
+              🚀 {isUrdu ? 'حقیقی دنیا کے منصوبے (Real-World Projects)' : 'Real-World Hands-on Projects'}
+            </h3>
+            <p className="text-xs sm:text-sm text-slate-600 font-arabic leading-relaxed">
+              {isUrdu 
+                ? 'ہمارا مقصد صرف اسباق ختم کرنا نہیں ہے، بلکہ حقیقی زندگی کا کوئی کارآمد کام کر کے دکھانا ہے۔ یہ پروجیکٹس آپ کو عملی تجربہ اور اعتماد دیں گے:' 
+                : 'The objective is not merely to finish lessons, but to produce something genuinely useful in real life.'}
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            {REAL_WORLD_PROJECT_TEMPLATES.map((proj) => (
+              <div 
+                key={proj.id}
+                className="bg-white rounded-3xl p-5 sm:p-6 border border-slate-200 shadow-sm space-y-4 flex flex-col justify-between"
+              >
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="px-3 py-1 rounded-full bg-emerald-100 text-emerald-900 text-xs font-black font-arabic">
+                      {isUrdu ? proj.categoryUrdu : proj.categoryEn}
+                    </span>
+                    <span className="text-xs text-slate-500 font-bold font-arabic">
+                      ⏱️ {isUrdu ? proj.difficultyUrdu : proj.difficultyEn}
+                    </span>
+                  </div>
+
+                  <h4 className="text-lg sm:text-xl font-black text-slate-900 font-arabic">
+                    {isUrdu ? proj.titleUrdu : proj.titleEn}
+                  </h4>
+
+                  <p className="text-sm text-slate-600 font-arabic leading-relaxed">
+                    {isUrdu ? proj.descUrdu : proj.descEn}
+                  </p>
+
+                  <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 space-y-1.5 text-xs font-arabic">
+                    <span className="font-black text-slate-800">📋 {isUrdu ? 'عملی مراحل:' : 'Action Steps:'}</span>
+                    <ul className="space-y-1 text-slate-600 list-disc list-inside">
+                      {(isUrdu ? proj.actionStepsUrdu : proj.actionStepsEn).map((step, sIdx) => (
+                        <li key={sIdx}>{step}</li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+
+                <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-arabic">
+                  <span className="text-slate-500 font-bold">
+                    🎯 {isUrdu ? proj.deliverableUrdu : proj.deliverableEn}
+                  </span>
+                  <button
+                    onClick={() => {
+                      if (onOpenAITeacherWithPrompt) {
+                        onOpenAITeacherWithPrompt(`السلام علیکم! میں پروجیکٹ "${proj.titleUrdu}" شروع کرنا چاہتا ہوں۔ مجھے اس پروجیکٹ کے پہلے قدم کی تفصیلی رہنمائی فرمائیں۔`);
+                      }
+                    }}
+                    className="py-2 px-4 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold transition"
+                  >
+                    {isUrdu ? 'رہنمائی لیں' : 'Get Guidance'}
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* SUB-VIEW 3: 8 INCOME PATHWAYS */}
+      {activeSubTab === 'earning' && (
+        <div className="space-y-6 animate-in fade-in">
+          <div className="bg-slate-900 text-white p-6 rounded-3xl space-y-3">
+            <h3 className="text-2xl font-black font-arabic text-amber-400">
+              💼 {isUrdu ? 'ہنر سے حلال کمائی کے ۸ بنیادی فارمولے' : '8 Core Halal Earning Models'}
+            </h3>
+            <p className="text-sm text-slate-300 font-arabic leading-relaxed">
+              {isUrdu 
+                ? 'جب آپ کوئی بھی ہنر سیکھ لیتے ہیں تو اس سے روزگار پیدا کرنے کے یہ ۸ حقیقی راستے کھلتے ہیں:' 
+                : 'Mastering a skill unlocks 8 proven avenues for dignified halal income:'}
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {[
+              { id: '1', titleUrdu: '۱. باقاعدہ ملازمت (Job)', descUrdu: 'کسی دکان، اسکول یا ادارے میں ماہانہ تنخواہ پر کام۔' },
+              { id: '2', titleUrdu: '۲. آن لائن فری لانسنگ (Freelancing)', descUrdu: 'گھر بیٹھے بین الاقوامی یا ملکی کلائنٹس کو سروسز دینا۔' },
+              { id: '3', titleUrdu: '۳. مقامی سروس (Local Service)', descUrdu: 'اپنے محلے اور علاقے میں گھر جا کر یا دکان پر کام کرنا۔' },
+              { id: '4', titleUrdu: '۴. چھوٹا کاروبار (Small Business)', descUrdu: 'اپنی دکان، ورکشاپ یا پروڈکشن یونٹ کھولنا۔' },
+              { id: '5', titleUrdu: '۵. آن لائن دکان (Online Business)', descUrdu: 'واٹس ایپ، فیس بک یا دراز پر سامان فروخت کرنا۔' },
+              { id: '6', titleUrdu: '۶. تدریس و کوچنگ (Teaching)', descUrdu: 'دوسروں کو یہ ہنر سکھا کر فیس لینا اور صدقہ جاریہ بنانا۔' },
+              { id: '7', titleUrdu: '۷. اپنی پروڈکٹ (Product Making)', descUrdu: 'کھانا، دستکاری یا کپڑے خود بنا کر بیچنا۔' },
+              { id: '8', titleUrdu: '۸. مشاورت (Consulting)', descUrdu: 'تجربے کی بنیاد پر دوسروں کے مسائل حل کرنے کا معاوضہ لینا۔' },
+            ].map((item) => (
+              <div key={item.id} className="bg-white p-5 rounded-3xl border border-slate-200 shadow-xs space-y-2 font-arabic">
+                <h4 className="text-base font-black text-slate-900">
+                  {item.titleUrdu}
+                </h4>
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  {item.descUrdu}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* SUB-VIEW 4: DAILY 20-MIN CHALLENGE */}
+      {activeSubTab === 'challenges' && (
+        <div className="space-y-6 animate-in fade-in">
+          <div className="bg-amber-500/15 border border-amber-300 p-5 rounded-3xl space-y-2">
+            <h3 className="text-xl font-black text-amber-950 font-arabic flex items-center gap-2">
+              <Flame className="w-6 h-6 text-amber-600" />
+              <span>{isUrdu ? 'آج ۲۰ منٹ میں یہ کام کریں (Daily Practical Challenge)' : 'Daily 20-Min Challenge'}</span>
+            </h3>
+            <p className="text-xs sm:text-sm text-slate-700 font-arabic leading-relaxed">
+              {isUrdu ? 'بڑے اہداف چھوٹے مستقل قدموں سے حاصل ہوتے ہیں۔ آج کا آسان چیلنج مکمل کریں اور پوائنٹس حاصل کریں:' : 'Consistency leads to mastery. Complete today\'s 20-minute challenge:'}
+            </p>
+          </div>
+
+          <div className="space-y-4">
+            {DAILY_PRACTICAL_CHALLENGES.map((chal) => {
+              const isDone = !!completedChallenges[chal.id];
+              return (
+                <div 
+                  key={chal.id}
+                  className={`p-5 rounded-3xl border transition-all flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 font-arabic ${
+                    isDone ? 'bg-emerald-50/60 border-emerald-300' : 'bg-white border-slate-200 shadow-xs'
+                  }`}
+                >
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      <span className="px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-900 text-xs font-black">
+                        +{chal.points} {isUrdu ? 'پوائنٹس' : 'Points'}
+                      </span>
+                      <span className="text-xs text-slate-500 font-bold">
+                        ⏱️ {chal.estimatedMinutes} {isUrdu ? 'منٹ' : 'mins'}
                       </span>
                     </div>
-
-                    <p className="text-xs sm:text-sm text-slate-600 leading-relaxed line-clamp-2">
-                      {language === 'ur' ? course.descriptionUrdu : course.descriptionEn}
+                    <h4 className="text-lg font-black text-slate-900">
+                      {isUrdu ? chal.titleUrdu : chal.titleEn}
+                    </h4>
+                    <p className="text-xs sm:text-sm text-slate-600">
+                      {isUrdu ? chal.descUrdu : chal.descEn}
                     </p>
                   </div>
 
-                  <div className="space-y-3 pt-2 border-t border-slate-100">
-                    <div className="flex items-center justify-between text-xs text-slate-600 font-medium">
-                      <span className="flex items-center gap-1.5">
-                        <BookOpen className="w-3.5 h-3.5 text-emerald-600" />
-                        <span>{course.lessons.length} {language === 'ur' ? 'اسباق' : 'Lessons'}</span>
-                      </span>
-                      <span className="flex items-center gap-1.5">
-                        <Clock className="w-3.5 h-3.5 text-slate-500" />
-                        <span>{course.estimatedHours} {language === 'ur' ? 'گھنٹے' : 'hours'}</span>
-                      </span>
-                    </div>
-
-                    {/* Action Buttons */}
-                    <div className="space-y-1.5">
-                      <button
-                        id={`start-course-btn-${course.id}`}
-                        onClick={() => onSelectCourse(course)}
-                        className="w-full py-2.5 px-4 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs sm:text-sm font-bold flex items-center justify-center gap-2 shadow-xs transition"
-                      >
-                        <Play className="w-3.5 h-3.5 fill-white" />
-                        <span>{language === 'ur' ? 'کورس شروع کریں' : 'Start Course'}</span>
-                      </button>
-
-                      {onOpenSkillPathway && (
-                        <button
-                          id={`pathway-course-btn-${course.id}`}
-                          type="button"
-                          onClick={() => onOpenSkillPathway(course.id, course.category)}
-                          className="w-full py-1.5 px-3 rounded-lg text-emerald-800 hover:bg-emerald-50 text-[11px] font-bold flex items-center justify-center gap-1 transition"
-                        >
-                          <Sparkles className="w-3 h-3 text-amber-500" />
-                          <span>{language === 'ur' ? 'ہنر سے موقع کا راستہ دیکھیں' : 'View Opportunity Path'}</span>
-                        </button>
-                      )}
-                    </div>
-                  </div>
+                  <button
+                    onClick={() => handleToggleChallenge(chal.id)}
+                    className={`py-2.5 px-6 rounded-2xl font-black text-xs transition whitespace-nowrap self-stretch sm:self-auto flex items-center justify-center gap-2 ${
+                      isDone 
+                        ? 'bg-emerald-700 text-white' 
+                        : 'bg-amber-400 hover:bg-amber-300 text-slate-950 shadow-xs'
+                    }`}
+                  >
+                    <Check className="w-4 h-4" />
+                    <span>{isDone ? (isUrdu ? 'مکمل شدہ ✓' : 'Completed ✓') : (isUrdu ? 'چیلنج مکمل کیا' : 'Mark Completed')}</span>
+                  </button>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
-        )}
-      </div>
+        </div>
+      )}
+
+      {/* SUB-VIEW 5: MY SKILLS & PORTFOLIO */}
+      {activeSubTab === 'portfolio' && (
+        <div className="space-y-6 animate-in fade-in">
+          <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-xs space-y-4">
+            <h3 className="text-xl font-black text-slate-900 font-arabic flex items-center gap-2">
+              <FolderKanban className="w-5 h-5 text-emerald-700" />
+              <span>{isUrdu ? 'میری سیکھنے کی سطح اور پورٹ فولیو' : 'My Skills Progress & Portfolio'}</span>
+            </h3>
+
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center font-arabic">
+              <div className="p-4 bg-emerald-50 rounded-2xl border border-emerald-100">
+                <span className="text-2xl font-black text-emerald-900">
+                  {Object.keys(completedChallenges).length}
+                </span>
+                <p className="text-xs text-slate-600 font-bold mt-1">
+                  {isUrdu ? 'مکمل کردہ چیلنجز' : 'Completed Challenges'}
+                </p>
+              </div>
+              <div className="p-4 bg-amber-50 rounded-2xl border border-amber-100">
+                <span className="text-2xl font-black text-amber-900">
+                  {userProfile.points || 120}
+                </span>
+                <p className="text-xs text-slate-600 font-bold mt-1">
+                  {isUrdu ? 'حاصل کردہ پوائنٹس' : 'Skill Points'}
+                </p>
+              </div>
+              <div className="p-4 bg-sky-50 rounded-2xl border border-sky-100">
+                <span className="text-2xl font-black text-sky-900">
+                  {userProfile.streakDays || 3}
+                </span>
+                <p className="text-xs text-slate-600 font-bold mt-1">
+                  {isUrdu ? 'مسلسل سیکھنے کے دن' : 'Streak Days'}
+                </p>
+              </div>
+              <div className="p-4 bg-purple-50 rounded-2xl border border-purple-100">
+                <span className="text-2xl font-black text-purple-900">
+                  {isUrdu ? 'ابتدائی' : 'Beginner'}
+                </span>
+                <p className="text-xs text-slate-600 font-bold mt-1">
+                  {isUrdu ? 'موجودہ لیول' : 'Current Level'}
+                </p>
+              </div>
+            </div>
+
+            <div className="pt-4 border-t border-slate-100 flex justify-center">
+              <button
+                onClick={() => setShowDiscoveryModal(true)}
+                className="py-3 px-6 rounded-2xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold font-arabic text-sm transition"
+              >
+                {isUrdu ? '🧭 نیا ہنر دریافت کریں (Discovery Quiz)' : '🧭 Discover New Skill'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 4. MODALS */}
+      <SkillDiscoveryModal
+        isOpen={showDiscoveryModal}
+        onClose={() => setShowDiscoveryModal(false)}
+        language={language}
+        userProfile={userProfile}
+        onSelectSkill={(skill) => {
+          setSelectedSkillForDetail(skill);
+        }}
+      />
+
+      <SkillMasterDetailModal
+        isOpen={!!selectedSkillForDetail}
+        onClose={() => setSelectedSkillForDetail(null)}
+        skill={selectedSkillForDetail}
+        language={language}
+        userProfile={userProfile}
+        onOpenAITeacherWithPrompt={onOpenAITeacherWithPrompt}
+        onSelectNextSkill={(nextSkillId) => {
+          const next = SKILLS_MASTER_DATA.find(s => s.id === nextSkillId);
+          if (next) {
+            setSelectedSkillForDetail(next);
+          }
+        }}
+      />
     </div>
   );
 };
