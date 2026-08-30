@@ -168,7 +168,7 @@ export const CANDIDATE_SKILLS: AssessmentCandidateSkill[] = [
   // 1. Practical AI on Mobile
   {
     id: 'rec-ai-mobile',
-    courseId: 'ai-basics-mobile',
+    courseId: 'ai-modern-tech-beginner',
     titleUrdu: 'موبائل سے AI اور چیٹ جی پی ٹی کا عملی استعمال',
     titleEn: 'Practical AI & ChatGPT on Mobile',
     category: 'AI & Technology',
@@ -340,7 +340,7 @@ export const CANDIDATE_SKILLS: AssessmentCandidateSkill[] = [
   // 2. Mobile Graphic Design & Canva
   {
     id: 'rec-canva-design',
-    courseId: 'canva-graphic-design',
+    courseId: 'graphic-design-canva',
     titleUrdu: 'کینوا سے موبائل پر گرافک ڈیزائننگ',
     titleEn: 'Mobile Graphic Design with Canva',
     category: 'Creative Skills',
@@ -480,7 +480,7 @@ export const CANDIDATE_SKILLS: AssessmentCandidateSkill[] = [
   // 3. Technical & Repair Skills (Safety-First)
   {
     id: 'rec-solar-repair',
-    courseId: 'solar-repair-technical',
+    courseId: 'solar-and-electrical-basics',
     titleUrdu: 'بنیادی Technical اور Repair Skills',
     titleEn: 'Technical & Repair Skills',
     category: 'Technical Trades',
@@ -620,7 +620,7 @@ export const CANDIDATE_SKILLS: AssessmentCandidateSkill[] = [
   // 4. Agriculture & Gardening Fundamentals
   {
     id: 'rec-agri-gardening',
-    courseId: 'agri-gardening-fundamentals',
+    courseId: 'agriculture-gardening-basics',
     titleUrdu: 'زراعت اور باغبانی کی بنیادی سمجھ',
     titleEn: 'Agriculture & Gardening Fundamentals',
     category: 'Agriculture & Local Skills',
@@ -760,7 +760,7 @@ export const CANDIDATE_SKILLS: AssessmentCandidateSkill[] = [
   // 5. Home & Daily Life Skills
   {
     id: 'rec-life-skills',
-    courseId: 'home-daily-life-skills',
+    courseId: 'home-daily-life-skills-basics',
     titleUrdu: 'روزمرہ زندگی کی مفید Skills',
     titleEn: 'Home & Daily Life Skills',
     category: 'Life Skills',
@@ -900,7 +900,7 @@ export const CANDIDATE_SKILLS: AssessmentCandidateSkill[] = [
   // 6. Small Business & Shop Management
   {
     id: 'rec-small-business',
-    courseId: 'small-business-mgmt',
+    courseId: 'business-entrepreneurship-basics',
     titleUrdu: 'چھوٹا کاروبار اور کھاتہ بک مینجمنٹ',
     titleEn: 'Small Business & Shop Management',
     category: 'Business & Freelancing',
@@ -1040,7 +1040,7 @@ export const CANDIDATE_SKILLS: AssessmentCandidateSkill[] = [
   // 7. Online Freelancing & Remote Work
   {
     id: 'rec-freelancing',
-    courseId: 'digital-freelancing',
+    courseId: 'freelancing-digital-work-basics',
     titleUrdu: 'آن لائن فری لانسنگ اور ڈیجیٹل روزگار',
     titleEn: 'Online Freelancing & Remote Work',
     category: 'Business & Freelancing',
@@ -1180,7 +1180,7 @@ export const CANDIDATE_SKILLS: AssessmentCandidateSkill[] = [
   // 8. Spoken English & Communication
   {
     id: 'rec-english-comm',
-    courseId: 'english-communication',
+    courseId: 'english-speaking-basics',
     titleUrdu: 'روزمرہ گفتگو اور بنیادی انگلش',
     titleEn: 'Spoken English & Everyday Communication',
     category: 'Communication & Languages',
@@ -1320,7 +1320,7 @@ export const CANDIDATE_SKILLS: AssessmentCandidateSkill[] = [
   // 9. Financial Literacy & Budgeting
   {
     id: 'rec-financial-lit',
-    courseId: 'financial-literacy-budgeting',
+    courseId: 'financial-literacy-budgeting-basics',
     titleUrdu: 'مالیاتی شعور اور گھریلو بجٹ سازی',
     titleEn: 'Financial Literacy & Household Budgeting',
     category: 'Life Skills',
@@ -1460,7 +1460,7 @@ export const CANDIDATE_SKILLS: AssessmentCandidateSkill[] = [
   // 10. Leadership, Ethics & Community Development
   {
     id: 'rec-leadership-comm',
-    courseId: 'leadership-community',
+    courseId: 'character-community-service',
     titleUrdu: 'قیادت، اخلاقیات اور گاؤں کی ترقی',
     titleEn: 'Leadership, Ethics & Community Development',
     category: 'Character & Leadership',
@@ -1600,7 +1600,7 @@ export const CANDIDATE_SKILLS: AssessmentCandidateSkill[] = [
   // 11. Smartphone & Computer Basics
   {
     id: 'rec-smartphone-basics',
-    courseId: 'smart-phone-mastery',
+    courseId: 'smartphone-safety-elders',
     titleUrdu: 'اسمارٹ فون اور بنیادی کمپیوٹر مہارتیں',
     titleEn: 'Smartphone & Computer Basics',
     category: 'Computer & Digital Skills',

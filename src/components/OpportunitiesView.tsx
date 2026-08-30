@@ -523,8 +523,8 @@ export const OpportunitiesView: React.FC<OpportunitiesViewProps> = ({
 
       {/* 8. Opportunity Details Modal ("مزید دیکھیں") */}
       {selectedOpportunity && (
-        <div className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
-          <div className="bg-white rounded-3xl max-w-xl w-full p-5 sm:p-7 border border-slate-200 shadow-2xl space-y-5 my-8 font-arabic animate-fade-in">
+        <div className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-xs flex items-end sm:items-center justify-center p-3 sm:p-4 overflow-y-auto">
+          <div className="bg-white rounded-t-3xl sm:rounded-3xl animate-in slide-in-from-bottom-8 sm:slide-in-from-bottom-0 sm:zoom-in-95 duration-300 max-w-xl w-full p-5 sm:p-7 border border-slate-200 shadow-2xl space-y-5 my-8 font-arabic animate-fade-in">
             {/* Modal Header */}
             <div className="flex items-start justify-between gap-3 pb-3 border-b border-slate-100">
               <div className="space-y-1">

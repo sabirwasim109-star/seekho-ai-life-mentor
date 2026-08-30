@@ -459,8 +459,8 @@ export const MyLearningView: React.FC<MyLearningViewProps> = ({
 
       {/* Certificate Modal View */}
       {selectedCertCourse && (
-        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
-          <div className="bg-white rounded-3xl max-w-2xl w-full p-6 sm:p-8 border-4 border-amber-300 shadow-2xl relative animate-fade-in text-center space-y-5">
+        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-end sm:items-center justify-center p-3 sm:p-6 overflow-y-auto">
+          <div className="bg-white rounded-t-3xl sm:rounded-3xl animate-in slide-in-from-bottom-8 sm:slide-in-from-bottom-0 sm:zoom-in-95 duration-300 max-w-2xl w-full p-6 sm:p-8 border-4 border-amber-300 shadow-2xl relative animate-fade-in text-center space-y-5">
             <button
               onClick={() => setSelectedCertCourse(null)}
               className="absolute top-4 right-4 text-slate-400 hover:text-slate-700 p-2 rounded-full hover:bg-slate-100 transition"

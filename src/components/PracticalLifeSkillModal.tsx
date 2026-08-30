@@ -84,10 +84,10 @@ export const PracticalLifeSkillModal: React.FC<PracticalLifeSkillModalProps> = (
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-slate-950/80 backdrop-blur-md overflow-y-auto animate-fade-in">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 pt-10 sm:p-4 bg-slate-950/80 backdrop-blur-md overflow-y-auto animate-fade-in">
       <div 
         id="life-skill-lesson-modal"
-        className="bg-white dark:bg-slate-900 w-full max-w-3xl rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden my-auto flex flex-col max-h-[92vh]"
+        className="bg-white dark:bg-slate-900 w-full max-w-3xl rounded-t-3xl sm:rounded-3xl animate-in slide-in-from-bottom-8 sm:slide-in-from-bottom-0 sm:zoom-in-95 duration-300 shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden my-auto flex flex-col max-h-[92vh]"
       >
         {/* Top Header */}
         <div className={`p-4 sm:p-6 bg-gradient-to-r ${categoryMeta?.accentColor || 'from-emerald-700 to-teal-900'} text-white relative flex flex-col gap-3 shrink-0`}>
@@ -115,7 +115,7 @@ export const PracticalLifeSkillModal: React.FC<PracticalLifeSkillModalProps> = (
                     : currentStep === 'practice'
                     ? `${isUrdu ? 'عملی منظرنامہ:' : 'Practice Scenario:'} ${isUrdu ? lesson.practiceScenarioUrdu : lesson.practiceScenarioEn}`
                     : currentStep === 'apply'
-                    ? `${isUrdu ? 'عملی قدم:' : 'Action Checklist:'} ${isUrdu ? lesson.applyActionUrdu : lesson.applyActionEn}. ${(isUrdu ? lesson.applyChecklistUrdu : lesson.applyChecklistEn).join('. ')}`
+                    ? `${isUrdu ? 'عملی قدم:' : 'Action Checklist:'} ${isUrdu ? lesson.applyActionUrdu : lesson.applyActionEn}. ${(isUrdu ? lesson.applyChecklistUrdu || [] : lesson.applyChecklistEn || []).join('. ')}`
                     : currentStep === 'reflect'
                     ? `${isUrdu ? 'خود احتسابی:' : 'Self-Reflection:'} ${isUrdu ? lesson.reflectPromptUrdu : lesson.reflectPromptEn}`
                     : `${isUrdu ? lesson.titleUrdu : lesson.titleEn}. ${isUrdu ? lesson.proTipUrdu : lesson.proTipEn}`

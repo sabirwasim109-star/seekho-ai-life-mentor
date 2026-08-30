@@ -221,10 +221,10 @@ export const AssessmentModal: React.FC<AssessmentModalProps> = ({
   };
 
   return (
-    <div id="assessment-modal-overlay" className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-slate-950/80 backdrop-blur-sm animate-fade-in overflow-y-auto">
+    <div id="assessment-modal-overlay" className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 pt-10 sm:p-4 bg-slate-950/80 backdrop-blur-sm animate-fade-in overflow-y-auto">
       <div 
         id="assessment-modal-container" 
-        className="relative w-full max-w-4xl bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden my-auto max-h-[92vh] flex flex-col"
+        className="relative w-full max-w-4xl bg-white rounded-t-3xl sm:rounded-3xl animate-in slide-in-from-bottom-8 sm:slide-in-from-bottom-0 sm:zoom-in-95 duration-300 shadow-2xl border border-slate-200 overflow-hidden my-auto max-h-[92vh] flex flex-col"
       >
         {/* Top Header Bar */}
         <div id="assessment-header" className="flex items-center justify-between px-5 sm:px-8 py-4 border-b border-slate-100 bg-gradient-to-r from-emerald-800 via-emerald-900 to-teal-950 text-white shrink-0">

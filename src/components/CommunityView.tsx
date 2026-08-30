@@ -266,8 +266,8 @@ export const CommunityView: React.FC<CommunityViewProps> = ({
 
       {/* Create Post Modal */}
       {showCreateModal && (
-        <div className="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-3">
-          <div className="bg-white max-w-lg w-full rounded-3xl p-5 sm:p-6 border border-slate-200 shadow-2xl space-y-4">
+        <div className="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-sm flex items-end sm:items-center justify-center p-3">
+          <div className="bg-white max-w-lg w-full rounded-t-3xl sm:rounded-3xl animate-in slide-in-from-bottom-8 sm:slide-in-from-bottom-0 sm:zoom-in-95 duration-300 p-5 sm:p-6 border border-slate-200 shadow-2xl space-y-4">
             <h3 className="text-lg font-black text-slate-900">
               {language === 'ur' ? 'برادری میں نیا علم یا پروجیکٹ شیئر کریں' : 'Share Useful Knowledge or Project'}
             </h3>

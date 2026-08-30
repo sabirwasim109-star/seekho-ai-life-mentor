@@ -148,14 +148,14 @@ export const SmartSearchLessonModal: React.FC<SmartSearchLessonModalProps> = ({
 
   return (
     <div 
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-slate-950/80 backdrop-blur-md animate-fade-in overflow-y-auto"
+      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-3 sm:p-5 bg-slate-950/80 backdrop-blur-md animate-fade-in overflow-y-auto"
       role="dialog"
       aria-modal="true"
       aria-labelledby="smart-search-modal-title"
     >
       <div 
         id="smart-search-modal-container"
-        className="bg-white text-slate-900 w-full max-w-4xl max-h-[92vh] rounded-3xl shadow-2xl border border-slate-200/90 flex flex-col overflow-hidden relative"
+        className="bg-white text-slate-900 w-full max-w-4xl max-h-[92vh] rounded-t-3xl sm:rounded-3xl animate-in slide-in-from-bottom-8 sm:slide-in-from-bottom-0 sm:zoom-in-95 duration-300 shadow-2xl border border-slate-200/90 flex flex-col overflow-hidden relative"
       >
         {/* Modal Top Header */}
         <header className="bg-gradient-to-r from-emerald-900 via-teal-900 to-slate-900 text-white px-5 sm:px-8 py-4 sm:py-5 flex items-center justify-between gap-4 border-b border-emerald-700/40 relative shrink-0">

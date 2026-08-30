@@ -656,8 +656,8 @@ export const MySkillsPortfolioView: React.FC<MySkillsPortfolioViewProps> = ({
 
       {/* 7. Add Project Modal */}
       {showAddProjectModal && (
-        <div className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
-          <div className="bg-white rounded-3xl max-w-xl w-full p-5 sm:p-7 border border-slate-200 shadow-2xl space-y-4 my-8 font-arabic">
+        <div className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-xs flex items-end sm:items-center justify-center p-3 sm:p-4 overflow-y-auto">
+          <div className="bg-white rounded-t-3xl sm:rounded-3xl animate-in slide-in-from-bottom-8 sm:slide-in-from-bottom-0 sm:zoom-in-95 duration-300 max-w-xl w-full p-5 sm:p-7 border border-slate-200 shadow-2xl space-y-4 my-8 font-arabic">
             <div className="flex items-center justify-between pb-3 border-b border-slate-100">
               <div className="flex items-center gap-2">
                 <PlusCircle className="w-5 h-5 text-teal-700" />

@@ -221,8 +221,8 @@ export const CourseModal: React.FC<CourseModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4 overflow-y-auto">
-      <div className="bg-white w-full max-w-3xl rounded-3xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[92vh]">
+    <div className="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 pt-10 sm:p-4 overflow-y-auto">
+      <div className="bg-white w-full max-w-3xl rounded-t-3xl sm:rounded-3xl animate-in slide-in-from-bottom-8 sm:slide-in-from-bottom-0 sm:zoom-in-95 duration-300 shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[92vh]">
         {/* Modal Header with Course Progress */}
         <div className={`p-4 sm:p-6 bg-gradient-to-r ${course.coverGradient} text-white relative flex flex-col gap-3`}>
           <div className="flex items-start justify-between gap-4">
@@ -264,12 +264,12 @@ export const CourseModal: React.FC<CourseModalProps> = ({
                 id={`course-header-tts-${course.id}-${activeStep}-${currentLessonIndex}`}
                 text={
                   activeStep === 'lesson'
-                    ? `${language === 'ur' ? currentLesson.titleUrdu : currentLesson.titleEn}. ${language === 'ur' ? currentLesson.contentUrdu : currentLesson.contentEn}. ${language === 'ur' ? 'اہم نکات:' : 'Key takeaways:'} ${(language === 'ur' ? currentLesson.keyTakeawaysUrdu : currentLesson.keyTakeawaysEn).join('. ')}`
+                    ? `${language === 'ur' ? currentLesson.titleUrdu : currentLesson.titleEn}. ${language === 'ur' ? currentLesson.contentUrdu : currentLesson.contentEn}. ${language === 'ur' ? 'اہم نکات:' : 'Key takeaways:'} ${(language === 'ur' ? currentLesson.keyTakeawaysUrdu || [] : currentLesson.keyTakeawaysEn || []).join('. ')}`
                     : activeStep === 'quiz'
-                    ? `${language === 'ur' ? 'جامع کوئز:' : 'Comprehension Quiz:'} ${activeQuiz.map((q, idx) => `${idx + 1}. ${language === 'ur' ? q.questionUrdu : q.questionEn}`).join('. ')}`
+                    ? `${language === 'ur' ? 'جامع کوئز:' : 'Comprehension Quiz:'} ${(activeQuiz || []).map((q, idx) => `${idx + 1}. ${language === 'ur' ? q.questionUrdu : q.questionEn}`).join('. ')}`
                     : activeStep === 'practice'
                     ? `${language === 'ur' ? activeTask.titleUrdu : activeTask.titleEn}. ${language === 'ur' ? activeTask.instructionsUrdu : activeTask.instructionsEn}. ${language === 'ur' ? 'مطلوبہ نتیجہ:' : 'Deliverable:'} ${language === 'ur' ? activeTask.deliverableUrdu : activeTask.deliverableEn}`
-                    : `${language === 'ur' ? course.titleUrdu : course.titleEn}. ${language === 'ur' ? course.descriptionUrdu : course.descriptionEn}. ${(language === 'ur' ? course.whatYouWillLearnUrdu : course.whatYouWillLearnEn).join('. ')}`
+                    : `${language === 'ur' ? course.titleUrdu : course.titleEn}. ${language === 'ur' ? course.descriptionUrdu : course.descriptionEn}. ${(language === 'ur' ? course.whatYouWillLearnUrdu || [] : course.whatYouWillLearnEn || []).join('. ')}`
                 }
                 language={language}
                 variant="header"
@@ -620,7 +620,7 @@ export const CourseModal: React.FC<CourseModalProps> = ({
                   {/* Audio Reciter Button */}
                   <AudioReaderButton
                     id={`course-lesson-tts-${currentLesson.id}`}
-                    text={`${language === 'ur' ? currentLesson.titleUrdu : currentLesson.titleEn}. ${language === 'ur' ? currentLesson.contentUrdu : currentLesson.contentEn}. ${language === 'ur' ? 'سبق کے ۳ اہم نکات:' : '3 Key Takeaways:'} ${(language === 'ur' ? currentLesson.keyTakeawaysUrdu : currentLesson.keyTakeawaysEn).join('. ')}`}
+                    text={`${language === 'ur' ? currentLesson.titleUrdu : currentLesson.titleEn}. ${language === 'ur' ? currentLesson.contentUrdu : currentLesson.contentEn}. ${language === 'ur' ? 'سبق کے ۳ اہم نکات:' : '3 Key Takeaways:'} ${(language === 'ur' ? currentLesson.keyTakeawaysUrdu || [] : currentLesson.keyTakeawaysEn || []).join('. ')}`}
                     language={language}
                     variant="pill"
                     size="sm"

@@ -177,10 +177,10 @@ export function generateDailySmartJourney(
   // -------------------------------------------------------------
   const personalizedResult = getPersonalizedCourseForUser(userProfile, COURSES_DATA);
   
-  let courseId = 'community-service-uplift-basics';
+  let courseId = 'character-community-service';
   let courseTitleUrdu = 'کمیونٹی سروس اور برادری کی فلاح';
   let courseTitleEn = 'Community Service & Social Uplift';
-  let lessonId = 'cs-b-l1';
+  let lessonId = 'char-l1';
   let lessonTitleUrdu = '1. کمیونٹی کے مسئلے کو سمجھنا اور خدمتِ خلق کا جذبہ';
   let lessonTitleEn = '1. Understanding Community Needs & Spirit of Service';
   let keyConceptUrdu = 'اس سبق کا بنیادی نکتہ روزمرہ زندگی اور برادری میں مثبت کردار ادا کرنا ہے۔';

@@ -532,10 +532,10 @@ export const KnowledgeLibraryView: React.FC<KnowledgeLibraryViewProps> = ({
 
       {/* 4. Complete 6-Step Intelligence Modal */}
       {selectedItemForModal && (
-        <div className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 animate-fade-in overflow-y-auto">
+        <div className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-xs flex items-end sm:items-center justify-center p-3 sm:p-4 animate-fade-in overflow-y-auto">
           <div
             id="knowledge-detail-modal"
-            className="bg-white dark:bg-slate-900 w-full max-w-2xl rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl p-5 sm:p-7 space-y-5 my-auto max-h-[90vh] overflow-y-auto"
+            className="bg-white dark:bg-slate-900 w-full max-w-2xl rounded-t-3xl sm:rounded-3xl animate-in slide-in-from-bottom-8 sm:slide-in-from-bottom-0 sm:zoom-in-95 duration-300 border border-slate-200 dark:border-slate-800 shadow-2xl p-5 sm:p-7 space-y-5 my-auto max-h-[90vh] overflow-y-auto"
           >
             {/* Modal Header */}
             <div className="flex items-start justify-between gap-3 pb-2 border-b border-slate-100 dark:border-slate-800">

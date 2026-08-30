@@ -133,9 +133,9 @@ export const SkillOpportunityPathModal: React.FC<SkillOpportunityPathModalProps>
   const isCurrentProjectDone = !!completedProjects[currentPathway.id];
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/70 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4 animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/70 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 pt-10 sm:p-4 animate-in fade-in duration-200">
       <div 
-        className="bg-white w-full max-w-4xl rounded-3xl shadow-2xl border border-slate-200 flex flex-col max-h-[92vh] overflow-hidden"
+        className="bg-white w-full max-w-4xl rounded-t-3xl sm:rounded-3xl animate-in slide-in-from-bottom-8 sm:slide-in-from-bottom-0 sm:zoom-in-95 duration-300 shadow-2xl border border-slate-200 flex flex-col max-h-[92vh] overflow-hidden"
         dir={isUrdu ? 'rtl' : 'ltr'}
       >
         {/* Top Header Bar */}

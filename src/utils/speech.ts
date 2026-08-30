@@ -1,7 +1,7 @@
 /**
  * Seekho Universal Speech & Voice Input System (Web Speech API)
  * Provides reliable Text-to-Speech (TTS) and Speech-to-Text (Mic Input)
- * with robust Urdu ('ur-PK' / 'ur-IN') and English ('en-US') language support.
+ * with robust Pakistani Urdu male voice ('ur-PK') and English male voice ('en-US') support.
  */
 
 import { Language } from '../types';
@@ -13,6 +13,16 @@ const listeners = new Set<SpeechStateListener>();
 let currentSpeakingId: string | null = null;
 let isCurrentlySpeaking = false;
 let isCurrentlyPaused = false;
+
+// Preload voices on load
+if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+  window.speechSynthesis.getVoices();
+  if (window.speechSynthesis.onvoiceschanged !== undefined) {
+    window.speechSynthesis.onvoiceschanged = () => {
+      window.speechSynthesis.getVoices();
+    };
+  }
+}
 
 function notifyListeners() {
   listeners.forEach(fn => fn({
@@ -64,7 +74,7 @@ export function cleanTextForSpeech(rawText: string, langMode: Language = 'ur'): 
   }
 
   return text
-    .replace(/[#*`_~>\-•✓⭐💡🎯📖🛠️💼🏪💰🗣️🌱🏡🤝⏳🔮⚡]/g, ' ')
+    .replace(/[#*`_~>\-•✓⭐💡🎯📖🛠️💼🏪💰🗣️🌱🏡🤝⏳🔮⚡👨‍🏫]/g, ' ')
     .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1') // remove markdown links
     .replace(/\s{2,}/g, ' ')
     .trim();
@@ -78,29 +88,62 @@ export function hasUrduCharacters(text: string): boolean {
 }
 
 /**
- * Find best matching voice for the target language
+ * Find best matching MALE voice for the target language (Prioritizing Pakistani/South Asian Male)
  */
 export function getBestVoice(targetLang: 'ur' | 'en' | 'ar'): SpeechSynthesisVoice | null {
   if (!isTTSSupported()) return null;
   const voices = window.speechSynthesis.getVoices();
   if (!voices || voices.length === 0) return null;
 
-  if (targetLang === 'ur') {
-    // Look for ur-PK, ur-IN, or ur
-    const urduVoice = voices.find(v => v.lang.startsWith('ur') || v.lang.includes('PK') || v.lang.includes('Urdu'));
+  if (targetLang === 'ur' || targetLang === 'ar') {
+    // 1. Explicit Pakistani or Urdu Male Voice
+    const urduMaleVoice = voices.find(v => 
+      (v.lang.startsWith('ur') || v.lang.includes('PK') || v.lang.includes('IN') || v.lang.startsWith('hi')) &&
+      (v.name.toLowerCase().includes('male') || v.name.toLowerCase().includes('man') || v.name.toLowerCase().includes('rizwan') || v.name.toLowerCase().includes('naeem') || v.name.toLowerCase().includes('faizan') || v.name.toLowerCase().includes('salman') || v.name.toLowerCase().includes('hemant') || v.name.toLowerCase().includes('rahul')) &&
+      !v.name.toLowerCase().includes('female') && !v.name.toLowerCase().includes('woman')
+    );
+    if (urduMaleVoice) return urduMaleVoice;
+
+    // 2. Any Urdu or Pakistan-tagged voice not explicitly female
+    const urduVoice = voices.find(v => 
+      (v.lang.startsWith('ur') || v.lang.includes('PK') || v.lang.includes('Urdu')) &&
+      !v.name.toLowerCase().includes('female') && !v.name.toLowerCase().includes('woman')
+    );
     if (urduVoice) return urduVoice;
 
-    // Fallback to Hindi or Arabic which share similar phonetics in many engines
-    const fallbackUrdu = voices.find(v => v.lang.startsWith('hi') || v.lang.startsWith('ar'));
+    // 3. South Asian Male Voice (Hindi / Urdu / Arabic)
+    const southAsianMale = voices.find(v => 
+      (v.lang.startsWith('hi') || v.lang.startsWith('ar') || v.lang.includes('India') || v.lang.includes('Pakistan') || v.lang.includes('South Asia')) &&
+      (v.name.toLowerCase().includes('male') || v.name.toLowerCase().includes('man') || !v.name.toLowerCase().includes('female') && !v.name.toLowerCase().includes('woman'))
+    );
+    if (southAsianMale) return southAsianMale;
+
+    // 4. Any Hindi or Arabic voice fallback
+    const fallbackUrdu = voices.find(v => (v.lang.startsWith('hi') || v.lang.startsWith('ar')) && !v.name.toLowerCase().includes('female'));
     if (fallbackUrdu) return fallbackUrdu;
+
+    const anyFallback = voices.find(v => v.lang.startsWith('hi') || v.lang.startsWith('ar') || v.lang.startsWith('ur'));
+    if (anyFallback) return anyFallback;
   }
 
   if (targetLang === 'en') {
-    const enVoice = voices.find(v => v.lang === 'en-US' || v.lang === 'en-GB' || v.lang.startsWith('en'));
+    // 1. English Male Voice
+    const enMale = voices.find(v => 
+      v.lang.startsWith('en') && 
+      (v.name.toLowerCase().includes('male') || v.name.toLowerCase().includes('man') || v.name.toLowerCase().includes('david') || v.name.toLowerCase().includes('daniel') || v.name.toLowerCase().includes('ryan') || v.name.toLowerCase().includes('oliver') || v.name.toLowerCase().includes('george')) &&
+      !v.name.toLowerCase().includes('female')
+    );
+    if (enMale) return enMale;
+
+    // 2. Any non-female English voice
+    const enVoice = voices.find(v => v.lang.startsWith('en') && !v.name.toLowerCase().includes('female') && !v.name.toLowerCase().includes('woman'));
     if (enVoice) return enVoice;
+
+    const anyEn = voices.find(v => v.lang.startsWith('en'));
+    if (anyEn) return anyEn;
   }
 
-  return null;
+  return voices[0] || null;
 }
 
 export interface SpeakOptions {
@@ -125,8 +168,8 @@ export function speakText(rawText: string, options: SpeakOptions = {}): boolean 
   const {
     id = `tts-${Date.now()}`,
     language = 'ur',
-    rate = 0.92,
-    pitch = 1.0,
+    rate = 0.88,
+    pitch = 0.88,
     onStart,
     onEnd,
     onError,

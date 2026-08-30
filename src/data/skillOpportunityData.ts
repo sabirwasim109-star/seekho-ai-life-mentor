@@ -96,12 +96,12 @@ export const SKILL_OPPORTUNITY_PATHWAYS_DATA: SkillOpportunityPathway[] = [
     nextSkillRecommendationUrdu: {
       skillName: 'گرافک ڈیزائن اور کینوا (Canva Design)',
       whyLearn: 'AI سے بنائی گئی تحریر کو جب آپ کینوا میں خوبصورت پوسٹر میں بدلیں گے تو آپ کی سروس کی مانگ دگنی ہو جائے گی۔',
-      courseId: 'course-canva-1',
+      courseId: 'graphic-design-canva',
     },
     nextSkillRecommendationEn: {
       skillName: 'Graphic Design & Canva Basics',
       whyLearn: 'Pairing AI text with visual poster design doubles your service value and market demand.',
-      courseId: 'course-canva-1',
+      courseId: 'graphic-design-canva',
     },
     bestNextActionUrdu: 'آج ۲۰ منٹ لگا کر ۳ کسٹمر سروس پیغامات کا ڈرافٹ AI سے بنوائیں اور خود پڑھ کر بہتر کریں۔',
     bestNextActionEn: 'Spend 20 mins drafting 3 customer service templates with AI and polish them manually.',
@@ -204,12 +204,12 @@ export const SKILL_OPPORTUNITY_PATHWAYS_DATA: SkillOpportunityPathway[] = [
     nextSkillRecommendationUrdu: {
       skillName: 'ویڈیو ایڈیٹنگ اور ریلز (CapCut / VN)',
       whyLearn: 'سوشل میڈیا پر اسٹیٹک تصویر سے زیادہ ویڈیو دیکھی جاتی ہے۔ ویڈیو ایڈیٹنگ آپ کے معاوضے کو مزید بڑھا دے گی۔',
-      courseId: 'course-video-1',
+      courseId: 'graphic-design-canva',
     },
     nextSkillRecommendationEn: {
       skillName: 'Mobile Video Editing (CapCut/VN)',
       whyLearn: 'Video content commands higher engagement and higher client pricing than static graphics.',
-      courseId: 'course-video-1',
+      courseId: 'graphic-design-canva',
     },
     bestNextActionUrdu: 'آج کینوا پر ایک نیا پوسٹر بنا کر اپنے پورٹ فولیو میں محفوظ کریں۔',
     bestNextActionEn: 'Create one new poster design in Canva today and save it to your portfolio.',
@@ -310,12 +310,12 @@ export const SKILL_OPPORTUNITY_PATHWAYS_DATA: SkillOpportunityPathway[] = [
     nextSkillRecommendationUrdu: {
       skillName: 'ڈیجیٹل مارکیٹنگ اور سوشل میڈیا مہمات',
       whyLearn: 'ویڈیو بنانے کے بعد اسے صحیح گاہکوں تک پہنچانے کا ہنر جاننے سے آپ کلائنٹ کے لیے ناگزیر بن جاتے ہیں۔',
-      courseId: 'course-marketing-1',
+      courseId: 'business-entrepreneurship-basics',
     },
     nextSkillRecommendationEn: {
       skillName: 'Digital Marketing & Social Ads',
       whyLearn: 'Knowing how to distribute your videos ensures maximum client satisfaction and repeat projects.',
-      courseId: 'course-marketing-1',
+      courseId: 'business-entrepreneurship-basics',
     },
     bestNextActionUrdu: 'آج ایک ویڈیو کلپ پر کٹ لگا کر کیپشنز کی درست ٹائمنگ سیٹ کریں۔',
     bestNextActionEn: 'Practice timing text captions on a short video clip today.',
@@ -416,12 +416,12 @@ export const SKILL_OPPORTUNITY_PATHWAYS_DATA: SkillOpportunityPathway[] = [
     nextSkillRecommendationUrdu: {
       skillName: 'سیلز اور کسٹمر ہینڈلنگ (Sales & Negotiation)',
       whyLearn: 'اچھی بات چیت کے ساتھ گاہک کی نفسیات سمجھنا آپ کو سیدھا کاروباری کامیابی کی طرف لے جاتا ہے۔',
-      courseId: 'course-sales-1',
+      courseId: 'business-entrepreneurship-basics',
     },
     nextSkillRecommendationEn: {
       skillName: 'Sales & Customer Negotiation',
       whyLearn: 'Combining solid communication with sales psychology makes you an indispensable revenue driver.',
-      courseId: 'course-sales-1',
+      courseId: 'business-entrepreneurship-basics',
     },
     bestNextActionUrdu: 'آج کسی ساتھی یا آئینے کے سامنے ۱ منٹ کا تعارف پرسکون لہجے میں دہرائیں۔',
     bestNextActionEn: 'Practice delivering your 1-minute intro clearly and calmly today.',
@@ -522,12 +522,12 @@ export const SKILL_OPPORTUNITY_PATHWAYS_DATA: SkillOpportunityPathway[] = [
     nextSkillRecommendationUrdu: {
       skillName: 'مارکیٹنگ اور سوشل میڈیا کسٹمر فائنڈنگ',
       whyLearn: 'سیلز کرنے کے لیے گاہکوں کا آنا ضروری ہے۔ مارکیٹنگ سیکھنے سے گاہکوں کا بہاؤ مسلسل رہتا ہے۔',
-      courseId: 'course-marketing-1',
+      courseId: 'business-entrepreneurship-basics',
     },
     nextSkillRecommendationEn: {
       skillName: 'Digital & Local Marketing',
       whyLearn: 'Marketing generates the steady flow of leads that your sales skills can convert.',
-      courseId: 'course-marketing-1',
+      courseId: 'business-entrepreneurship-basics',
     },
     bestNextActionUrdu: 'آج کسی پروڈکٹ کا ایک شائستہ ۳۰ سیکنڈ کا تعارفی میسج کاغذ پر تیار کریں۔',
     bestNextActionEn: 'Draft a courteous 30-second product introduction message today.',
@@ -628,12 +628,12 @@ export const SKILL_OPPORTUNITY_PATHWAYS_DATA: SkillOpportunityPathway[] = [
     nextSkillRecommendationUrdu: {
       skillName: 'کمپیوٹر ڈیٹا انٹری اور بک کیپنگ',
       whyLearn: 'جب مارکیٹنگ سے کسٹمرز آئیں گے تو ان کا کھاتہ اور ریکارڈ سنبھالنا ضروری ہو جائے گا۔',
-      courseId: 'course-computer-1',
+      courseId: 'computer-digital-world-basics',
     },
     nextSkillRecommendationEn: {
       skillName: 'Computer Data Entry & Bookkeeping',
       whyLearn: 'Managing customer records and digital ledgers is essential as marketing scales demand.',
-      courseId: 'course-computer-1',
+      courseId: 'computer-digital-world-basics',
     },
     bestNextActionUrdu: 'آج کسی ایک لوکل شاپ کو گوگل میپس پر سرچ کریں اور دیکھیں کہ کیا ان کی معلومات درست ہیں۔',
     bestNextActionEn: 'Search for a local shop on Google Maps today to see if their profile is accurate.',
@@ -734,12 +734,12 @@ export const SKILL_OPPORTUNITY_PATHWAYS_DATA: SkillOpportunityPathway[] = [
     nextSkillRecommendationUrdu: {
       skillName: 'فری لانسنگ اور آن لائن پلیٹ فارمز (Freelancing)',
       whyLearn: 'کمپیوٹر ڈیٹا انٹری اور ایکسل کی صلاحیت کو اپ ورک اور فائور پر دنیا بھر کے کلائنٹس کو فروخت کریں۔',
-      courseId: 'course-freelancing-1',
+      courseId: 'freelancing-digital-work-basics',
     },
     nextSkillRecommendationEn: {
       skillName: 'Freelancing Platforms & Client Bidding',
       whyLearn: 'Sell your spreadsheet and data management skills to global clients on Fiverr and Upwork.',
-      courseId: 'course-freelancing-1',
+      courseId: 'freelancing-digital-work-basics',
     },
     bestNextActionUrdu: 'آج گوگل شیٹ پر ۱۰ اشیاء کا ایک فرضی بل بنا کر فارمولا ٹیسٹ کریں۔',
     bestNextActionEn: 'Create a sample 10-item bill in Google Sheets to test calculation formulas.',
@@ -838,12 +838,12 @@ export const SKILL_OPPORTUNITY_PATHWAYS_DATA: SkillOpportunityPathway[] = [
     nextSkillRecommendationUrdu: {
       skillName: 'مؤثر انگریزی گفتگو اور کسٹمر ڈیلنگ',
       whyLearn: 'انگریزی میں روانی عالمی کلائنٹس کے ساتھ ڈیلنگ کو آسان اور معاوضے کو کئی گنا بڑھا دیتی ہے۔',
-      courseId: 'course-comm-english-basics',
+      courseId: 'english-speaking-basics',
     },
     nextSkillRecommendationEn: {
       skillName: 'English Communication for Freelancers',
       whyLearn: 'Fluency in English client handling unlocks tier-1 markets with significantly higher project budgets.',
-      courseId: 'course-comm-english-basics',
+      courseId: 'english-speaking-basics',
     },
     bestNextActionUrdu: 'آج ایک فرضی جاب پوسٹ کے لیے ۳ لائنوں کا پر اثر تعارفی جملہ تیار کریں۔',
     bestNextActionEn: 'Draft a crisp 3-sentence proposal hook for a sample freelance job today.',
@@ -944,12 +944,12 @@ export const SKILL_OPPORTUNITY_PATHWAYS_DATA: SkillOpportunityPathway[] = [
     nextSkillRecommendationUrdu: {
       skillName: 'چھوٹا کاروبار اور مقامی دکان کا انتظام',
       whyLearn: 'زرعی پیداوار کو صحیح قیمت پر مارکیٹ کرنے کے لیے کاروباری حساب کتاب اور سیلز کی سمجھ ضروری ہے۔',
-      courseId: 'course-business-1',
+      courseId: 'business-entrepreneurship-basics',
     },
     nextSkillRecommendationEn: {
       skillName: 'Micro-Enterprise & Local Commerce',
       whyLearn: 'Commercializing agricultural yield requires sound bookkeeping, pricing, and retail coordination.',
-      courseId: 'course-business-1',
+      courseId: 'business-entrepreneurship-basics',
     },
     bestNextActionUrdu: 'آج کچن سے سبزیوں کے چھلکے اور سوکھے پتے جمع کر کے کھاد کے گڑھے میں ڈالیں۔',
     bestNextActionEn: 'Collect kitchen vegetable scraps and dry leaves into a compost box today.',
@@ -1048,12 +1048,12 @@ export const SKILL_OPPORTUNITY_PATHWAYS_DATA: SkillOpportunityPathway[] = [
     nextSkillRecommendationUrdu: {
       skillName: 'ڈیجیٹل مارکیٹنگ اور واٹس ایپ سیلز',
       whyLearn: 'دکان کے سامان کو سوشل میڈیا اور واٹس ایپ کے ذریعے پورے قصبے میں بیچیں۔',
-      courseId: 'course-marketing-1',
+      courseId: 'business-entrepreneurship-basics',
     },
     nextSkillRecommendationEn: {
       skillName: 'Digital Marketing & WhatsApp Commerce',
       whyLearn: 'Expand your retail footprint across neighboring villages using WhatsApp channels.',
-      courseId: 'course-marketing-1',
+      courseId: 'business-entrepreneurship-basics',
     },
     bestNextActionUrdu: 'آج کسی مقامی شاپ کی ۵ اہم اشیاء کے خرید اور فروخت ریٹس کا فرق نوٹ کریں۔',
     bestNextActionEn: 'Note down wholesale vs retail margins for 5 common items in your market today.',
@@ -1154,12 +1154,12 @@ export const SKILL_OPPORTUNITY_PATHWAYS_DATA: SkillOpportunityPathway[] = [
     nextSkillRecommendationUrdu: {
       skillName: 'مؤثر ابلاغ اور عوامی خطاب (Public Speaking)',
       whyLearn: 'لوگوں کو اچھے کام پر متفق کرنے اور ان کا تعاون حاصل کرنے کے لیے شائستہ اور پر اثر گفتگو ضروری ہے۔',
-      courseId: 'course-comm-1',
+      courseId: 'communication-skills-basics',
     },
     nextSkillRecommendationEn: {
       skillName: 'Public Speaking & Group Facilitation',
       whyLearn: 'Persuasive, respectful communication is key to rallying community volunteers around a shared goal.',
-      courseId: 'course-comm-1',
+      courseId: 'communication-skills-basics',
     },
     bestNextActionUrdu: 'آج محلے میں کوئی گرا ہوا کوڑا صاف کر کے یا ایک پودے کو پانی دے کر شروعات کریں۔',
     bestNextActionEn: 'Take one immediate civic action today: clear litter from a walkway or water a neighborhood tree.',

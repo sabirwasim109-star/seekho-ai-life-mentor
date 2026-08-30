@@ -123,7 +123,7 @@ export const DISCOVER_ITEMS_DATA: DiscoverItem[] = [
     actionLabelUrdu: 'کینوا کورس شروع کریں',
     actionLabelEn: 'Start Canva Course',
     actionPayload: {
-      courseId: 'canva-design'
+      courseId: 'graphic-design-canva'
     },
     actionStepsUrdu: [
       'گوگل پلے اسٹور سے Canva ایپ انسٹال کریں۔',
@@ -170,7 +170,7 @@ export const DISCOVER_ITEMS_DATA: DiscoverItem[] = [
     actionLabelUrdu: 'موبائل اسکلز سیکھیں',
     actionLabelEn: 'Learn Mobile Skills',
     actionPayload: {
-      courseId: 'mobile-literacy'
+      courseId: 'computer-digital-world-basics'
     }
   },
   {
@@ -199,7 +199,7 @@ export const DISCOVER_ITEMS_DATA: DiscoverItem[] = [
     actionLabelUrdu: 'AI فاؤنڈیشنز کورس دیکھیں',
     actionLabelEn: 'Explore AI Course',
     actionPayload: {
-      courseId: 'ai-foundations'
+      courseId: 'ai-modern-tech-beginner'
     }
   },
 
@@ -295,7 +295,7 @@ export const DISCOVER_ITEMS_DATA: DiscoverItem[] = [
     actionLabelUrdu: 'کاروباری بنیادی اصول دیکھیں',
     actionLabelEn: 'View Business Fundamentals',
     actionPayload: {
-      courseId: 'small-business'
+      courseId: 'business-entrepreneurship-basics'
     }
   },
   {
@@ -357,7 +357,7 @@ export const DISCOVER_ITEMS_DATA: DiscoverItem[] = [
     actionLabelUrdu: 'فری لانسنگ کورس دیکھیں',
     actionLabelEn: 'View Freelancing Basics',
     actionPayload: {
-      courseId: 'freelancing-basics'
+      courseId: 'freelancing-digital-work-basics'
     }
   },
   {
@@ -607,7 +607,7 @@ export const DISCOVER_ITEMS_DATA: DiscoverItem[] = [
     actionLabelUrdu: 'اسلامی کاروباری اخلاق دیکھیں',
     actionLabelEn: 'View Islamic Ethics Course',
     actionPayload: {
-      courseId: 'islamic-work-ethics'
+      courseId: 'character-community-service'
     }
   },
   {
@@ -671,7 +671,7 @@ export const DISCOVER_ITEMS_DATA: DiscoverItem[] = [
     actionLabelUrdu: 'بجٹنگ کورس دیکھیں',
     actionLabelEn: 'View Budgeting Course',
     actionPayload: {
-      courseId: 'practical-math-budgeting'
+      courseId: 'financial-literacy-budgeting-basics'
     }
   },
   {
@@ -700,7 +700,7 @@ export const DISCOVER_ITEMS_DATA: DiscoverItem[] = [
     actionLabelUrdu: 'موبائل سیفٹی سیکھیں',
     actionLabelEn: 'Learn Mobile Safety',
     actionPayload: {
-      courseId: 'mobile-literacy'
+      courseId: 'smartphone-safety-elders'
     }
   }
 ];

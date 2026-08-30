@@ -256,8 +256,8 @@ export const VisionModal: React.FC<VisionModalProps> = ({ language, onClose, ini
   const steps = isUrdu ? stepsUrdu : stepsEn;
 
   return (
-    <div className="fixed inset-0 z-50 bg-slate-900/85 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
-      <div className="bg-white w-full max-w-4xl rounded-3xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[92vh]">
+    <div className="fixed inset-0 z-50 bg-slate-900/85 backdrop-blur-sm flex items-end sm:items-center justify-center p-3 sm:p-4 overflow-y-auto">
+      <div className="bg-white w-full max-w-4xl rounded-t-3xl sm:rounded-3xl animate-in slide-in-from-bottom-8 sm:slide-in-from-bottom-0 sm:zoom-in-95 duration-300 shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[92vh]">
         {/* Header */}
         <div className="p-5 sm:p-6 bg-gradient-to-r from-slate-950 via-slate-900 to-[#0B132B] text-white flex items-start justify-between gap-4 border-b border-cyan-500/20">
           <div className="flex items-center gap-3.5">

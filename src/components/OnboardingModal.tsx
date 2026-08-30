@@ -355,10 +355,10 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
   const BackArrowIcon = isEnOnly ? ArrowLeft : ArrowRight;
 
   return (
-    <div id="onboarding-modal-overlay" className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-2 sm:p-4 overflow-y-auto animate-fade-in">
+    <div id="onboarding-modal-overlay" className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-end sm:items-center justify-center p-0 pt-10 sm:p-4 overflow-y-auto animate-fade-in">
       <div 
         id="onboarding-modal-container"
-        className="bg-white w-full max-w-3xl rounded-3xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[94vh] my-auto"
+        className="bg-white w-full max-w-3xl rounded-t-3xl sm:rounded-3xl animate-in slide-in-from-bottom-8 sm:slide-in-from-bottom-0 sm:zoom-in-95 duration-300 shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[94vh] my-auto"
       >
         {/* Top Header */}
         <header className="px-5 sm:px-8 py-4 bg-gradient-to-r from-emerald-900 via-teal-900 to-slate-900 text-white flex items-center justify-between gap-3 shrink-0">

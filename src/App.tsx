@@ -27,8 +27,9 @@ import { PersonalRoadmapView } from './components/PersonalRoadmapView';
 import { WelcomeScreen } from './components/WelcomeScreen';
 import { RecommendedSkill, DynamicSearchLesson } from './types';
 import { SmartSearchLessonModal } from './components/SmartSearchLessonModal';
+import { SettingsModal } from './components/SettingsModal';
 import { generateDynamicSearchLesson } from './utils/searchLessonGeneratorEngine';
-import { Sparkles, Bot, Loader2 } from 'lucide-react';
+import { Sparkles, Bot, Loader2, User as UserIcon, Compass, BookOpen, Wrench } from 'lucide-react';
 
 export const App: React.FC = () => {
   // Auth & Cloud Profile State
@@ -45,6 +46,8 @@ export const App: React.FC = () => {
     return 'dual';
   });
   const [fontSize, setFontSize] = useState<FontSize>('normal');
+  const [textScale, setTextScale] = useState<number>(1.0);
+  const [showSettingsModal, setShowSettingsModal] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<NavTab>('home');
   const [userProfile, setUserProfile] = useState<UserProfile>(authProfile);
 
@@ -903,7 +906,7 @@ export const App: React.FC = () => {
   };
 
   return (
-    <div className={`min-h-screen bg-slate-50 text-slate-900 flex flex-col font-sans transition-all selection:bg-emerald-200 selection:text-emerald-950 font-size-${fontSize}`}>
+    <div style={{ fontSize: `${textScale}rem` }} className={`min-h-screen bg-slate-50 text-slate-900 flex flex-col font-sans transition-all selection:bg-emerald-200 selection:text-emerald-950 font-size-${fontSize}`}>
       {/* Toast Notification */}
       {toastMessage && (
         <div className="fixed top-18 left-1/2 -translate-x-1/2 z-50 bg-emerald-900 text-white px-5 py-2.5 rounded-2xl shadow-xl border border-emerald-500/40 text-xs sm:text-sm font-bold animate-fade-in flex items-center gap-2">
@@ -917,16 +920,59 @@ export const App: React.FC = () => {
         onToggleLanguage={handleToggleLanguage}
         onChangeLanguage={handleSetLanguage}
         userProfile={userProfile}
+        textScale={textScale}
+        onSetTextScale={setTextScale}
         onOpenAssessment={handleOpenAssessment}
         onOpenVision={handleOpenVisionModal}
         onOpenOpportunities={() => handleNavigateToTab('opportunities')}
         onOpenProfileTab={() => handleNavigateToTab('profile')}
         onOpenLibrary={() => handleNavigateToTab('library')}
+        onOpenSettings={() => setShowSettingsModal(true)}
       />
 
       {/* Main Body Content View Router */}
-      <main className="flex-1 max-w-7xl w-full mx-auto p-2 sm:p-4">
-        {activeTab === 'home' && (
+      <div className="flex flex-1 w-full max-w-[1440px] mx-auto relative">
+        {/* Left/Right Sidebar for Desktop (md and above) */}
+        <aside className="hidden md:flex flex-col w-24 lg:w-64 shrink-0 border-r rtl:border-r-0 rtl:border-l border-slate-200/80 bg-white/50 backdrop-blur-md sticky top-[76px] h-[calc(100vh-76px)] overflow-y-auto z-10 py-6 px-3">
+          <nav className="flex flex-col gap-2 w-full">
+            {[
+              { id: 'home', labelUrdu: 'آج', labelEn: 'Today', icon: Sparkles },
+              { id: 'journey', labelUrdu: 'میرا سفر', labelEn: 'Journey', icon: Compass },
+              { id: 'mylearning', labelUrdu: 'میری تعلیم', labelEn: 'Learning', icon: BookOpen },
+              { id: 'skills', labelUrdu: 'ہنر', labelEn: 'Skills', icon: Wrench },
+              { id: 'profile', labelUrdu: 'پروفائل', labelEn: 'Profile', icon: UserIcon },
+            ].map((item) => {
+              const Icon = item.icon;
+              const isActive = activeTab === item.id || (item.id === 'journey' && (activeTab as any) === 'roadmap');
+              return (
+                <button
+                  key={item.id}
+                  onClick={() => handleNavigateToTab(item.id as NavTab)}
+                  className={`flex flex-col lg:flex-row items-center lg:items-start gap-2 lg:gap-3 p-3 rounded-2xl transition-all text-center lg:text-left rtl:lg:text-right ${
+                    isActive 
+                      ? 'bg-emerald-100 text-emerald-900 font-bold shadow-xs' 
+                      : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                  }`}
+                >
+                  <Icon className={`w-6 h-6 shrink-0 ${isActive ? 'text-emerald-700' : 'text-slate-500'}`} />
+                  {language === 'dual' ? (
+                    <div className="flex flex-col leading-tight">
+                      <span className="text-sm font-bold font-arabic">{item.labelUrdu}</span>
+                      <span className="text-[10px] font-medium opacity-80">{item.labelEn}</span>
+                    </div>
+                  ) : (
+                    <span className={`text-sm lg:text-base leading-tight mt-1 lg:mt-0.5 ${language === 'ur' ? 'font-arabic font-bold' : 'font-sans font-semibold'}`}>
+                      {language === 'ur' ? item.labelUrdu : item.labelEn}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </nav>
+        </aside>
+
+        <main className="flex-1 w-full p-2 sm:p-4 pb-24 md:pb-6 overflow-x-hidden min-w-0">
+          {activeTab === 'home' && (
           <HomeScreen
             language={language}
             userProfile={userProfile}
@@ -1080,13 +1126,16 @@ export const App: React.FC = () => {
           />
         )}
       </main>
+      </div>
 
-      {/* 7-Tab Bottom Navigation (Sticky) */}
-      <BottomNavigation
-        activeTab={activeTab}
-        onSelectTab={handleNavigateToTab}
-        language={language}
-      />
+      {/* 7-Tab Bottom Navigation (Sticky) - Mobile Only */}
+      <div className="md:hidden">
+        <BottomNavigation
+          activeTab={activeTab}
+          onSelectTab={handleNavigateToTab}
+          language={language}
+        />
+      </div>
 
       {/* Comprehensive Personal Learning Engine & Onboarding Modal */}
       {showOnboarding && (
@@ -1250,6 +1299,18 @@ export const App: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* Settings Modal */}
+      <SettingsModal
+        isOpen={showSettingsModal}
+        language={language}
+        onClose={() => setShowSettingsModal(false)}
+        onChangeLanguage={setLanguage}
+        textScale={textScale}
+        onSetTextScale={setTextScale}
+        onOpenVision={handleOpenVisionModal}
+        onOpenProfile={() => handleNavigateToTab('profile')}
+      />
 
       {/* First-Time Welcome / Splash Experience (Only shown for first-time users or on-demand) */}
       {showWelcomeScreen && (

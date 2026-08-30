@@ -197,9 +197,9 @@ export const IslamicGuidanceModal: React.FC<IslamicGuidanceModalProps> = ({
   const savedReflectionsCount = Object.keys(userProfile.islamicReflections || {}).length;
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4">
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/80 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 pt-10 sm:p-4">
       <div 
-        className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-4xl max-h-[94vh] flex flex-col shadow-2xl border-2 border-emerald-500/40 overflow-hidden animate-in fade-in zoom-in-95 duration-200"
+        className="bg-white dark:bg-slate-900 rounded-t-3xl sm:rounded-3xl animate-in slide-in-from-bottom-8 sm:slide-in-from-bottom-0 sm:zoom-in-95 duration-300 w-full max-w-4xl max-h-[94vh] flex flex-col shadow-2xl border-2 border-emerald-500/40 overflow-hidden animate-in fade-in zoom-in-95 duration-200"
         role="dialog"
         aria-modal="true"
       >

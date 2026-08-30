@@ -17,7 +17,7 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
   const isUrdu = language === 'ur';
 
   return (
-    <div className="fixed inset-0 z-50 bg-gradient-to-b from-slate-900 via-slate-900 to-emerald-950 flex flex-col items-center justify-between p-4 sm:p-6 overflow-y-auto text-white">
+    <div className="fixed inset-0 z-50 bg-gradient-to-b from-slate-900 via-slate-900 to-emerald-950 flex flex-col items-end sm:items-center justify-between p-4 sm:p-6 overflow-y-auto text-white">
       {/* Top Bar: Language Toggle */}
       <header className="w-full max-w-md flex items-center justify-between pt-2">
         <div className="flex items-center gap-2">
@@ -41,7 +41,7 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
       <main className="w-full max-w-md my-auto py-6 sm:py-8 flex flex-col items-center text-center space-y-6">
         {/* App Icon Container */}
         <div className="relative group">
-          <div className="absolute -inset-2 bg-gradient-to-r from-emerald-500 to-teal-400 rounded-3xl blur-md opacity-40 group-hover:opacity-60 transition duration-500" />
+          <div className="absolute -inset-2 bg-gradient-to-r from-emerald-500 to-teal-400 rounded-t-3xl sm:rounded-3xl animate-in slide-in-from-bottom-8 sm:slide-in-from-bottom-0 sm:zoom-in-95 duration-300 blur-md opacity-40 group-hover:opacity-60 transition duration-500" />
           <div className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-3xl bg-slate-900/90 p-1.5 ring-1 ring-white/20 shadow-2xl flex items-center justify-center">
             <SeekhoLogo className="w-full h-full rounded-2xl" showRings />
           </div>

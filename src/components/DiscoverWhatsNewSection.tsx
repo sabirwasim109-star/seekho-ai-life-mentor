@@ -437,9 +437,9 @@ export const DiscoverWhatsNewSection: React.FC<DiscoverWhatsNewSectionProps> = (
       {/* DETAIL MODAL (When clicking detail info or specific topic) */}
       {/* ------------------------------------------------------------- */}
       {activeDetailItem && (
-        <div className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
+        <div className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-xs flex items-end sm:items-center justify-center p-4 overflow-y-auto">
           <div 
-            className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white rounded-3xl p-5 sm:p-7 max-w-xl w-full border border-slate-200 dark:border-slate-800 shadow-2xl space-y-4 my-auto relative animate-fade-in"
+            className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white rounded-t-3xl sm:rounded-3xl animate-in slide-in-from-bottom-8 sm:slide-in-from-bottom-0 sm:zoom-in-95 duration-300 p-5 sm:p-7 max-w-xl w-full border border-slate-200 dark:border-slate-800 shadow-2xl space-y-4 my-auto relative animate-fade-in"
             dir={language === 'ur' ? 'rtl' : 'ltr'}
           >
             {/* Close Button */}

@@ -258,13 +258,13 @@ export const MindTrainingLessonModal: React.FC<MindTrainingLessonModalProps> = (
 
   return (
     <div 
-      className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-5"
+      className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/85 backdrop-blur-md flex items-end sm:items-center justify-center p-3 sm:p-5"
       dir={isUrdu ? 'rtl' : 'ltr'}
       id="mind-training-lesson-modal"
     >
       {/* Toast Notification */}
       {toastMessage && (
-        <div className="fixed top-6 left-1/2 -translate-x-1/2 z-60 bg-emerald-900 border-2 border-amber-400 text-white font-arabic px-6 py-3 rounded-2xl shadow-2xl flex items-center gap-3 animate-bounce text-base sm:text-lg font-bold">
+        <div className="fixed top-6 left-1/2 -translate-x-1/2 z-60 bg-emerald-900 border-2 border-amber-400 text-white font-arabic px-6 py-3 rounded-t-3xl sm:rounded-3xl animate-in slide-in-from-bottom-8 sm:slide-in-from-bottom-0 sm:zoom-in-95 duration-300 shadow-2xl flex items-center gap-3 animate-bounce text-base sm:text-lg font-bold">
           <Sparkles className="w-5 h-5 text-amber-400 shrink-0" />
           <span>{toastMessage}</span>
         </div>

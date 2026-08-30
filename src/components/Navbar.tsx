@@ -15,7 +15,8 @@ import {
   LogIn,
   User as UserIcon,
   Cloud,
-  Library
+  Library,
+  Settings
 } from 'lucide-react';
 import { Language, UserProfile } from '../types';
 import { UI_TRANSLATIONS } from '../data/mockData';
@@ -35,6 +36,7 @@ interface NavbarProps {
   onOpenOpportunities?: () => void;
   onOpenProfileTab?: () => void;
   onOpenLibrary?: () => void;
+  onOpenSettings?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -50,6 +52,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenOpportunities,
   onOpenProfileTab,
   onOpenLibrary,
+  onOpenSettings = () => {},
 }) => {
   const t = UI_TRANSLATIONS[language] || UI_TRANSLATIONS.dual;
   const { user, signInWithGoogle } = useAuth();
@@ -287,6 +290,19 @@ export const Navbar: React.FC<NavbarProps> = ({
             >
               <LogIn className="w-3.5 h-3.5" />
               <span className="hidden sm:inline">{language === 'ur' ? 'سائن ان' : 'Sign In'}</span>
+            </button>
+          )}
+
+          {/* Settings Modal Button */}
+          {onOpenSettings && (
+            <button
+              id="nav-settings-btn"
+              onClick={onOpenSettings}
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold border border-slate-200 transition font-arabic shadow-2xs"
+              title={language === 'ur' ? 'ایپ سیٹنگز' : 'Settings'}
+            >
+              <Settings className="w-4 h-4 text-slate-700" />
+              <span className="hidden md:inline">{language === 'ur' ? 'سیٹنگز' : 'Settings'}</span>
             </button>
           )}
 
