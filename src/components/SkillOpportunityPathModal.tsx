@@ -42,6 +42,8 @@ interface SkillOpportunityPathModalProps {
   onOpenAITeacherWithPrompt?: (prompt?: string) => void;
   onAddToDailyMission?: (taskTitle: string, minutes: number) => void;
   onSelectCourse?: (courseId: string) => void;
+  onNavigateToCourse?: (courseId: string) => void;
+  onCompleteProject?: (pathwayId: string, projectId: string, points?: number) => void;
 }
 
 export const SkillOpportunityPathModal: React.FC<SkillOpportunityPathModalProps> = ({
@@ -54,6 +56,8 @@ export const SkillOpportunityPathModal: React.FC<SkillOpportunityPathModalProps>
   onOpenAITeacherWithPrompt,
   onAddToDailyMission,
   onSelectCourse,
+  onNavigateToCourse,
+  onCompleteProject,
 }) => {
   const isUrdu = language === 'ur';
   const ArrowIcon = isUrdu ? ArrowLeft : ArrowRight;

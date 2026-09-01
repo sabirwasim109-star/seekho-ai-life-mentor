@@ -315,7 +315,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           ) : (
             <button
               id="nav-signin-btn"
-              onClick={() => signInWithGoogle().catch(console.error)}
+              onClick={() => signInWithGoogle().catch((e) => console.warn('Sign-in cancelled or pending:', e))}
               title={language === 'ur' ? 'گوگل سے سائن ان کریں' : 'Sign in with Google'}
               className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition shadow-2xs font-arabic"
             >

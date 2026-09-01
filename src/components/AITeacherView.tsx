@@ -191,7 +191,7 @@ Whenever you ask **"What should I do now?"**, I will connect your skills, daily 
           language,
           currentCourse,
           currentLesson,
-          chatHistory: messages.slice(-4),
+          chatHistory: messages.slice(-6).map((m) => ({ role: m.role, text: m.text })),
         }),
       });
 
@@ -201,21 +201,25 @@ Whenever you ask **"What should I do now?"**, I will connect your skills, daily 
 
       const data = await res.json();
       
-      const responseResult = generateAITeacherResponse({
-        message: text,
-        userProfile,
-        language,
-        currentCourse,
-        currentLesson,
-        chatHistory: [...messages, userMsg],
-      });
+      const fallbackResult = !data.reply
+        ? generateAITeacherResponse({
+            message: text,
+            userProfile,
+            language,
+            currentCourse,
+            currentLesson,
+            chatHistory: [...messages, userMsg],
+          })
+        : null;
 
       const botMsg: ChatMessage = {
         id: `bot-${Date.now()}`,
         role: 'assistant',
-        text: data.reply || responseResult.reply,
+        text: data.reply || (fallbackResult ? fallbackResult.reply : ''),
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        suggestions: data.suggestions && data.suggestions.length > 0 ? data.suggestions : responseResult.suggestions,
+        suggestions: data.suggestions && data.suggestions.length > 0
+          ? data.suggestions
+          : (fallbackResult ? fallbackResult.suggestions : []),
       };
 
       setMessages((prev) => [...prev, botMsg]);

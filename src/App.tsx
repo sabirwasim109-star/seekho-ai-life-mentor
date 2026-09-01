@@ -51,14 +51,14 @@ export const App: React.FC = () => {
   const [textScale, setTextScale] = useState<number>(1.0);
   const [showSettingsModal, setShowSettingsModal] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<NavTab>('home');
-  const [userProfile, setUserProfile] = useState<UserProfile>(authProfile);
+  const [userProfile, setUserProfile] = useState<UserProfile>(authProfile || DEFAULT_USER_PROFILE);
 
   const handleSetLanguage = (newLang: Language) => {
     setLanguage(newLang);
     try {
       localStorage.setItem('seekho_language', newLang);
     } catch (e) {
-      console.error(e);
+      console.warn('Language save note:', e);
     }
   };
 
@@ -71,7 +71,7 @@ export const App: React.FC = () => {
       try {
         localStorage.setItem('seekho_language', next);
       } catch (e) {
-        console.error(e);
+        console.warn('Language save note:', e);
       }
       return next;
     });
@@ -109,7 +109,7 @@ export const App: React.FC = () => {
     try {
       localStorage.setItem('seekho_welcome_seen', 'true');
     } catch (e) {
-      console.error(e);
+      console.warn('Welcome dismiss note:', e);
     }
     setShowWelcomeScreen(false);
     try {
@@ -189,7 +189,7 @@ export const App: React.FC = () => {
         setActiveSearchLesson(generated);
         window.history.pushState({ tab: activeTab, modal: 'search_lesson' }, '');
       } catch (err) {
-        console.error('Error generating search lesson:', err);
+        console.warn('Search lesson note:', err);
       } finally {
         setIsGeneratingSearchLesson(false);
       }

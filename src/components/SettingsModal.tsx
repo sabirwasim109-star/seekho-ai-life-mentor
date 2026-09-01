@@ -280,7 +280,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                   </button>
                 ) : (
                   <button
-                    onClick={() => signInWithGoogle().catch(console.error)}
+                    onClick={() => signInWithGoogle().catch((e) => console.warn('Sign-in note:', e))}
                     className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center gap-1.5 transition shadow-sm"
                   >
                     <LogIn className="w-4 h-4" />

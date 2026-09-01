@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Search, 
   Sparkles, 
@@ -29,7 +29,7 @@ import { COURSES_DATA, COMMUNITY_POSTS_DATA, AGE_GROUP_RECOMMENDATIONS, UI_TRANS
 import { KNOWLEDGE_CATEGORIES_META } from '../data/knowledgeLibraryData';
 import { INITIAL_LEARNER_SKILLS, LearnerSkillItem } from '../data/portfolioData';
 import { SAMPLE_OPPORTUNITIES, SampleOpportunity } from '../data/opportunitiesData';
-import { speakText } from '../utils/speech';
+import { speakText, stopSpeaking, subscribeSpeechState } from '../utils/speech';
 import { VisionBanner } from './VisionBanner';
 import { MyActionPlanSection } from './MyActionPlanSection';
 import { IslamicGuidanceCard } from './IslamicGuidanceCard';
@@ -211,23 +211,28 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
 
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
 
+  useEffect(() => {
+    const unsubscribe = subscribeSpeechState((state) => {
+      setIsPlayingAudio(state.isSpeaking && state.currentId === 'home-active-lesson');
+    });
+    return () => unsubscribe();
+  }, []);
+
   const handleToggleAudio = () => {
-    if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
     if (isPlayingAudio) {
-      window.speechSynthesis.cancel();
+      stopSpeaking();
       setIsPlayingAudio(false);
     } else if (currentLesson) {
-      window.speechSynthesis.cancel();
       const textToSpeak = language === 'ur'
         ? `${currentLesson.titleUrdu}۔ ${currentLesson.keyTakeawaysUrdu?.[0] || activeCourse?.descriptionUrdu || ''}`
         : `${currentLesson.titleEn}. ${currentLesson.keyTakeawaysEn?.[0] || activeCourse?.descriptionEn || ''}`;
-      const utterance = new SpeechSynthesisUtterance(textToSpeak.replace(/[#*`_]/g, ''));
-      utterance.lang = language === 'ur' ? 'ur-PK' : 'en-US';
-      utterance.rate = 0.9;
-      utterance.onend = () => setIsPlayingAudio(false);
-      utterance.onerror = () => setIsPlayingAudio(false);
-      window.speechSynthesis.speak(utterance);
-      setIsPlayingAudio(true);
+      speakText(textToSpeak, {
+        id: 'home-active-lesson',
+        language,
+        onStart: () => setIsPlayingAudio(true),
+        onEnd: () => setIsPlayingAudio(false),
+        onError: () => setIsPlayingAudio(false),
+      });
     }
   };
 
@@ -355,22 +360,34 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   const ArrowIcon = language === 'ur' ? ArrowLeft : ArrowRight;
 
   const [isPlayingHeaderAudio, setIsPlayingHeaderAudio] = useState(false);
+
+  useEffect(() => {
+    const unsubscribe = subscribeSpeechState((state) => {
+      if (state.currentId === 'home-header-vision-audio') {
+        setIsPlayingHeaderAudio(state.isSpeaking && !state.isPaused);
+      } else if (!state.isSpeaking) {
+        setIsPlayingHeaderAudio(false);
+      }
+    });
+    return () => {
+      unsubscribe();
+    };
+  }, []);
+
   const handleToggleHeaderAudio = () => {
-    if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
     if (isPlayingHeaderAudio) {
-      window.speechSynthesis.cancel();
+      stopSpeaking();
       setIsPlayingHeaderAudio(false);
     } else {
-      window.speechSynthesis.cancel();
       const text = language === 'ur'
-        ? 'السلام علیکم! سیکھو. علم سے عمل، ہنر سے اثر، اور آخرت کی کامیابی تک۔'
-        : 'Assalam-o-Alaikum! Seekho. From knowledge to action, skills to impact, and success in the Hereafter.';
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = language === 'ur' ? 'ur-PK' : 'en-US';
-      utterance.rate = 0.9;
-      utterance.onend = () => setIsPlayingHeaderAudio(false);
-      utterance.onerror = () => setIsPlayingHeaderAudio(false);
-      window.speechSynthesis.speak(utterance);
+        ? 'السلام علیکم! سیکھو۔ علم سے عمل، ہنر سے اثر، اور آخرت کی کامیابی تک۔ یہ ایپ آپ کے لیے ہے — اپنے آپ، خاندان، معاشرے اور ساری انسانیت کے فائدے کے لیے۔'
+        : 'Assalam-o-Alaikum! Seekho. From knowledge to action, skills to impact, and success in the Hereafter. For the benefit of yourself, family, community, and all of humanity.';
+      speakText(text, {
+        id: 'home-header-vision-audio',
+        language,
+        rate: 0.88,
+        pitch: 0.84,
+      });
       setIsPlayingHeaderAudio(true);
     }
   };

@@ -55,7 +55,7 @@ export const SkillMasterDetailModal: React.FC<SkillMasterDetailModalProps> = ({
   const isUrdu = language === 'ur';
   const ArrowIcon = isUrdu ? ArrowLeft : ArrowRight;
 
-  const [activeTab, setActiveTab] = useState<'overview' | 'lessons' | 'projects' | 'earning' | 'ethics' | 'teach'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'lessons' | 'pathway' | 'projects' | 'earning' | 'ethics' | 'teach'>('overview');
   const [completedLessonIds, setCompletedLessonIds] = useState<Record<string, boolean>>(() => {
     try {
       const saved = localStorage.getItem('seekho_completed_skill_lessons');
@@ -244,15 +244,16 @@ export const SkillMasterDetailModal: React.FC<SkillMasterDetailModalProps> = ({
           </div>
         </div>
 
-        {/* Modal Navigation Tabs (6 Clear Pillars) */}
+        {/* Modal Navigation Tabs (7 Clear Pillars) */}
         <div className="border-b border-slate-200 bg-slate-50 flex items-center overflow-x-auto px-4 py-2 gap-2 text-xs sm:text-sm font-arabic font-bold text-slate-600">
           {[
             { id: 'overview', labelUrdu: '۱. مکمل جائزہ', labelEn: 'Overview' },
             { id: 'lessons', labelUrdu: '۲. عملی اسباق (Learn & Act)', labelEn: 'Lessons' },
-            { id: 'projects', labelUrdu: '۳. پروجیکٹس و ٹیسٹ', labelEn: 'Projects' },
-            { id: 'earning', labelUrdu: '۴. حلال روزگار کے ۸ راستے', labelEn: 'Income Pathways' },
-            { id: 'ethics', labelUrdu: '۵. دیانت و اخلاق', labelEn: 'Ethics' },
-            { id: 'teach', labelUrdu: '۶. ایک انسان کو سکھائیں', labelEn: 'Teach One' },
+            { id: 'pathway', labelUrdu: '۳. روڈ میپ (آج / یہ ہفتہ)', labelEn: 'Learning Roadmap' },
+            { id: 'projects', labelUrdu: '۴. پروجیکٹس و ٹیسٹ', labelEn: 'Projects' },
+            { id: 'earning', labelUrdu: '۵. حلال روزگار کے ۸ راستے', labelEn: 'Income Pathways' },
+            { id: 'ethics', labelUrdu: '۶. دیانت و اخلاق', labelEn: 'Ethics' },
+            { id: 'teach', labelUrdu: '۷. ایک انسان کو سکھائیں', labelEn: 'Teach One' },
           ].map((tab) => (
             <button
               key={tab.id}
@@ -451,7 +452,104 @@ export const SkillMasterDetailModal: React.FC<SkillMasterDetailModalProps> = ({
             </div>
           )}
 
-          {/* TAB 3: PROJECTS & SELF ASSESSMENT */}
+          {/* TAB 3: PRACTICAL LEARNING ROADMAP (TODAY / THIS WEEK / FIRST EARNING) */}
+          {activeTab === 'pathway' && (
+            <div className="space-y-6 animate-in fade-in">
+              <div className="bg-gradient-to-r from-teal-900 to-emerald-950 text-white p-5 sm:p-6 rounded-3xl space-y-2">
+                <h3 className="text-xl font-black font-arabic text-amber-300">
+                  🗺️ {isUrdu ? 'عملی روڈ میپ: شروع سے پہلی کمائی تک' : 'Step-by-Step Practical Learning Pathway'}
+                </h3>
+                <p className="text-xs sm:text-sm text-teal-100 font-arabic leading-relaxed">
+                  {isUrdu 
+                    ? 'الجھن سے بچنے کے لیے اپنے سفر کو ۴ واضح مراحل میں بانٹیں: آج کیا کرنا ہے، اس ہفتے کیا بنانا ہے، پہلا پروجیکٹ اور مارکیٹ کا اگلا ہنر۔' 
+                    : 'A realistic milestone-based roadmap from day 1 to first earnings and skill progression.'}
+                </p>
+              </div>
+
+              <div className="space-y-4">
+                {/* Milestone 1: Today */}
+                <div className="p-5 rounded-3xl bg-white border border-slate-200 shadow-xs space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="px-3 py-1 rounded-full bg-amber-100 text-amber-900 text-xs font-black font-arabic">
+                      ⚡ {isUrdu ? 'مرحلہ ۱: آج کا دن (Day 1 Focus)' : 'Milestone 1: Today'}
+                    </span>
+                    <span className="text-xs text-slate-500 font-arabic font-bold">⏱️ ۲۰ منٹ</span>
+                  </div>
+                  <h4 className="text-lg font-black text-slate-900 font-arabic">
+                    {isUrdu ? 'بنیادی تعارف اور پہلے ٹول کی عملی انسٹالیشن / سیٹ اپ' : 'Tool Installation & First Sandbox Exercise'}
+                  </h4>
+                  <p className="text-sm text-slate-600 font-arabic leading-relaxed bg-slate-50 p-3.5 rounded-2xl border border-slate-100">
+                    {isUrdu ? skill.lessons[0]?.practicalActionUrdu || 'آج کے دن ہنر کا بنیادی سبق سنیں اور کم از کم ایک عملی خاکہ خود تیار کریں۔' : 'Listen to the first core lesson and complete the initial action exercise.'}
+                  </p>
+                </div>
+
+                {/* Milestone 2: This Week */}
+                <div className="p-5 rounded-3xl bg-white border border-slate-200 shadow-xs space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="px-3 py-1 rounded-full bg-emerald-100 text-emerald-900 text-xs font-black font-arabic">
+                      📅 {isUrdu ? 'مرحلہ ۲: پہلا ہفتہ (Week 1 Outcome)' : 'Milestone 2: Week 1'}
+                    </span>
+                    <span className="text-xs text-slate-500 font-arabic font-bold">⏱️ روزانہ ۳۰ منٹ</span>
+                  </div>
+                  <h4 className="text-lg font-black text-slate-900 font-arabic">
+                    {isUrdu ? '۳ مکمل مشقیں اور پورٹ فولیو کا بنیادی فولڈر تیار کرنا' : '3 Hands-on Exercises & Basic Portfolio'}
+                  </h4>
+                  <p className="text-sm text-slate-600 font-arabic leading-relaxed bg-slate-50 p-3.5 rounded-2xl border border-slate-100">
+                    {isUrdu 
+                      ? 'روزانہ ایک سبق مکمل کر کے اپنے ہاتھ یا موبائل سے ۳ نمونے تیار کریں اور اپنے فون میں "میرا ہنر پورٹ فولیو" نامی فولڈر بنا کر محفوظ کریں۔' 
+                      : 'Complete 3 tangible exercises and archive your work in a dedicated showcase folder.'}
+                  </p>
+                </div>
+
+                {/* Milestone 3: First Real Deliverable */}
+                <div className="p-5 rounded-3xl bg-white border border-slate-200 shadow-xs space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="px-3 py-1 rounded-full bg-blue-100 text-blue-900 text-xs font-black font-arabic">
+                      🎯 {isUrdu ? 'مرحلہ ۳: پہلا لائیو پروجیکٹ (First Live Deliverable)' : 'Milestone 3: First Live Project'}
+                    </span>
+                    <span className="text-xs text-slate-500 font-arabic font-bold">⏱️ اختتامِ مہینہ</span>
+                  </div>
+                  <h4 className="text-lg font-black text-slate-900 font-arabic">
+                    {isUrdu ? (skill.realWorldProjects[0]?.titleUrdu || 'پہلا حقیقی پروجیکٹ') : 'First Live Real-World Project'}
+                  </h4>
+                  <p className="text-sm text-slate-600 font-arabic leading-relaxed bg-slate-50 p-3.5 rounded-2xl border border-slate-100">
+                    {isUrdu 
+                      ? (skill.realWorldProjects[0]?.descriptionUrdu || 'کسی دوست، رشتہ دار یا مقامی دکاندار کے لیے مکمل پروجیکٹ تیار کر کے فیڈ بیک لیں۔') 
+                      : 'Deliver a finished project for a real person or local shop to get genuine feedback.'}
+                  </p>
+                </div>
+
+                {/* Milestone 4: Next Stack Skill */}
+                <div className="p-5 rounded-3xl bg-purple-50 border border-purple-200 shadow-xs space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="px-3 py-1 rounded-full bg-purple-200 text-purple-900 text-xs font-black font-arabic">
+                      🚀 {isUrdu ? 'مرحلہ ۴: اگلا اسکل اسٹیک (Skill Stack Expansion)' : 'Milestone 4: Stack Extension'}
+                    </span>
+                    <span className="text-xs text-purple-700 font-arabic font-bold">💡 ہائی ویلیو</span>
+                  </div>
+                  <h4 className="text-lg font-black text-purple-950 font-arabic">
+                    {isUrdu ? skill.nextSkillRecommendation.skillTitleUrdu : skill.nextSkillRecommendation.skillTitleEn}
+                  </h4>
+                  <p className="text-sm text-slate-700 font-arabic leading-relaxed">
+                    {isUrdu ? skill.nextSkillRecommendation.whyUrdu : skill.nextSkillRecommendation.whyEn}
+                  </p>
+                  {onSelectNextSkill && (
+                    <button
+                      onClick={() => {
+                        stopSpeaking();
+                        onSelectNextSkill(skill.nextSkillRecommendation.skillId);
+                      }}
+                      className="px-4 py-2 bg-purple-700 hover:bg-purple-800 text-white font-bold text-xs font-arabic rounded-xl transition"
+                    >
+                      {isUrdu ? 'اس ہنر کی تفصیل دیکھیں' : 'Explore Next Skill'}
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 4: PROJECTS & SELF ASSESSMENT */}
           {activeTab === 'projects' && (
             <div className="space-y-6 animate-in fade-in">
               <div className="space-y-4">

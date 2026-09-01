@@ -32,7 +32,7 @@ export interface AudioReaderButtonProps {
   title?: string;
   language?: Language;
   className?: string;
-  variant?: 'header' | 'pill' | 'ghost' | 'floating' | 'card';
+  variant?: 'header' | 'pill' | 'ghost' | 'floating' | 'card' | 'inline';
   size?: 'sm' | 'md' | 'lg';
   showLabel?: boolean;
   labelUr?: string;

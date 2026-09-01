@@ -25,7 +25,7 @@ import {
   Calendar,
   Share2
 } from 'lucide-react';
-import { Course, Language, RecommendedSkill, UserProfile, DailyPlanDay, RoadmapStep } from '../types';
+import { Course, Language, RecommendedSkill, UserProfile, DailyPlanDay, RoadmapStep, SkillCategory } from '../types';
 import { COURSES_DATA, UI_TRANSLATIONS } from '../data/mockData';
 import { generatePersonalizedRecommendations } from '../data/assessmentData';
 import { MyActionPlanSection } from './MyActionPlanSection';
@@ -69,9 +69,9 @@ export const PersonalRoadmapView: React.FC<PersonalRoadmapViewProps> = ({
       educationLevel: userProfile.educationLevel || 'Matric',
       currentOccupation: userProfile.role || 'طالب علم',
       currentSkills: userProfile.currentSkills || ['موبائل استعمال'],
-      interests: userProfile.learningGoals && userProfile.learningGoals.length > 0 
+      interests: (userProfile.learningGoals && userProfile.learningGoals.length > 0 
         ? userProfile.learningGoals 
-        : (userProfile.interests || ['AI & Technology', 'Graphic Design', 'Business']),
+        : (userProfile.interests || ['AI & Technology', 'Graphic Design', 'Business'])) as SkillCategory[],
       dailyTime: userProfile.timePerDay || '30 منٹ',
       device: userProfile.device || 'اسمارٹ فون',
       primaryGoal: (userProfile.learningGoals && userProfile.learningGoals[0]) || userProfile.goals || 'Skill سیکھنا',

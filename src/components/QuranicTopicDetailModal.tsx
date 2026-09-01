@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   X,
   BookOpen,
@@ -25,7 +25,7 @@ import {
 } from 'lucide-react';
 import { Language, UserProfile } from '../types';
 import { QuranicTopicItem } from '../data/quranicWisdomMasterData';
-import { speakText, stopSpeaking } from '../utils/speech';
+import { speakText, stopSpeaking, subscribeSpeechState } from '../utils/speech';
 
 interface QuranicTopicDetailModalProps {
   topic: QuranicTopicItem;
@@ -64,6 +64,22 @@ export const QuranicTopicDetailModal: React.FC<QuranicTopicDetailModalProps> = (
   });
   const [copiedNotification, setCopiedNotification] = useState(false);
 
+  const audioTrackId = `quran-topic-${topic.id}`;
+
+  useEffect(() => {
+    const unsubscribe = subscribeSpeechState((state) => {
+      if (state.currentId === audioTrackId) {
+        setIsPlayingAudio(state.isSpeaking && !state.isPaused);
+      } else if (!state.isSpeaking) {
+        setIsPlayingAudio(false);
+      }
+    });
+    return () => {
+      unsubscribe();
+      stopSpeaking();
+    };
+  }, [audioTrackId]);
+
   const handleToggleAudio = () => {
     if (isPlayingAudio) {
       stopSpeaking();
@@ -71,7 +87,7 @@ export const QuranicTopicDetailModal: React.FC<QuranicTopicDetailModalProps> = (
     } else {
       const textToRead = `${topic.arabicVerse}۔ ترجمہ: ${topic.translationUrdu}۔ بنیادی پیغام: ${topic.coreMessageUrdu}`;
       speakText(textToRead, {
-        id: `quran-topic-${topic.id}`,
+        id: audioTrackId,
         language: 'ur',
         rate: isSlowAudio ? 0.72 : 0.86,
         pitch: 0.84, // Male mentor pitch

@@ -77,7 +77,7 @@ export const CommunityView: React.FC<CommunityViewProps> = ({
       authorName: userProfile.name || (language === 'ur' ? 'معزز ساتھی' : 'Learner'),
       authorAgeGroup: userProfile.ageGroup,
       authorLocation: userProfile.village || (language === 'ur' ? 'ڈوبے، برنالہ' : 'Dobay, Barnala'),
-      isElder: userProfile.ageGroup === '61-70+' || userProfile.ageGroup === '70+',
+      isElder: userProfile.ageGroup === '61-70' || userProfile.ageGroup === '70+' || userProfile.ageGroup === '46-60',
       titleUrdu: newTitle,
       titleEn: newTitle,
       contentUrdu: newContent,

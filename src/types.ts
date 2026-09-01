@@ -168,7 +168,7 @@ export interface UserProfile {
   completedGoodDeedIds?: string[];
   completedLifeSkillLessonIds?: string[];
   completedPracticeScenarioIds?: string[];
-  lifeSkillReflections?: Record<string, { reflectionText: string; completedAt: string }>;
+  lifeSkillReflections?: Record<string, { reflectionText: string; completedAt: string } | string>;
   growthDailyTimePreference?: '15m' | '30m' | '1h' | '2h+';
   quizMistakeRecords?: Record<string, number>; // questionId -> mistake count for intelligent encouraging revision
   completedMissionIds?: string[];
@@ -181,6 +181,8 @@ export interface UserProfile {
   completedPathwayProjectIds?: string[];
   viewedPathwayIds?: string[];
   activePathwayId?: string;
+  selectedSkill?: RecommendedSkill;
+  lastAssessmentDate?: string;
   createdAt?: any;
   updatedAt?: any;
 }
@@ -527,6 +529,8 @@ export interface Course {
   practicalTask: PracticalTask;
   projectDescriptionUrdu: string;
   projectDescriptionEn: string;
+  whatYouWillLearnUrdu?: string[];
+  whatYouWillLearnEn?: string[];
   realLifePurpose?: RealLifePurpose;
 }
 
@@ -1092,6 +1096,14 @@ export interface PracticalLifeLesson {
   improveTipUrdu: string;
   improveTipEn: string;
 
+  // Optional legacy/alias fields
+  corePrincipleUrdu?: string;
+  corePrincipleEn?: string;
+  realLifeSituationUrdu?: string;
+  realLifeSituationEn?: string;
+  proTipUrdu?: string;
+  proTipEn?: string;
+
   estimatedMinutes: number;
   points: number;
   tagUrdu: string;
@@ -1349,7 +1361,7 @@ export interface KnowledgeLibraryItem {
   gentleRevisionEn?: string;
   nextRecommendedStepUrdu?: string;
   nextRecommendedStepEn?: string;
-  nextRecommendedStepType?: 'course' | 'mission' | 'knowledge' | 'impact' | 'skills';
+  nextRecommendedStepType?: 'course' | 'mission' | 'knowledge' | 'impact' | 'skills' | 'roadmap';
   nextRecommendedStepId?: string;
   impactCategory?: 'Family' | 'Community' | 'Helping Others' | 'Teaching/Sharing Knowledge' | 'Environment' | 'Ethical Work';
   iconName?: string;

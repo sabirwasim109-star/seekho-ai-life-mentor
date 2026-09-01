@@ -22,6 +22,7 @@ interface AuthContextType {
   userProfile: UserProfile;
   signInWithGoogle: () => Promise<void>;
   signOut: () => Promise<void>;
+  logout: () => Promise<void>;
   updateUserProfile: (data: Partial<UserProfile>) => Promise<void>;
   isSyncing: boolean;
 }
@@ -136,7 +137,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [userProfile, setUserProfile] = useState<UserProfile>(() => {
     try {
       const saved = localStorage.getItem('seekho_user_profile');
-      return saved ? JSON.parse(saved) : DEFAULT_USER_PROFILE;
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        return {
+          ...DEFAULT_USER_PROFILE,
+          ...parsed,
+          skills: parsed.skills || DEFAULT_USER_PROFILE.skills,
+          currentSkills: parsed.currentSkills || DEFAULT_USER_PROFILE.currentSkills,
+          interests: parsed.interests || DEFAULT_USER_PROFILE.interests,
+        };
+      }
+      return DEFAULT_USER_PROFILE;
     } catch {
       return DEFAULT_USER_PROFILE;
     }
@@ -270,6 +281,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         userProfile,
         signInWithGoogle,
         signOut,
+        logout: signOut,
         updateUserProfile,
         isSyncing,
       }}

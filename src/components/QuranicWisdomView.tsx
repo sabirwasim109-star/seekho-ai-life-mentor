@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
   Brain,
   BookOpen,
@@ -62,7 +62,7 @@ import {
 } from '../data/quranicWisdomMasterData';
 import { QuranicTopicDetailModal } from './QuranicTopicDetailModal';
 import { QuranicSelfReflectionModal } from './QuranicSelfReflectionModal';
-import { speakText, stopSpeaking } from '../utils/speech';
+import { speakText, stopSpeaking, subscribeSpeechState } from '../utils/speech';
 
 interface QuranicWisdomViewProps {
   language: Language;
@@ -149,6 +149,20 @@ export const QuranicWisdomView: React.FC<QuranicWisdomViewProps> = ({
   }, [searchQuery, selectedCategory]);
 
   const [isPlayingHeaderAudio, setIsPlayingHeaderAudio] = useState(false);
+
+  useEffect(() => {
+    const unsubscribe = subscribeSpeechState((state) => {
+      if (state.currentId === 'quranic-wisdom-header-audio') {
+        setIsPlayingHeaderAudio(state.isSpeaking && !state.isPaused);
+      } else if (!state.isSpeaking) {
+        setIsPlayingHeaderAudio(false);
+      }
+    });
+    return () => {
+      unsubscribe();
+    };
+  }, []);
+
   const handleToggleHeaderAudio = () => {
     if (isPlayingHeaderAudio) {
       stopSpeaking();

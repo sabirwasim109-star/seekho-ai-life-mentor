@@ -1414,22 +1414,142 @@ Who is truly strong according to authentic Islamic teachings?
   }
 
   // ---------------------------------------------------------------------------
-  // SCENARIO 6: LIFE, CAREER, LIVELIHOOD & BUSINESS QUESTIONS
-  // Connecting skills, halal livelihood, honest customer service, and diligence.
+  // SCENARIO 5.8: 15-MINUTE MICRO-LEARNING ("میں آج صرف 15 منٹ میں کیا سیکھ سکتا ہوں؟")
+  // ---------------------------------------------------------------------------
+  if (
+    q.includes('15 منٹ') ||
+    q.includes('مختصر وقت') ||
+    q.includes('تھوڑا وقت') ||
+    q.includes('15 min') ||
+    q.includes('15 minutes') ||
+    q.includes('quick learning')
+  ) {
+    if (isUrdu) {
+      return {
+        reply: `بہت خوب ${salutation}! روزانہ کے صرف ۱۵ منٹ تسلسل کے ساتھ دینا مہینے کے ساڑھے سات گھنٹے بنتے ہیں جو انسان کو کسی بھی ہنر میں ماہر بنا دیتے ہیں۔
+
+📌 **۱۵ منٹ کا سنہری مائیکرو لرننگ فارمولا:**
+1. **پہلے ۵ منٹ (سیکھیں):** اپنے فعال کورس **"${courseTitle}"** کا صرف ایک بنیادی نکتہ یا سبق دھیان سے پڑھیں۔
+2. **درمیانی ۷ منٹ (ہاتھ سے مشق):** موبائل ایپ کھولیں اور اس فیچر کو خود آزما کر دیکھیں۔
+3. **آخری ۳ منٹ (جائزہ و سوال):** جو سیکھا، اسے کاپی پر ایک جملے میں لکھیں اور فوری کوئز حل کریں۔
+
+📌 **آسان مثال:**
+جیسے روزانہ کا ایک قطرہ پانی مٹکے کو بھر دیتا ہے، ویسے ہی روزانہ کے ۱۵ منٹ کی مشق آپ کو ہنر مند اور خود کفیل بناتی ہے۔
+
+🎯 **آج کا فوری عملی کام (15 منٹ):**
+ابھی Seekho کے ہوم پیج پر جا کر آج کا ۵ منٹ کا سبق اور ۷ منٹ کی مشق مکمل کریں۔
+
+🔍 **آپ کی فہم کی جانچ:**
+کیا آپ ابھی ۱۵ منٹ کی مشق شروع کرنے کے لیے تیار ہیں؟
+(الف: جی ہاں، بالکل! / ب: مجھے کوئی اور ہنر دکھائیں)`,
+        suggestions: [
+          'الف: جی ہاں، بالکل!',
+          'آج کا ۵ منٹ کا کوئز حل کریں',
+          'میرا اگلا ہدف کیا ہونا چاہیے؟',
+          'روزانہ تسلسل برقرار رکھنے کا راز'
+        ]
+      };
+    } else {
+      return {
+        reply: `Terrific, ${salutation}! Spending 15 focused minutes every day equates to 7.5 hours a month—enough to gain real mastery in any skill.
+
+📌 **The 15-Minute Micro-Learning Formula:**
+1. **First 5 Mins (Learn):** Read 1 key concept in **"${courseTitle}"**.
+2. **Middle 7 Mins (Hands-On):** Open the tool on your phone and practice it directly.
+3. **Final 3 Mins (Review & Quiz):** Jot down 1 key takeaway and complete the quick quiz.
+
+📌 **Simple Analogy:**
+Small daily drops fill the vessel; 15 minutes of disciplined daily practice builds lifelong self-reliance.
+
+🎯 **Today's Immediate Action (15 mins):**
+Head to your Seekho course dashboard right now and complete today's micro-lesson.
+
+🔍 **Quick Check Question:**
+Are you ready to dive into today's 15-minute hands-on practice right now?
+(A: Yes, absolutely! / B: Show another skill)`,
+        suggestions: [
+          'A: Yes, absolutely!',
+          'Take today’s 5-minute quiz',
+          'What should be my next goal?',
+          'Secret to daily consistency'
+        ]
+      };
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // SCENARIO 5.9: FREELANCING & SKILL ACQUISITION ("فری لانسنگ شروع کرنے کے لیے مجھے کیا سیکھنا چاہیے؟")
+  // ---------------------------------------------------------------------------
+  if (
+    q.includes('فری لانسنگ') ||
+    q.includes('freelanc') ||
+    q.includes('آن لائن کام') ||
+    q.includes('upwork') ||
+    q.includes('fiverr')
+  ) {
+    if (isUrdu) {
+      return {
+        reply: `بہت شاندار سوال، ${salutation}! فری لانسنگ کا مطلب ہے اپنے ہنر کو باوقار اور حلال طریقے سے دوسروں کی خدمت کے لیے پیش کرنا۔
+
+📌 **فری لانسنگ کے لیے مرحلہ وار ۴ لازمی قدم:**
+1. **ایک ٹھوس ہنر منتخب کریں:** ابتدائی سطح پر سب سے تیز ہنر **کینوا (Canva) پر سوشل میڈیا ڈیزائننگ**، **موبائل پر شارٹ ویڈیوز/ریلز ایڈیٹنگ**، یا **اردو/انگریزی ٹرانسلیشن و ڈیٹا انٹری** ہے۔
+2. **اپنا پورٹ فولیو (نمونہ کام) بنائیں:** کلائنٹ ڈھونڈنے سے پہلے خود ۳ سے ۵ بہترین ڈیزائن یا نمونے بنا کر اپنے پاس محفوظ کریں۔
+3. **مقامی مارکیٹ سے آغاز کریں:** انٹرنیشنل ویب سائٹس پر جانے سے پہلے اپنے محلے کی دکانوں، اسکولوں، فیس بک گروپس اور دوستوں کو بتائیں کہ آپ ان کے لیے پوسٹر یا سوشل میڈیا کام کر سکتے ہیں۔
+4. **ایمانداری اور حلال روزگار:** وقت کی پابندی، ایمانداری اور معیاری کام ہی فری لانسنگ میں برکت اور مستقل کلائنٹس کا راز ہے۔
+
+🎯 **آج کا فوری عملی کام (15 منٹ):**
+کینوا ایپ کھولیں اور کسی فرضی دکان (مثلاً "المدینہ کریانہ اسٹور" یا "نیو بیکرز") کے لیے ایک خوبصورت پروموشنل پوسٹر تیار کریں۔
+
+🔍 **آپ کی فہم کی جانچ:**
+فری لانسنگ میں مستقل کلائنٹ کس بنیاد پر ملتے ہیں؟
+(الف: ایمانداری، معیاری کام اور وقت کی پابندی سے / ب: بغیر ہنر کے دعوے کرنے سے)`,
+        suggestions: [
+          'الف: ایمانداری اور معیاری کام سے',
+          'کینوا سے پہلا پورٹ فولیو کیسے بنائیں؟',
+          'مقامی دکانوں کو سوشل میڈیا ڈیزائن کیسے پیش کریں؟',
+          'میرا اگلا قدم کیا ہے؟'
+        ]
+      };
+    } else {
+      return {
+        reply: `Excellent question, ${salutation}! Freelancing means offering your valuable skills directly to clients with honesty and dignity.
+
+📌 **4 Crucial Steps to Start Freelancing:**
+1. **Master 1 High-Demand Skill:** Start with **Canva Social Media Design**, **Mobile Video/Reel Editing**, or **Translation & Data Entry**.
+2. **Build a 3-5 Piece Portfolio:** Before approaching clients, create realistic sample banners or edited videos to show your capability.
+3. **Start with Local Clients:** Approach local shops, schools, neighborhood businesses, and community groups first.
+4. **Honesty & Halal Principles:** Timely delivery, transparent pricing, and quality work build long-term repeat clients.
+
+🎯 **Today's Immediate Action (15 mins):**
+Open Canva and design a flyer/poster for a local grocery store or bakery.
+
+🔍 **Quick Check Question:**
+What earns lasting freelance clients?
+(A: Honesty, high quality, and punctuality / B: Empty claims without skills)`,
+        suggestions: [
+          'A: Honesty, high quality, and punctuality',
+          'How to build first Canva portfolio?',
+          'Offering social media design to local stores',
+          'What is my next step?'
+        ]
+      };
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // SCENARIO 6: SMALL BUSINESS / HOME BUSINESS ("گھر بیٹھ کر چھوٹا کاروبار کیسے شروع کروں؟")
   // ---------------------------------------------------------------------------
   const livelihoodPatterns = [
     'کاروبار',
     'دکان',
     'ملازمت',
     'نوکری',
-    'فری لانسنگ',
     'پیسے',
     'آمدنی',
     'رزق',
     'حلال',
     'گھر کا خرچ',
     'business',
-    'freelancing',
     'job',
     'income',
     'livelihood',

@@ -1,5 +1,5 @@
 {
-  "name": "Seekho",
+  "name": "Seekho — سیکھو",
   "description": "سیکھو ایک AI Life Mentor ہے جو علم کو عملی زندگی، مہارت، کردار اور روزمرہ عمل سے جوڑتا ہے۔",
   "requestFramePermissions": ["microphone"],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
