@@ -35,6 +35,7 @@ import {
   Star
 } from 'lucide-react';
 import { IslamicDailyLesson, Language, UserProfile } from '../types';
+import { speakText, stopSpeaking } from '../utils/speech';
 import { 
   ISLAMIC_LESSONS_DATA, 
   ISLAMIC_CHARACTER_LEVELS, 
@@ -97,7 +98,15 @@ export const IslamicGuidanceModal: React.FC<IslamicGuidanceModalProps> = ({
 
   const ArrowIcon = language === 'ur' ? ArrowLeft : ArrowRight;
 
+  React.useEffect(() => {
+    return () => {
+      stopSpeaking();
+    };
+  }, []);
+
   const handleLessonChange = (idx: number) => {
+    stopSpeaking();
+    setIsSpeaking(false);
     setSelectedLessonIndex(idx);
     setSelectedScenarioOption(null);
     setScenarioEvaluated(false);
@@ -132,26 +141,23 @@ export const IslamicGuidanceModal: React.FC<IslamicGuidanceModalProps> = ({
   };
 
   const toggleSpeech = () => {
-    if (!('speechSynthesis' in window)) {
-      return;
-    }
-
+    const audioId = `islamic-guidance-${currentLesson.id}`;
     if (isSpeaking) {
-      window.speechSynthesis.cancel();
+      stopSpeaking();
       setIsSpeaking(false);
     } else {
-      window.speechSynthesis.cancel();
+      stopSpeaking();
       const textToRead = language === 'ur' 
         ? `${currentLesson.bismillah}۔ ${currentLesson.themeUrdu}۔ قرآنی رہنمائی: ${currentLesson.quranGuidance.translationUrdu}۔ حدیث نبوی: ${currentLesson.hadithGuidance.textUrdu}۔ صحابہ کرام سے سبق: ${currentLesson.sahabaLesson.storyUrdu}۔ آج کا عملی سبق: ${currentLesson.practicalAction.actionUrdu}`
         : `${currentLesson.themeEn}. Quranic guidance: ${currentLesson.quranGuidance.translationEn}. Hadith: ${currentLesson.hadithGuidance.textEn}. Practical action: ${currentLesson.practicalAction.actionEn}`;
       
-      const utterance = new SpeechSynthesisUtterance(textToRead);
-      utterance.lang = language === 'ur' ? 'ur-PK' : 'en-US';
-      utterance.rate = 0.9;
-      utterance.onend = () => setIsSpeaking(false);
-      utterance.onerror = () => setIsSpeaking(false);
-      window.speechSynthesis.speak(utterance);
       setIsSpeaking(true);
+      speakText(textToRead, {
+        id: audioId,
+        language: language === 'ur' ? 'ur' : 'en',
+        onEnd: () => setIsSpeaking(false),
+        onError: () => setIsSpeaking(false),
+      });
     }
   };
 

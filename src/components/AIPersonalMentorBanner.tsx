@@ -35,8 +35,8 @@ export const AIPersonalMentorBanner: React.FC<AIPersonalMentorBannerProps> = ({
     }
 
     return {
-      greetingUrdu: `ماشاءاللہ ${userProfile.name}! آپ نے مسلسل ${streak} دن میں سیکھنے کا شاندار تسلسل قائم رکھا ہے۔`,
-      greetingEn: `Well done ${userProfile.name}! You have maintained a ${streak}-day active learning streak.`,
+      greetingUrdu: `ماشاءاللہ ${userProfile.name}! آپ نے سیکھنے کا شاندار اور مستقل تسلسل قائم رکھا ہے۔`,
+      greetingEn: `Well done ${userProfile.name}! You have maintained an active and continuous learning momentum.`,
       adviceUrdu: 'آپ نے جو علم حاصل کیا ہے، اب وقت ہے کہ اسے کسی ایک عملی کام میں لگائیں اور اپنے گھر والوں یا محلے میں کسی کو فائدہ پہنچائیں۔',
       adviceEn: 'Now is the time to apply what you learned in a practical task and benefit someone around you.',
       actionUrdu: 'آج اپنی اسکل کا ایک عملی پروجیکٹ بنائیں',

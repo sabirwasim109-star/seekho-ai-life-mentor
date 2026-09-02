@@ -35,6 +35,7 @@ import {
   ChevronUp
 } from 'lucide-react';
 import { Language, UserProfile } from '../types';
+import { speakText, stopSpeaking } from '../utils/speech';
 import { 
   ELDER_CATEGORIES, 
   INITIAL_ELDER_ENTRIES, 
@@ -169,21 +170,27 @@ export const EldersWisdomView: React.FC<EldersWisdomViewProps> = ({
     };
   }, [showCreateModal, askingQuestionFor]);
 
+  useEffect(() => {
+    return () => {
+      stopSpeaking();
+    };
+  }, []);
+
   // Handle TTS
   const handleSpeak = (id: string, text: string) => {
-    if (!('speechSynthesis' in window)) return;
+    const audioId = `elder-wisdom-${id}`;
     if (speakingId === id) {
-      window.speechSynthesis.cancel();
+      stopSpeaking();
       setSpeakingId(null);
     } else {
-      window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = language === 'ur' ? 'ur-PK' : 'en-US';
-      utterance.rate = 0.9;
-      utterance.onend = () => setSpeakingId(null);
-      utterance.onerror = () => setSpeakingId(null);
-      window.speechSynthesis.speak(utterance);
+      stopSpeaking();
       setSpeakingId(id);
+      speakText(text, {
+        id: audioId,
+        language: language === 'ur' ? 'ur' : 'en',
+        onEnd: () => setSpeakingId(null),
+        onError: () => setSpeakingId(null),
+      });
     }
   };
 

@@ -92,7 +92,12 @@ STRICT PEDAGOGICAL & CONVERSATIONAL RULES:
           parts: [{ text: message.trim() }],
         });
 
-        const response = await ai.models.generateContent({
+        // 8-second safety timeout for external API calls
+        const timeoutPromise = new Promise((_, reject) =>
+          setTimeout(() => reject(new Error("Gemini API call timed out")), 8000)
+        );
+
+        const apiPromise = ai.models.generateContent({
           model: "gemini-3.7-flash",
           contents: formattedContents,
           config: {
@@ -100,6 +105,8 @@ STRICT PEDAGOGICAL & CONVERSATIONAL RULES:
             temperature: 0.7,
           },
         });
+
+        const response: any = await Promise.race([apiPromise, timeoutPromise]);
 
         const replyText = response.text || "";
         const dynamicSuggestions = generateDynamicSuggestions(message, language);
@@ -161,7 +168,83 @@ function generateDynamicSuggestions(message: string, language: string): string[]
   const q = (message || "").toLowerCase();
   const isUrdu = language === "ur" || language === "dual";
 
-  if (q.includes("اگلا قدم") || q.includes("آگے کیا") || q.includes("next step") || q.includes("اب کیا")) {
+  // Canva Overview
+  if ((q.includes("canva") || q.includes("کینوا")) && (q.includes("کیا ہے") || q.includes("what is") || q.includes("تعارف") || q.includes("intro"))) {
+    return isUrdu ? [
+      "Canva سے گھر بیٹھے کام کیسے حاصل کیا جا سکتا ہے؟",
+      "کینوا سے پہلا پورٹ فولیو کیسے بنائیں؟",
+      "میرے پاس صرف موبائل ہے، کیا کینوا چل جائے گا؟",
+      "میرا اگلا قدم کیا ہونا چاہیے؟"
+    ] : [
+      "How to get freelance work using Canva?",
+      "How to create your first Canva portfolio?",
+      "Can I run Canva smoothly on mobile only?",
+      "What should be my next step?"
+    ];
+  }
+
+  // Canva Earning / Freelancing with Canva
+  if ((q.includes("canva") || q.includes("کینوا")) && (q.includes("کام") || q.includes("پیسے") || q.includes("کمائی") || q.includes("کلائنٹ") || q.includes("earn") || q.includes("freelanc"))) {
+    return isUrdu ? [
+      "مقامی دکانوں کو سوشل میڈیا ڈیزائن کیسے پیش کریں؟",
+      "کینوا سے فائیور اور اپ ورک پر آرڈر کیسے لیں؟",
+      "آن لائن کمائی میں حلال روزگار کے سنہری اصول",
+      "میرا اگلا قدم کیا ہونا چاہیے؟"
+    ] : [
+      "Offering social media designs to local shops",
+      "Getting freelance gigs on Fiverr/Upwork with Canva",
+      "Principles of Halal online income",
+      "What should be my next step?"
+    ];
+  }
+
+  // Mobile Only Skills
+  if (q.includes("صرف موبائل") || q.includes("موبائل ہے") || q.includes("only mobile") || q.includes("phone only") || q.includes("کمپیوٹر نہیں")) {
+    return isUrdu ? [
+      "موبائل سے ویڈیو ایڈیٹنگ (CapCut) کیسے سیکھیں؟",
+      "کینوا سے موبائل پر پہلا بینر ڈیزائن کریں",
+      "موبائل پر اردو/انگریزی ڈیٹا انٹری کے مواقع",
+      "آج میں صرف 15 منٹ میں کیا سیکھ سکتا ہوں؟"
+    ] : [
+      "Learn mobile video editing with CapCut",
+      "Design your first poster on Canva mobile",
+      "Mobile data entry & translation opportunities",
+      "What can I learn in 15 minutes today?"
+    ];
+  }
+
+  // Critical Thinking
+  if (q.includes("تنقیدی سوچ") || q.includes("critical thinking") || q.includes("سوچ سمجھ") || q.includes("تحقیق")) {
+    return isUrdu ? [
+      "روزمرہ زندگی میں تنقیدی سوچ کی عملی مثال",
+      "سوشل میڈیا کی خبروں کی تصدیق کا اسلامی طریقہ",
+      "غصے یا دباؤ میں صحیح فیصلہ کیسے کریں؟",
+      "میرا اگلا قدم کیا ہونا چاہیے؟"
+    ] : [
+      "Everyday practical example of critical thinking",
+      "Islamic guidelines on verifying news & rumors",
+      "Making sound decisions under pressure",
+      "What should be my next step?"
+    ];
+  }
+
+  // Parenting & Screen Time
+  if (q.includes("بچے") || q.includes("بچوں") || q.includes("والدین") || q.includes("موبائل کے غلط استعمال") || q.includes("screen time") || q.includes("parenting") || q.includes("موبائل کی لت")) {
+    return isUrdu ? [
+      "بچوں کو موبائل کی لت سے چھڑانے کا ۳ نکاتی فارمولا",
+      "بچوں کے لیے مفید اسلامی و تعلیمی موبائل ایپس",
+      "گھر میں پرسکون اور محبت بھرا ماحول کیسے بنائیں؟",
+      "میرا اگلا قدم کیا ہونا چاہیے؟"
+    ] : [
+      "3-step formula to reduce child screen time",
+      "Safe educational and Islamic apps for kids",
+      "Creating a peaceful home environment",
+      "What should be my next step?"
+    ];
+  }
+
+  // Next Step
+  if (q.includes("اگلا قدم") || q.includes("آگے کیا") || q.includes("next step") || q.includes("اب کیا") || q.includes("ہدف")) {
     return isUrdu ? [
       "آج کا 15 منٹ کا ہنر مشن شروع کریں",
       "فری لانسنگ شروع کرنے کا پہلا قدم کیا ہے؟",
@@ -175,6 +258,7 @@ function generateDynamicSuggestions(message: string, language: string): string[]
     ];
   }
 
+  // Freelancing General
   if (q.includes("فری لانسنگ") || q.includes("freelanc") || q.includes("کلائنٹ") || q.includes("fiverr") || q.includes("کمائی")) {
     return isUrdu ? [
       "کینوا سے پہلا پورٹ فولیو کیسے بنائیں؟",
@@ -189,6 +273,7 @@ function generateDynamicSuggestions(message: string, language: string): string[]
     ];
   }
 
+  // Small Business
   if (q.includes("کاروبار") || q.includes("دکان") || q.includes("بزنس") || q.includes("business") || q.includes("گھریلو")) {
     return isUrdu ? [
       "واٹس ایپ اسٹیٹس سے مفت تشہیر کیسے کریں؟",
@@ -203,6 +288,7 @@ function generateDynamicSuggestions(message: string, language: string): string[]
     ];
   }
 
+  // AI & Tech
   if (q.includes("ai") || q.includes("مصنوعی ذہانت") || q.includes("chatgpt") || q.includes("پرامپٹ")) {
     return isUrdu ? [
       "AI سے اردو درخواست یا خط کیسے لکھوائیں؟",
@@ -217,7 +303,8 @@ function generateDynamicSuggestions(message: string, language: string): string[]
     ];
   }
 
-  if (q.includes("15 منٹ") || q.includes("مختصر وقت") || q.includes("15 min") || q.includes("تھوڑا وقت")) {
+  // 15-Minute Micro-Learning
+  if (q.includes("15 منٹ") || q.includes("مختصر وقت") || q.includes("15 min") || q.includes("تھوڑا وقت") || q.includes("کچھ نیا سیکھنا")) {
     return isUrdu ? [
       "آج کا 5 منٹ کا کوئز حل کریں",
       "موبائل پر 7 منٹ کی عملی مشق",
@@ -265,49 +352,248 @@ function generateSmartFallbackReply(
   let urduPart = "";
   let enPart = "";
 
-  // 1. INTENT: "I DIDN'T UNDERSTAND" ("مجھے سمجھ نہیں آئی")
+  // Helper to extract recent assistant replies to ensure repeat-answer protection
+  const lastAssistantMsg = Array.isArray(chatHistory)
+    ? [...chatHistory].reverse().find(m => m.role === "assistant" || m.role === "model")?.text || ""
+    : "";
+
+  // 1. INTENT: CANVA OVERVIEW ("Canva کیا ہے؟")
   if (
-    query.includes("سمجھ نہیں آئی") ||
-    query.includes("سمجھ نہیں آیا") ||
-    query.includes("نہیں سمجھی") ||
-    query.includes("نہیں سمجھا") ||
-    query.includes("دوبارہ بتائیں") ||
-    query.includes("آسان الفاظ میں") ||
-    query.includes("مشکل ہے") ||
-    query.includes("not understand") ||
-    query.includes("did not understand") ||
-    query.includes("explain again") ||
-    query.includes("simpler")
+    (query.includes("canva") || query.includes("کینوا")) &&
+    (query.includes("کیا ہے") || query.includes("what is") || query.includes("تعارف") || query.includes("intro") || query.includes("کس کام آتا ہے"))
   ) {
-    urduPart = `کوئی بات نہیں ${name}! بالکل پریشان نہ ہوں۔
+    urduPart = `کینوا (Canva) موبائل اور کمپیوٹر کا ایک بے حد آسان اور مفت گرافک ڈیزائننگ ٹول ہے، جس سے ہر شخص بغیر کسی پیچیدہ سافٹ ویئر یا ڈگری کے خوبصورت ڈیزائن بنا سکتا ہے۔
 
-سیکھنے کے دوران کسی بات کا پہلی بار سمجھ نہ آنا **بالکل قدرتی، عام اور مثبت بات ہے**۔ آپ نے سوال پوچھا، یہ آپ کی لگن اور فہم کا ثبوت ہے! 🌱
+📌 **کینوا کی ۴ اہم خصوصیات:**
+1. **بنے بنائے سانچے (Templates):** کینوا پر لاکھوں تیار شدہ ٹیمپلیٹس موجود ہیں—جیسے دکان کا اشتہار، واٹس ایپ اسٹیٹس، سوشل میڈیا پوسٹ، بینر اور شادی کارڈ۔
+2. **موبائل پر آسانی:** آپ کو کمپیوٹر کی ضرورت نہیں؛ عام سمارٹ فون پر صرف انگلی کے اشارے سے متن، رنگ اور تصاویر تبدیل کی جا سکتی ہیں۔
+3. **اردو اور مقامی فونٹس:** کینوا میں خوبصورت اردو فونٹس (مثلاً جمیل نوری نستعلیق) اور کسٹم تحریر آسانی سے شامل کی جا سکتی ہے۔
+4. **مفت اور فوری:** ڈیزائن مکمل ہونے پر ایک کلک سے ہائی کوالٹی تصویر (PNG/JPG) محفوظ ہو جاتی ہے۔
 
-📌 **آسان روزمرہ مثال:**
-جیسے ایک استاد یا کاریگر آپ کے سامنے بیٹھ کر آپ کے ہاتھ سے کام کروا کر دکھاتا ہے، ویسے ہی یہ ہنر بھی بالکل سادہ ہے۔
+🎯 **آج کا فوری عملی کام (10 منٹ):**
+اپنے موبائل میں Canva ایپ کھولیں (یا canva.com پر جائیں)، سرچ میں *"Sale Banner"* یا *"Quote"* لکھیں اور اپنا نام لکھ کر پہلی تصویر ڈاؤنلوڈ کریں۔
 
-🎯 **آج کا چھوٹا عملی قدم (3 منٹ):**
-ایک سادہ کاغذ اور قلم لیں، اور صرف ایک جملہ لکھیں کہ آپ اس ہنر سے اپنے گھر یا کام کا کون سا مسئلہ حل کرنا چاہتے ہیں۔
+🔍 **آپ سے فالو اپ سوال:**
+کیا آپ کینوا کو ذاتی استعمال کے لیے سیکھنا چاہتے ہیں، سوشل میڈیا کے لیے، یا اس سے فری لانسنگ کر کے پیسے کمانے کے لیے؟`;
 
-🔍 **آپ کی فہم کی جانچ:**
-کیا بلا جھجھک سوال پوچھنا بہترین طالب علم کی نشانی ہے؟
-(الف: جی ہاں، بالکل! / ب: نہیں)`;
+    enPart = `Canva is an easy-to-use, free graphic design platform available on smartphones and computers, enabling anyone to create professional visuals without complex software.
 
-    enPart = `No worries at all, ${name}! Please do not worry.
+📌 **4 Key Features of Canva:**
+1. **Ready-Made Templates:** Thousands of layouts for social media, flyers, sale posters, and cards.
+2. **100% Mobile Friendly:** Customize colors, fonts, and photos directly from your phone.
+3. **Urdu & Multilingual Fonts:** Full support for beautiful typography and custom text.
+4. **Fast & Free:** Download crisp, high-resolution PNG or PDF files with one tap.
 
-It is **completely natural and great** to ask for clarification when learning something new. 🌟
+🎯 **Today's Action (10 mins):**
+Open Canva on your phone, choose a free template, insert your name or greeting, and export it.
 
-📌 **Everyday Analogy:**
-Think of sitting next to a patient mentor who guides your hands step-by-step through a simple task.
-
-🎯 **Today's Practical Task (3 mins):**
-Write down 1 single sentence describing what problem you want this skill to solve for you.
-
-🔍 **Quick Reflection:**
-Is asking questions the hallmark of a great learner?
-(A: Yes, absolutely! / B: No)`;
+🔍 **Follow-up Question:**
+Are you exploring Canva for personal creative projects, social media, or to offer design services to clients?`;
   }
-  // 2. INTENT: "WHAT IS MY NEXT STEP?" ("میرا اگلا قدم کیا ہے؟")
+  // 2. INTENT: CANVA EARNING / FREELANCING PATHWAYS ("Canva سے گھر بیٹھے کام کیسے حاصل کیا جا سکتا ہے؟")
+  else if (
+    (query.includes("canva") || query.includes("کینوا")) &&
+    (query.includes("کام") || query.includes("پیسے") || query.includes("کمائی") || query.includes("کلائنٹ") || query.includes("گھر بیٹھے") || query.includes("earning") || query.includes("freelanc") || query.includes("آرڈر"))
+  ) {
+    urduPart = `ماشاءاللہ ${name}! کینوا (Canva) سے گھر بیٹھے باعزت اور حلال آمدنی حاصل کرنے کا راستہ انتہائی عملی اور تیز ہے۔
+
+📌 **کینوا سے کلائنٹس اور کام حاصل کرنے کا ۴ نکاتی لائحہ عمل:**
+1. **پہلے ۳ سے ۵ نمونے (Portfolio) بنائیں:** مختلف موضوعات پر معیاری پوسٹرز بنائیں—مثلاً کریانہ اسٹور کی سیل، اسکول کا داخلہ اشتہار، ریسٹورنٹ کا مینو اور یوٹیوب تھمب نیل۔
+2. **مقامی دکانوں اور کاروباروں سے آغاز کریں:** اپنے محلے کی بیکری، کپڑوں کی دکان، اکیڈمی یا ڈاکٹر کلینک سے رابطہ کریں اور انہیں اپنے بنے ہوئے پروموشنل ڈیزائن دکھائیں۔
+3. **سوشل میڈیا مینجمنٹ:** فیس بک اور انسٹاگرام پیجز چلانے والوں کو ہفتہ وار ۳ سے ۵ پوسٹس بنا کر دینے کی سروس پیش کریں۔
+4. **آن لائن مارکیٹس (Fiverr/Upwork):** جب ہاتھ میں صفائی آ جائے تو آن لائن پلیٹ فارمز پر "Social Media Poster Designer" کے طور پر گگ بنائیں۔
+
+📜 **حدیث مبارکہ:** "سچا اور امانت دار تاجر (اور ہنر مند) قیامت کے دن انبیاء، صدیقین اور شہداء کے ساتھ ہوگا۔" (سنن ترمذی: ۱۲۰۹)
+
+🎯 **آج کا فوری عملی کام (15 منٹ):**
+اپنے علاقے کی کسی دکان یا اسکول کا فرضی اشتہار کینوا پر ڈیزائن کریں اور اسے بطور نمونہ محفوظ کریں۔
+
+🔍 **آپ سے فالو اپ سوال:**
+آپ کو مقامی دکانوں کے لیے پوسٹرز بنانے میں زیادہ دلچسپی ہے یا آن لائن انٹرنیشنل کلائنٹس تلاش کرنے میں؟`;
+
+    enPart = `Masha’Allah ${name}! Generating dignified, halal income using Canva from home is one of the fastest and most practical freelancing pathways.
+
+📌 **4-Step Roadmap to Get Paid Work with Canva:**
+1. **Build a 3-5 Piece Portfolio:** Create realistic sample flyers for a local grocery store, tuition academy, restaurant menu, and YouTube thumbnail.
+2. **Pitch to Local Neighborhood Businesses:** Show your ready-made flyers to local bakeries, tailors, and private schools who need promotion.
+3. **Monthly Social Media Retainers:** Offer to design 3-5 promotional posts per week for local Facebook/Instagram shop pages.
+4. **Freelance Gig Platforms:** Once your craft is polished, offer flyer and banner services on Fiverr and Upwork.
+
+📜 **Prophetic Guidance:** "The truthful, trustworthy merchant will be with the prophets and martyrs." (Tirmidhi: 1209)
+
+🎯 **Today's Action (15 mins):**
+Design a sample promotional flyer for a local bakery or school in Canva and save it to your phone.
+
+🔍 **Follow-up Question:**
+Would you prefer starting with local businesses in your area or exploring online freelance platforms?`;
+  }
+  // 3. INTENT: MOBILE-ONLY SKILLS ("میرے پاس صرف موبائل ہے، میرے لیے کون سا ہنر بہتر ہے؟")
+  else if (
+    query.includes("صرف موبائل") ||
+    query.includes("موبائل ہے") ||
+    query.includes("only mobile") ||
+    query.includes("phone only") ||
+    query.includes("کمپیوٹر نہیں") ||
+    query.includes("لیپ ٹاپ نہیں") ||
+    query.includes("اسمارٹ فون سے کیا")
+  ) {
+    urduPart = `بہت زبردست سوال، ${name}! یہ ایک غلط فہمی ہے کہ ہنر سیکھنے کے لیے مہنگا کمپیوٹر لازمی ہے۔ آج کا سمارٹ فون ایک مکمل ڈیجیٹل ورک اسٹیشن ہے۔
+
+📌 **صرف موبائل سے سیکھے جانے والے ۵ بہترین اور باوقار ہنر:**
+1. **کینوا گرافک ڈیزائننگ (Canva):** سوشل میڈیا پوسٹس، بینرز، شادی کارڈز اور اشتہارات صرف موبائل سے پروفیشنل انداز میں بنتے ہیں۔
+2. **شارٹ ویڈیو ایڈیٹنگ (CapCut / VN Editor):** موبائل سے ٹک ٹاک، یوٹیوب شارٹس اور انسٹاگرام ریلز ایڈٹ کریں جس کی مارکیٹ میں زبردست مانگ ہے۔
+3. **اردو و انگریزی وائس اوور اور آڈیو ریکارڈنگ:** صاف آواز میں کہانیاں، اشتہاری پیغامات یا تعلیمی نوٹس ریکارڈ کریں۔
+4. **ڈیجیٹل مارکیٹنگ و واٹس ایپ کیٹلاگ مینجمنٹ:** مقامی دکانوں کی مصنوعات کو واٹس ایپ بزنس پر لسٹ کرنا اور سوشل میڈیا پر پروموٹ کرنا۔
+5. **ڈیٹا انٹری اور اردو ٹرانسلیشن:** گوگل ڈرائیو، گوگل شیٹس اور گوگل ڈاکس پر موبائل سے کام کرنا۔
+
+🎯 **آج کا فوری عملی کام (15 منٹ):**
+کینوا (Canva) یا کیپ کٹ (CapCut) موبائل ایپ انسٹال کریں اور پہلی بار اس کے ٹولز کو کھول کر ۵ منٹ مشق کریں۔
+
+🔍 **آپ سے فالو اپ سوال:**
+آپ کی زیادہ ترجیح گرافک ڈیزائن (پوسٹرز) کی طرف ہے، ویڈیو ایڈیٹنگ کی طرف، یا سوشل میڈیا مارکیٹنگ کی طرف؟`;
+
+    enPart = `Excellent question, ${name}! It is a common misconception that you need an expensive laptop to learn valuable skills. A smartphone is a complete digital workstation.
+
+📌 **Top 5 High-Demand Skills You Can Master 100% on Mobile:**
+1. **Canva Graphic Design:** Create professional posters, flyers, and announcements directly on your phone.
+2. **Mobile Video Editing (CapCut / VN):** Edit YouTube Shorts, TikToks, and reels for businesses and creators.
+3. **Voiceover & Audio Narration:** Record clean voice clips for promotional messages and educational content.
+4. **WhatsApp Business Catalog Management:** Set up online inventories and customer management for local shops.
+5. **Content Writing & Data Entry:** Type and organize documents via Google Docs and Sheets mobile apps.
+
+🎯 **Today's Action (15 mins):**
+Install either Canva or CapCut on your smartphone and spend 5 minutes exploring its core editing interface.
+
+🔍 **Follow-up Question:**
+Are you more interested in visual poster design, video editing, or business management on your phone?`;
+  }
+  // 4. INTENT: CRITICAL THINKING ("تنقیدی سوچ کیا ہوتی ہے؟")
+  else if (
+    query.includes("تنقیدی سوچ") ||
+    query.includes("critical thinking") ||
+    query.includes("سوچ سمجھ") ||
+    query.includes("تحقیق کرنا") ||
+    query.includes("غور و فکر")
+  ) {
+    urduPart = `تنقیدی سوچ (Critical Thinking) کا مطلب ہے کسی بھی سنی سنائی بات، خبر یا دعوے پر آنکھ بند کر کے یقین کرنے کے بجائے، عقل، تحقیق اور ثبوت کی بنیاد پر حقیقت اور رائے کا فرق جانچنا۔
+
+📌 **تنقیدی سوچ کے ۳ بنیادی ستون:**
+1. **سوال پوچھنے کی ہمت:** *"کیا یہ بات واقعی سچ ہے؟ اس کا ثبوت کیا ہے؟ اور کہنے والے کا مقصد کیا ہو سکتا ہے؟"*
+2. **حقیقت اور رائے میں فرق:** ہر انسان کی ذاتی پسند یا غصہ ایک "رائے" ہو سکتا ہے، مگر "ٹھوس حقیقت" ہمیشہ غیر جانبدار ثبوت مانگتی ہے۔
+3. **جذبات کے بجائے دلیل کو ترجیح:** غصے یا تعصب میں آ کر فیصلہ کرنے کے بجائے پرسکون ہو کر دونوں رخ دیکھنا۔
+
+📖 **قرآنی رہنمائی [سورۃ الحجرات: آیت ۶]:**
+*"اے ایمان والو! اگر کوئی فاسق تمہارے پاس کوئی خبر لائے تو خوب تحقیق کر لیا کرو، کہیں ایسا نہ ہو کہ تم نادانی میں کسی قوم کو نقصان پہنچا بیٹھو۔"*
+
+🎯 **آج کی عملی مشق (5 منٹ):**
+آج سوشل میڈیا یا محلے میں سنی جانے والی کسی بھی سنسنی خیز خبر پر فوراً تبصرہ یا آگے فارورڈ نہ کریں، بلکہ پہلے سوچیں: *"کیا میرے پاس اس کی مصدقہ تصدیق ہے؟"*
+
+🔍 **آپ سے فالو اپ سوال:**
+کیا آپ روزمرہ زندگی میں کسی مخصوص فیصلے یا خبر کے حوالے سے تنقیدی سوچ کا جائزہ لینا چاہتے ہیں؟`;
+
+    enPart = `Critical Thinking is the ability to evaluate information objectively—analyzing facts and evidence rather than blindly accepting rumors, assumptions, or emotional biases.
+
+📌 **3 Core Pillars of Critical Thinking:**
+1. **Inquiring Mindset:** Asking: *"Is this verified? What is the concrete evidence? What is the source?"*
+2. **Distinguishing Fact from Opinion:** Recognizing subjective personal viewpoints versus objective verified reality.
+3. **Reason Over Impulse:** Pausing before reacting emotionally to social media posts or rumors.
+
+📖 **Quranic Injunction [Surah Al-Hujurat: 6]:**
+*"O you who have believed, if there comes to you a disobedient one with information, investigate, lest you harm a people out of ignorance."*
+
+🎯 **Today's Action (5 mins):**
+Whenever you encounter sensational news or forward messages today, pause and verify the source before believing or sharing.
+
+🔍 **Follow-up Question:**
+Would you like an everyday practical scenario to practice applying critical thinking right now?`;
+  }
+  // 5. INTENT: CHILDREN SCREEN TIME & DIGITAL PARENTING ("گھر میں بچوں کو موبائل کے غلط استعمال سے کیسے بچائیں؟")
+  else if (
+    query.includes("بچے") ||
+    query.includes("بچوں") ||
+    query.includes("والدین") ||
+    query.includes("موبائل کے غلط استعمال") ||
+    query.includes("موبائل کی لت") ||
+    query.includes("screen time") ||
+    query.includes("parenting") ||
+    query.includes("اسکرین")
+  ) {
+    urduPart = `محترم ${name}! بچوں کو موبائل کے غلط استعمال یا لت سے بچانا آج کے دور کا اہم ترین خاندانی چیلنج ہے، اور اس کا حل سختی یا مار پیٹ کے بجائے حکمت، نظم و ضبط اور محبت میں ہے۔
+
+📌 **بچوں کی مثبت ڈیجیٹل تربیت کے ۴ عملی اصول:**
+1. **گھر میں سکرین کا وقت (Screen Time) طے کریں:** دن میں زیادہ سے زیادہ ۳۰ سے ۴۵ منٹ مقرر کریں، اور کھانا کھاتے وقت یا سونے سے ۱ گھنٹہ پہلے موبائل کا استعمال سختی سے ممنوع رکھیں۔
+2. **متبادل دلچسپ سرگرمیاں فراہم کریں:** اگر آپ بچے سے موبائل لیں گے تو اس کی جگہ رنگ بھرنے والی کتابیں، بلاکس، چھت پر کھیل یا کہانی سنانے کا وقت دیں۔
+3. **والدین خود عملی نمونہ بنیں:** اگر والدین خود ہر وقت موبائل پر رہیں گے تو بچے کبھی نہیں مانیں گے۔ بچوں کے سامنے بامقصد اور محدود موبائل استعمال کریں۔
+4. **مفید تعلیمی ایپس کا استعمال:** اگر موبائل دینا بھی پڑے تو کارٹونز کے بجائے سیکھنے اور ذہنی نشوونما والی ایپس (مثلاً اردو قاری، Seekho کے اسباق، یا قرآنی کہانیاں) کھول کر دیں۔
+
+📜 **حدیث نبوی ﷺ:** "تم میں سے ہر شخص نگہبان ہے اور ہر ایک سے اس کی رعیت (اہل و عیال) کے بارے میں پوچھا جائے گا۔" (صحیح بخاری: ۸۹۳)
+
+🎯 **آج کا عملی اقدام:**
+آج شام کھانے کی میز پر تمام گھر والے موبائل ایک طرف رکھ کر آپس میں ۱۰ منٹ دن بھر کے احوال پر گفتگو کریں۔
+
+🔍 **آپ سے فالو اپ سوال:**
+کیا آپ کے گھر میں بچوں کی عمریں ۱۰ سال سے کم ہیں یا ٹین ایج (نو عمر) ہیں؟`;
+
+    enPart = `Dear ${name}, guiding children toward healthy digital habits requires patience, clear household boundaries, and compassionate leadership rather than harsh scolding.
+
+📌 **4 Practical Steps to Manage Screen Time:**
+1. **Set Clear Daily Limits:** Restrict recreational screen time to 30-45 minutes daily. Keep meal times and bedrooms screen-free.
+2. **Provide Engaging Physical Alternatives:** Offer drawing books, constructive puzzles, board games, or outdoor play to fill their natural energy.
+3. **Lead by Example:** Children mirror adult habits. Minimize unnecessary phone scrolling in their presence.
+4. **Curate Educational Content:** Replace mindless short-form entertainment with constructive learning and storytelling apps.
+
+📜 **Prophetic Wisdom:** "Every one of you is a shepherd and is responsible for his flock." (Sahih Bukhari: 893)
+
+🎯 **Today's Action:**
+Implement a "Device-Free Family Dinner" tonight and spend 10 uninterrupted minutes talking with your children.
+
+🔍 **Follow-up Question:**
+What age group are your children so we can tailor age-appropriate activities?`;
+  }
+  // 6. INTENT: 15-MINUTE MICRO-LEARNING ("میں آج صرف 15 منٹ میں کیا سیکھ سکتا ہوں؟")
+  else if (
+    query.includes("15 منٹ") ||
+    query.includes("مختصر وقت") ||
+    query.includes("تھوڑا وقت") ||
+    query.includes("15 min") ||
+    query.includes("15 minutes") ||
+    query.includes("کم وقت") ||
+    query.includes("کچھ نیا سیکھنا") ||
+    query.includes("quick learning")
+  ) {
+    urduPart = `بہت خوب ${name}! روزانہ کے صرف ۱۵ منٹ تسلسل کے ساتھ دینا مہینے کے ساڑھے سات گھنٹے بنتے ہیں جو انسان کو کسی بھی ہنر میں ماہر بنا دیتے ہیں۔
+
+📌 **۱۵ منٹ کا سنہری مائیکرو لرننگ فارمولا:**
+1. **پہلے ۵ منٹ (سیکھیں):** اپنے فعال کورس **"${activeCourseName}"** کا صرف ایک بنیادی نکتہ یا سبق دھیان سے پڑھیں۔
+2. **درمیانی ۷ منٹ (ہاتھ سے مشق):** موبائل ایپ کھولیں اور اس فیچر کو خود آزما کر دیکھیں۔
+3. **آخری ۳ منٹ (جائزہ و سوال):** جو سیکھا، اسے کاپی پر ایک جملے میں لکھیں اور فوری کوئز حل کریں۔
+
+📌 **آسان مثال:**
+جیسے روزانہ کا ایک قطرہ پانی مٹکے کو بھر دیتا ہے، ویسے ہی روزانہ کے ۱۵ منٹ کی مشق آپ کو ہنر مند اور خود کفیل بناتی ہے۔
+
+🎯 **آج کا فوری عملی کام (15 منٹ):**
+ابھی Seekho کے ہوم پیج پر جائیں اور اپنے کورس کا آج کا ۵ منٹ کا سبق اور ۷ منٹ کی مشق مکمل کریں۔
+
+🔍 **آپ سے فالو اپ سوال:**
+کیا آپ ابھی ۱۵ منٹ کی مشق شروع کرنے کے لیے تیار ہیں؟`;
+
+    enPart = `Terrific, ${name}! Spending 15 focused minutes every day equates to 7.5 hours a month—enough to gain real mastery in any skill.
+
+📌 **The 15-Minute Micro-Learning Formula:**
+1. **First 5 Mins (Learn):** Read 1 key concept in **"${activeCourseName}"**.
+2. **Middle 7 Mins (Hands-On):** Open the tool on your phone and practice it directly.
+3. **Final 3 Mins (Review & Quiz):** Jot down 1 key takeaway and complete the quick quiz.
+
+📌 **Simple Analogy:**
+Small daily drops fill the vessel; 15 minutes of disciplined daily practice builds lifelong self-reliance.
+
+🎯 **Today's Immediate Action (15 mins):**
+Head to your Seekho course dashboard right now and complete today's micro-lesson.
+
+🔍 **Follow-up Question:**
+Are you ready to dive into today's 15-minute hands-on practice right now?`;
+  }
+  // 7. INTENT: "WHAT IS MY NEXT STEP?" ("میرا اگلا قدم کیا ہے؟")
   else if (
     query.includes("اگلا قدم") ||
     query.includes("اگلا مرحلہ") ||
@@ -346,7 +632,7 @@ Go to your active course now and complete the next practical exercise.
 🔍 **Follow-up Question:**
 Are you ready to spend 15 minutes today to complete this hands-on exercise?`;
   }
-  // 3. INTENT: FREELANCING & CAREER ("فری لانسنگ شروع کرنے کے لیے مجھے کیا سیکھنا چاہیے؟")
+  // 8. INTENT: FREELANCING GENERAL ("فری لانسنگ شروع کرنے کے لیے مجھے کیا سیکھنا چاہیے؟")
   else if (
     query.includes("فری لانسنگ") ||
     query.includes("freelanc") ||
@@ -354,12 +640,8 @@ Are you ready to spend 15 minutes today to complete this hands-on exercise?`;
     query.includes("کلائنٹ") ||
     query.includes("upwork") ||
     query.includes("fiverr") ||
-    query.includes("پیسے کمانا") ||
     query.includes("کمائی") ||
-    query.includes("earning") ||
-    query.includes("جاب") ||
-    query.includes("ملازمت") ||
-    query.includes("order")
+    query.includes("earning")
   ) {
     urduPart = `بہت شاندار سوال، ${name}! فری لانسنگ کا مطلب ہے اپنے ہنر کو باوقار اور حلال طریقے سے دوسروں کی خدمت کے لیے پیش کرنا۔
 
@@ -389,7 +671,7 @@ Open Canva and design a flyer/poster for a local grocery store or bakery.
 🔍 **Follow-up Question:**
 Are you more inclined toward graphic design or video editing/data entry?`;
   }
-  // 4. INTENT: SMALL BUSINESS / HOME BUSINESS ("گھر بیٹھ کر چھوٹا کاروبار کیسے شروع کروں؟")
+  // 9. INTENT: SMALL BUSINESS / HOME BUSINESS ("گھر بیٹھ کر چھوٹا کاروبار کیسے شروع کروں؟")
   else if (
     query.includes("چھوٹا کاروبار") ||
     query.includes("گھر بیٹھ کر") ||
@@ -398,10 +680,7 @@ Are you more inclined toward graphic design or video editing/data entry?`;
     query.includes("بزنس") ||
     query.includes("business") ||
     query.includes("دکانداری") ||
-    query.includes("گھریلو") ||
-    query.includes("سیلز") ||
-    query.includes("مارکیٹنگ") ||
-    query.includes("سرمایہ")
+    query.includes("گھریلو")
   ) {
     urduPart = `خوش آمدید ${name}! ایک کامیاب چھوٹے کاروبار کا اصل راز کم سرمائے سے آغاز کرنا اور اپنے علاقے کے لوگوں کی حقیقی ضرورت پوری کرنا ہے۔
 
@@ -435,15 +714,13 @@ Write down 3 viable product or service ideas you can offer in your area with est
 🔍 **Follow-up Question:**
 Which type of business or service are you currently most passionate about starting?`;
   }
-  // 5. INTENT: EVERYDAY AI ("AI مجھے روزمرہ زندگی میں کیسے فائدہ دے سکتی ہے؟")
+  // 10. INTENT: EVERYDAY AI ("AI مجھے روزمرہ زندگی میں کیسے فائدہ دے سکتی ہے؟")
   else if (
     query.includes("ai") ||
     query.includes("مصنوعی ذہانت") ||
     query.includes("artificial intelligence") ||
     query.includes("chatgpt") ||
     query.includes("gemini") ||
-    query.includes("روزمرہ زندگی") ||
-    query.includes("ٹیکنالوجی") ||
     query.includes("پرامپٹ")
   ) {
     urduPart = `ماشاءاللہ ${name}! مصنوعی ذہانت (AI) ایک بے حد طاقتور ڈیجیٹل معاون ہے جو عام اردو میں آپ کی بات سمجھ کر روزمرہ کاموں کو ۱۰ گنا تیز اور آسان بنا دیتی ہے۔
@@ -474,122 +751,44 @@ Ask an AI assistant: *"Give me 3 practical methods to manage a household monthly
 🔍 **Follow-up Question:**
 Have you tried drafting a letter or brainstorm ideas with AI before?`;
   }
-  // 6. INTENT: 15-MINUTE MICRO-LEARNING ("میں آج صرف 15 منٹ میں کیا سیکھ سکتا ہوں؟")
+  // 11. INTENT: "I DIDN'T UNDERSTAND" ("مجھے سمجھ نہیں آئی")
   else if (
-    query.includes("15 منٹ") ||
-    query.includes("مختصر وقت") ||
-    query.includes("تھوڑا وقت") ||
-    query.includes("15 min") ||
-    query.includes("15 minutes") ||
-    query.includes("کم وقت") ||
-    query.includes("quick learning")
+    query.includes("سمجھ نہیں آئی") ||
+    query.includes("سمجھ نہیں آیا") ||
+    query.includes("دوبارہ بتائیں") ||
+    query.includes("آسان الفاظ میں") ||
+    query.includes("not understand") ||
+    query.includes("explain again")
   ) {
-    urduPart = `بہت خوب ${name}! روزانہ کے صرف ۱۵ منٹ تسلسل کے ساتھ دینا مہینے کے ساڑھے سات گھنٹے بنتے ہیں جو انسان کو کسی بھی ہنر میں ماہر بنا دیتے ہیں۔
+    urduPart = `کوئی بات نہیں ${name}! بالکل پریشان نہ ہوں۔
 
-📌 **۱۵ منٹ کا سنہری مائیکرو لرننگ فارمولا:**
-1. **پہلے ۵ منٹ (سیکھیں):** اپنے کورس **"${activeCourseName}"** کا صرف ایک بنیادی نکتہ یا سبق دھیان سے پڑھیں۔
-2. **درمیانی ۷ منٹ (ہاتھ سے مشق):** موبائل ایپ کھولیں اور اس فیچر کو خود آزما کر دیکھیں۔
-3. **آخری ۳ منٹ (جائزہ و سوال):** جو سیکھا، اسے کاپی پر ایک جملے میں لکھیں اور فوری کوئز حل کریں۔
+سیکھنے کے دوران کسی بات کا پہلی بار سمجھ نہ آنا **بالکل قدرتی، عام اور مثبت بات ہے**۔ آپ نے سوال پوچھا، یہ آپ کی لگن اور فہم کا ثبوت ہے! 🌱
 
-📌 **آسان مثال:**
-جیسے روزانہ کا ایک قطرہ پانی مٹکے کو بھر دیتا ہے، ویسے ہی روزانہ کے ۱۵ منٹ کی مشق آپ کو ہنر مند اور خود کفیل بناتی ہے۔
+📌 **آسان روزمرہ مثال:**
+جیسے ایک استاد یا کاریگر آپ کے سامنے بیٹھ کر آپ کے ہاتھ سے کام کروا کر دکھاتا ہے، ویسے ہی یہ ہنر بھی بالکل سادہ ہے۔
 
-🎯 **آج کا فوری عملی کام (15 منٹ):**
-ابھی Seekho کے ہوم پیج پر جا کر آج کا ۵ منٹ کا سبق اور ۷ منٹ کی مشق مکمل کریں۔
-
-🔍 **آپ سے فالو اپ سوال:**
-کیا آپ ابھی ۱۵ منٹ کی مشق شروع کرنے کے لیے تیار ہیں؟`;
-
-    enPart = `Terrific, ${name}! Spending 15 focused minutes every day equates to 7.5 hours a month—enough to gain real mastery in any skill.
-
-📌 **The 15-Minute Micro-Learning Formula:**
-1. **First 5 Mins (Learn):** Read 1 key concept in **"${activeCourseName}"**.
-2. **Middle 7 Mins (Hands-On):** Open the tool on your phone and practice it directly.
-3. **Final 3 Mins (Review & Quiz):** Jot down 1 key takeaway and complete the quick quiz.
-
-📌 **Simple Analogy:**
-Small daily drops fill the vessel; 15 minutes of disciplined daily practice builds lifelong self-reliance.
-
-🎯 **Today's Immediate Action (15 mins):**
-Head to your Seekho course dashboard right now and complete today's micro-lesson.
-
-🔍 **Follow-up Question:**
-Are you ready to dive into today's 15-minute hands-on practice right now?`;
-  }
-  // 7. INTENT: CANVA & GRAPHIC DESIGN
-  else if (
-    query.includes("canva") ||
-    query.includes("کینوا") ||
-    query.includes("ڈیزائن") ||
-    query.includes("design") ||
-    query.includes("پوسٹر") ||
-    query.includes("بینر") ||
-    query.includes("لوگو")
-  ) {
-    urduPart = `بہت خوب ${name}! کینوا (Canva) موبائل کا ایسا آسان ٹول ہے جس سے آپ بغیر کمپیوٹر کے پیشہ ورانہ پوسٹر اور اشتہارات بنا سکتے ہیں۔
-
-📌 **کینوا سیکھنے کے ۳ بنیادی مراحل:**
-1. **ٹیمپلیٹ کا انتخاب:** کینوا ایپ میں بنے بنائے سانچے منتخب کریں (مثلاً "Social Media Post" یا "Sale Flyer")۔
-2. **متن اور رنگ کی تبدیلی:** ڈمی ٹیکسٹ کو ہٹا کر اپنی دکان یا پیغام کا اردو/انگریزی متن لکھیں۔
-3. **سیو اور شیئر:** تصویر کو PNG یا JPG میں محفوظ کریں اور واٹس ایپ/فیس بک پر شیئر کریں۔
-
-🎯 **آج کا فوری عملی کام (10 منٹ):**
-کینوا میں ایک سادہ پوسٹر بنا کر اس میں اپنا نام اور ایک اچھا تعلیمی نعرہ لکھیں۔
+🎯 **آج کا چھوٹا عملی قدم (3 منٹ):**
+ایک سادہ کاغذ اور قلم لیں، اور صرف ایک جملہ لکھیں کہ آپ اس ہنر سے اپنے گھر یا کام کا کون سا مسئلہ حل کرنا چاہتے ہیں۔
 
 🔍 **آپ کی فہم کی جانچ:**
-کیا کینوا پر بنے بنائے ڈیزائن میں ترمیم ممکن ہے؟
-(الف: جی ہاں، بالکل آسان ہے / ب: نہیں)`;
+کیا بلا جھجھک سوال پوچھنا بہترین طالب علم کی نشانی ہے؟
+(الف: جی ہاں، بالکل! / ب: نہیں)`;
 
-    enPart = `Great topic, ${name}! Canva is a user-friendly mobile design application enabling professional poster and graphic creation without expensive software.
+    enPart = `No worries at all, ${name}! Please do not worry.
 
-📌 **3 Steps to Master Canva:**
-1. **Select a Template:** Choose a ready-made flyer, card, or banner layout.
-2. **Customize Text & Colors:** Replace the placeholder wording with your own announcement.
-3. **Export & Share:** Download high-resolution PNG/JPG files for print or social channels.
+It is **completely natural and great** to ask for clarification when learning something new. 🌟
 
-🎯 **Today's Practical Task (10 mins):**
-Open Canva and build a simple personalized announcement banner.
+📌 **Everyday Analogy:**
+Think of sitting next to a patient mentor who guides your hands step-by-step through a simple task.
 
-🔍 **Quick Check:**
-Can you modify templates in Canva?
-(A: Yes, easily / B: No)`;
+🎯 **Today's Practical Task (3 mins):**
+Write down 1 single sentence describing what problem you want this skill to solve for you.
+
+🔍 **Quick Reflection:**
+Is asking questions the hallmark of a great learner?
+(A: Yes, absolutely! / B: No)`;
   }
-  // 8. INTENT: DECISION MAKING, EMOTIONAL CONTROL & PRESSURE
-  else if (
-    query.includes("غصہ") ||
-    query.includes("دباؤ") ||
-    query.includes("پریشانی") ||
-    query.includes("ٹینشن") ||
-    query.includes("جھگڑا") ||
-    query.includes("دوست") ||
-    query.includes("والدین") ||
-    query.includes("فیصلہ")
-  ) {
-    urduPart = `محترم ${name}! مشکل اور جذباتی لمحات میں صحیح فیصلہ کرنا انسان کے اصل کردار کی پہچان ہے۔
-
-📌 **سنت اور حکمت کے ۵ مراحل (5-Step Method):**
-1. **پہلے ۳۰ سیکنڈ رکیں (STOP):** غصے یا دباؤ میں فوری ردعمل نہ دیں۔ پانی پئیں اور ایک گہرا سانس لیں۔
-2. **معاملے کو سمجھیں:** جذباتی ہونے کے بجائے حقیقت کو سمجھیں کہ اصل مسئلہ کیا ہے۔
-3. **دو راستوں پر غور کریں:** جذباتی راستہ بعد میں ندامت لاتا ہے، جبکہ صبر اور حکمت عزت و سکون دیتی ہے۔
-4. **رہنمائی:** نبی کریم ﷺ نے فرمایا: "پہلوان وہ نہیں جو پچھاڑ دے، بلکہ پہلوان وہ ہے جو غصے کے وقت خود پر قابو رکھے۔" (صحیح بخاری: ۶۱۱۴)
-5. **مثبت اقدام:** پرسکون ہو کر احترام کے ساتھ بات چیت کریں یا خاموشی اختیار کریں۔
-
-🎯 **آج کا ایک عمل:**
-جب بھی کوئی منفی بات سنے کو ملے، ۳۰ سیکنڈ خاموش رہ کر سوچیں کہ باوقار جواب کیا ہونا چاہیے۔`;
-
-    enPart = `Dear ${name}, making wise choices under emotional stress is the hallmark of true character.
-
-📌 **The 5-Step Sunnah & Wisdom Framework:**
-1. **Pause for 30 Seconds:** Do not react impulsively. Drink water, take a deep breath.
-2. **Understand the Reality:** Look beyond raw emotions at the real issue.
-3. **Weigh the Two Paths:** Impulsive reactions bring regret; patience and poise protect dignity.
-4. **Prophetic Wisdom:** "The strong person is not the one who wrestles well, but the one who controls himself during anger." (Sahih Bukhari: 6114)
-5. **Constructive Action:** Communicate with calm respect or maintain dignified silence.
-
-🎯 **One Practical Action:**
-Whenever provocation occurs, pause for 30 seconds before responding thoughtfully.`;
-  }
-  // 9. GENERAL CONTEXTUAL PEDAGOGICAL RESPONDER
+  // 12. GENERAL CONTEXTUAL RESPONDER
   else {
     urduPart = `وعلیکم السلام و رحمتہ اللہ، ${name}! میں استاد سیکھو ہوں۔
 

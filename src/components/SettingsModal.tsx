@@ -169,10 +169,10 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                     <Volume2 className="w-5 h-5 text-emerald-700" />
                     <div>
                       <h4 className="font-bold text-slate-800 text-sm">
-                        {language === 'ur' ? 'مردانہ اردو رہنما آواز (Male Mentor Voice)' : 'Natural Male Urdu Voice'}
+                        {language === 'ur' ? 'آڈیو رہنما گائیڈ (Audio Guide)' : 'Seekho Audio Guide'}
                       </h4>
                       <p className="text-xs text-slate-500">
-                        {language === 'ur' ? 'قدرتی، پرسکون اور باوقار مردانہ تلفظ' : 'Warm, educated Pakistani male speech synthesis'}
+                        {language === 'ur' ? 'پرسکون، واضح اور باوقار تلفظ' : 'Calm, clear and dignified audio narration'}
                       </p>
                     </div>
                   </div>

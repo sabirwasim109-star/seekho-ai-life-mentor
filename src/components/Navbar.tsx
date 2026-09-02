@@ -17,7 +17,8 @@ import {
   Cloud,
   Library,
   HeartHandshake,
-  Settings
+  Settings,
+  Award
 } from 'lucide-react';
 import { Language, UserProfile } from '../types';
 import { UI_TRANSLATIONS } from '../data/mockData';
@@ -284,10 +285,10 @@ export const Navbar: React.FC<NavbarProps> = ({
             )}
           </div>
 
-          {/* Streak Badge */}
-          <div className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-50 border border-amber-200 text-amber-900 text-xs font-bold" title={t.streakDays}>
-            <Flame className="w-4 h-4 text-amber-500 fill-amber-400" />
-            <span>{userProfile.streakDays}</span>
+          {/* Points Badge */}
+          <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-amber-50 border border-amber-200/90 text-amber-950 text-xs font-bold font-arabic shadow-2xs" title={language === 'ur' ? 'حاصل کردہ پوائنٹس' : 'Earned Points'}>
+            <Award className="w-3.5 h-3.5 text-amber-600" />
+            <span>{userProfile.points || 175}</span>
           </div>
 
           {/* Google Sign-in / Cloud Status Badge in Navbar */}

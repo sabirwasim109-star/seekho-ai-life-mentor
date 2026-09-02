@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { CheckCircle2, Sparkles, Award, Volume2, X } from 'lucide-react';
 import { Language } from '../types';
+import { speakText, stopSpeaking } from '../utils/speech';
 
 export interface IslamicCompletionModalProps {
   isOpen: boolean;
@@ -26,20 +27,27 @@ export const IslamicCompletionModal: React.FC<IslamicCompletionModalProps> = ({
 
   if (!isOpen) return null;
 
+  useEffect(() => {
+    return () => {
+      stopSpeaking();
+    };
+  }, []);
+
   const handlePlayAudio = (textToSpeak: string) => {
-    if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
-    window.speechSynthesis.cancel();
+    const audioId = `islamic-completion-${type}`;
     if (isPlayingAudio) {
+      stopSpeaking();
       setIsPlayingAudio(false);
       return;
     }
-    const utterance = new SpeechSynthesisUtterance(textToSpeak);
-    utterance.lang = 'ur-PK';
-    utterance.rate = 0.85;
-    utterance.onend = () => setIsPlayingAudio(false);
-    utterance.onerror = () => setIsPlayingAudio(false);
-    window.speechSynthesis.speak(utterance);
+    stopSpeaking();
     setIsPlayingAudio(true);
+    speakText(textToSpeak, {
+      id: audioId,
+      language: language === 'ur' ? 'ur' : 'en',
+      onEnd: () => setIsPlayingAudio(false),
+      onError: () => setIsPlayingAudio(false),
+    });
   };
 
   const isReflectionOrService = type === 'reflection' || type === 'service';

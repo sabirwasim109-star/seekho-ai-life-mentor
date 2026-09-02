@@ -7145,7 +7145,7 @@ export const UI_TRANSLATIONS = {
 };
 
 export const DEFAULT_USER_PROFILE: import('../types').UserProfile = {
-  name: 'علی احمد',
+  name: 'دعا فاطمہ',
   ageGroup: '16-25',
   educationLevel: 'Intermediate / Matric',
   country: 'Pakistan',

@@ -35,6 +35,7 @@ import { UI_TRANSLATIONS } from '../data/mockData';
 import { generateAITeacherResponse } from '../utils/aiTeacherEngine';
 import { MENTOR_CHALLENGES, getRecommendedChallengesForUser } from '../data/mentorChallengesData';
 import { AudioReaderButton, VoiceInputButton } from './AudioSpeechControls';
+import { speakText, stopSpeaking } from '../utils/speech';
 
 interface AITeacherViewProps {
   language: Language;
@@ -248,21 +249,19 @@ Whenever you ask **"What should I do now?"**, I will connect your skills, daily 
   };
 
   const handleSpeak = (msgId: string, text: string) => {
-    if (!('speechSynthesis' in window)) return;
-
+    const audioId = `ai-teacher-msg-${msgId}`;
     if (isSpeakingId === msgId) {
-      window.speechSynthesis.cancel();
+      stopSpeaking();
       setIsSpeakingId(null);
     } else {
-      window.speechSynthesis.cancel();
-      const cleanText = text.replace(/[*#`_]/g, '');
-      const utterance = new SpeechSynthesisUtterance(cleanText);
-      utterance.lang = language === 'ur' ? 'ur-PK' : 'en-US';
-      utterance.rate = 0.95;
-      utterance.onend = () => setIsSpeakingId(null);
-      utterance.onerror = () => setIsSpeakingId(null);
-      window.speechSynthesis.speak(utterance);
+      stopSpeaking();
       setIsSpeakingId(msgId);
+      speakText(text, {
+        id: audioId,
+        language: language === 'ur' ? 'ur' : 'en',
+        onEnd: () => setIsSpeakingId(null),
+        onError: () => setIsSpeakingId(null),
+      });
     }
   };
 
@@ -343,7 +342,10 @@ Whenever you ask **"What should I do now?"**, I will connect your skills, daily 
             <button
               onClick={() => {
                 setMessages([messages[0]]);
-                if (isSpeakingId) window.speechSynthesis?.cancel();
+                if (isSpeakingId) {
+                  stopSpeaking();
+                  setIsSpeakingId(null);
+                }
               }}
               className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 transition"
               title={isUrdu ? 'نئی گفتگو شروع کریں' : 'Reset Conversation'}

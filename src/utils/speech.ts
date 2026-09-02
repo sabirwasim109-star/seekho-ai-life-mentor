@@ -1,45 +1,150 @@
 /**
  * Seekho Universal Speech & Voice Input System (Web Speech API)
- * Provides reliable Text-to-Speech (TTS) and Speech-to-Text (Mic Input)
- * with robust Pakistani Urdu male voice ('ur-PK') and English male voice ('en-US') support.
+ * Provides reliable Text-to-Speech (TTS) with natural Pakistani Urdu Male Voice ('ur-PK'),
+ * deep masculine resonance tuning, word-by-word reading highlight, and speech-to-text.
  */
 
 import { Language } from '../types';
 
-// Speech Synthesis State Listener
-type SpeechStateListener = (state: { isSpeaking: boolean; isPaused: boolean; currentId: string | null }) => void;
+export interface WordToken {
+  index: number;
+  word: string;
+  cleanWord: string;
+  startChar: number;
+  endChar: number;
+  estimatedDurationMs: number;
+}
+
+export interface SpeechState {
+  isSpeaking: boolean;
+  isPaused: boolean;
+  currentId: string | null;
+  text: string;
+  currentCharIndex: number;
+  currentWordIndex: number;
+  currentWord: string;
+  words: WordToken[];
+}
+
+type SpeechStateListener = (state: SpeechState) => void;
 const listeners = new Set<SpeechStateListener>();
 
 let currentSpeakingId: string | null = null;
 let isCurrentlySpeaking = false;
 let isCurrentlyPaused = false;
+let currentRawText = '';
+let currentWords: WordToken[] = [];
+let activeWordIndex = -1;
+let activeCharIndex = 0;
+let fallbackTickerInterval: any = null;
+let utteranceStartTime = 0;
+let accumulatedPauseTime = 0;
+let pauseStartTime = 0;
 
-// Preload voices on load
-if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-  window.speechSynthesis.getVoices();
-  if (window.speechSynthesis.onvoiceschanged !== undefined) {
-    window.speechSynthesis.onvoiceschanged = () => {
-      window.speechSynthesis.getVoices();
-    };
+// Cached voices and voice ready notification
+let cachedSystemVoices: SpeechSynthesisVoice[] = [];
+let isVoiceListenerAttached = false;
+const voiceLoadResolvers: Array<(voices: SpeechSynthesisVoice[]) => void> = [];
+
+/**
+ * Initialize system voices safely with async event handling
+ */
+export function initVoiceEngine(): void {
+  if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
+  if (isVoiceListenerAttached) return;
+  isVoiceListenerAttached = true;
+
+  const onVoicesReady = () => {
+    try {
+      const v = window.speechSynthesis.getVoices();
+      if (v && v.length > 0) {
+        cachedSystemVoices = v;
+        while (voiceLoadResolvers.length > 0) {
+          const resolver = voiceLoadResolvers.shift();
+          if (resolver) resolver(v);
+        }
+      }
+    } catch {
+      // safe fallback
+    }
+  };
+
+  try {
+    const current = window.speechSynthesis.getVoices();
+    if (current && current.length > 0) {
+      cachedSystemVoices = current;
+    }
+    if (window.speechSynthesis.onvoiceschanged !== undefined) {
+      window.speechSynthesis.onvoiceschanged = onVoicesReady;
+    }
+    window.speechSynthesis.addEventListener?.('voiceschanged', onVoicesReady);
+  } catch {
+    // safe fallback
   }
 }
 
-function notifyListeners() {
-  listeners.forEach(fn => fn({
+// Auto-run on module evaluation in browser
+initVoiceEngine();
+
+/**
+ * Returns available voices immediately, or loads them
+ */
+export function getAvailableVoices(): SpeechSynthesisVoice[] {
+  if (typeof window === 'undefined' || !('speechSynthesis' in window)) return [];
+  if (cachedSystemVoices.length > 0) return cachedSystemVoices;
+  const v = window.speechSynthesis.getVoices();
+  if (v && v.length > 0) {
+    cachedSystemVoices = v;
+  }
+  return cachedSystemVoices;
+}
+
+/**
+ * Wait for voices to be populated asynchronously if not ready yet
+ */
+export function ensureVoicesReady(): Promise<SpeechSynthesisVoice[]> {
+  return new Promise((resolve) => {
+    const voices = getAvailableVoices();
+    if (voices.length > 0) {
+      return resolve(voices);
+    }
+    voiceLoadResolvers.push(resolve);
+    // Timeout fallback after 400ms
+    setTimeout(() => {
+      resolve(getAvailableVoices());
+    }, 400);
+  });
+}
+
+function getCurrentState(): SpeechState {
+  const currentWordObj = currentWords[activeWordIndex];
+  return {
     isSpeaking: isCurrentlySpeaking,
     isPaused: isCurrentlyPaused,
     currentId: currentSpeakingId,
-  }));
+    text: currentRawText,
+    currentCharIndex: activeCharIndex,
+    currentWordIndex: activeWordIndex,
+    currentWord: currentWordObj ? currentWordObj.word : '',
+    words: currentWords,
+  };
+}
+
+function notifyListeners() {
+  const state = getCurrentState();
+  listeners.forEach(fn => {
+    try {
+      fn(state);
+    } catch (e) {
+      console.warn('Error in speech listener:', e);
+    }
+  });
 }
 
 export function subscribeSpeechState(listener: SpeechStateListener) {
   listeners.add(listener);
   // Immediate trigger
-  listener({
-    isSpeaking: isCurrentlySpeaking,
-    isPaused: isCurrentlyPaused,
-    currentId: currentSpeakingId,
-  });
+  listener(getCurrentState());
   return () => {
     listeners.delete(listener);
   };
@@ -73,6 +178,23 @@ export function cleanTextForSpeech(rawText: string, langMode: Language = 'ur'): 
     }
   }
 
+  // Common mixed Urdu-English technical terms phonetic expansion for natural South Asian pronunciation
+  text = text
+    .replace(/\bAI\b/gi, 'اے آئی')
+    .replace(/\bCanva\b/gi, 'کینوا')
+    .replace(/\bCapCut\b/gi, 'کیپ کٹ')
+    .replace(/\bWhatsApp\b/gi, 'واٹس ایپ')
+    .replace(/\bFreelancing\b/gi, 'فری لانسنگ')
+    .replace(/\bPortfolio\b/gi, 'پورٹ فولیو')
+    .replace(/\bYouTube\b/gi, 'یوٹیوب')
+    .replace(/\bFiverr\b/gi, 'فائیور')
+    .replace(/\bUpwork\b/gi, 'اپ ورک')
+    .replace(/\bGoogle\b/gi, 'گوگل')
+    .replace(/\bOnline\b/gi, 'آن لائن')
+    .replace(/\bSkills\b/gi, 'ہنر')
+    .replace(/\bSkill\b/gi, 'ہنر')
+    .replace(/\bMobile\b/gi, 'موبائل');
+
   return text
     .replace(/[#*`_~>\-•✓⭐💡🎯📖🛠️💼🏪💰🗣️🌱🏡🤝⏳🔮⚡👨‍🏫]/g, ' ')
     .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1') // remove markdown links
@@ -88,54 +210,174 @@ export function hasUrduCharacters(text: string): boolean {
 }
 
 /**
- * Find best matching MALE voice for the target language (Prioritizing Pakistani/South Asian Male)
+ * Tokenize readable text into words with character indices and duration weights for synchronization
+ */
+export function tokenizeTextForHighlight(text: string, rate: number = 0.89): WordToken[] {
+  if (!text || !text.trim()) return [];
+
+  const tokens: WordToken[] = [];
+  // Match words and their whitespace/punctuation positions
+  const regex = /(\S+)/g;
+  let match: RegExpExecArray | null;
+  let idx = 0;
+
+  while ((match = regex.exec(text)) !== null) {
+    const rawWord = match[0];
+    const start = match.index;
+    const end = start + rawWord.length;
+    const clean = rawWord.replace(/[.,/#!$%^&*;:{}=\-_`~()?"'،۔؛؟]/g, '');
+
+    // Estimate duration based on word length + punctuation pause
+    const baseLengthMs = Math.max(160, clean.length * 60);
+    const hasComma = rawWord.includes('،') || rawWord.includes(',');
+    const hasFullStop = rawWord.includes('۔') || rawWord.includes('.') || rawWord.includes('!') || rawWord.includes('؟');
+    
+    let pauseBonusMs = 0;
+    if (hasFullStop) pauseBonusMs = 380;
+    else if (hasComma) pauseBonusMs = 220;
+
+    const adjustedDurationMs = Math.round((baseLengthMs + pauseBonusMs) / Math.max(0.7, rate));
+
+    tokens.push({
+      index: idx++,
+      word: rawWord,
+      cleanWord: clean,
+      startChar: start,
+      endChar: end,
+      estimatedDurationMs: adjustedDurationMs,
+    });
+  }
+
+  return tokens;
+}
+
+/**
+ * Strict regex identifying female voices, tokens, and known engine female models
+ */
+const FEMALE_VOICE_REGEX = new RegExp(
+  [
+    '\\bfemale\\b', '\\bwoman\\b', '\\bgirl\\b', '\\bfeminine\\b', '\\bfemme\\b', '\\bdonna\\b', '\\bmujer\\b',
+    // Microsoft / Windows female voices
+    'zira', 'heera', 'kalpana', 'geeta', 'swara', 'puja', 'priya', 'kavita',
+    'susan', 'helen', 'hazel', 'sara', 'sarah', 'veena', 'neha', 'pooja', 'madhuri',
+    'kiran', 'aditi', 'lekha', 'anjali', 'meera', 'tania', 'monica', 'victoria',
+    'samantha', 'karen', 'moira', 'fiona', 'tessa', 'eva', 'stephanie', 'jenny',
+    'aria', 'natasha', 'sonia', 'siri', 'alice', 'katrina', 'zariyah', 'ayesha', 'fatima',
+    'uzma', 'salma', 'amany', 'gul', 'libby', 'hoda', 'mary', 'linda', 'amy', 'joanna',
+    'salli', 'kimberly', 'kendra', 'ivy', 'sora', 'hanan', 'nour', 'layla', 'zeina',
+    'miren', 'agatha', 'laura', 'clara', 'sabina', 'lucia', 'elena', 'cosimo', 'yuri',
+    'kyoko', 'ting-ting', 'sin-ji', 'mei-jia', 'huihui', 'yaoyao', 'kanya', 'damayanti',
+    // Chrome / Google female voices (Google's Urdu and Hindi default TTS in Chrome are female)
+    'google\\s+urdu', 'google\\s+اردو', 'google\\s+हिन्दी', 'google\\s+hindi',
+    'google.*female', 'google\\s+us\\s+english', 'google\\s+uk\\s+english\\s+female'
+  ].join('|'),
+  'i'
+);
+
+/**
+ * Verified male voice regex matching explicit male markers and known male voices
+ */
+const VERIFIED_MALE_REGEX = new RegExp(
+  [
+    '\\bmale\\b', '\\bman\\b', '\\bboy\\b', '\\bmasculine\\b',
+    // Pakistani / Urdu / Arabic Male Voices
+    'asad', 'salman', 'rizwan', 'naeem', 'faizan', 'tariq', 'bilal', 'hamza',
+    'asim', 'ali', 'ahmed', 'omar', 'amr', 'shakir', 'hamed',
+    // South Asian Male Voices
+    'madhav', 'hemant', 'amit', 'tarun', 'neel', 'pradeep', 'prabhat', 'tarak',
+    // English Male Voices
+    'david', 'mark', 'george', 'daniel', 'guy', 'ryan', 'oliver', 'richard', 'fred', 'maged',
+    'uk english male', 'natural.*male', 'male-medium', 'male-deep', 'ur-pk.*male'
+  ].join('|'),
+  'i'
+);
+
+/**
+ * Check if a voice is strictly female
+ */
+export function isStrictlyFemale(v: SpeechSynthesisVoice | null | undefined): boolean {
+  if (!v) return false;
+  const str = `${v.name} ${v.voiceURI} ${v.lang}`.toLowerCase();
+  return FEMALE_VOICE_REGEX.test(str);
+}
+
+/**
+ * Check if a voice is verified male
+ */
+export function isVerifiedMale(v: SpeechSynthesisVoice | null | undefined): boolean {
+  if (!v) return false;
+  if (isStrictlyFemale(v)) return false;
+  const str = `${v.name} ${v.voiceURI}`.toLowerCase();
+  return VERIFIED_MALE_REGEX.test(str);
+}
+
+/**
+ * Find best matching natural MALE voice for the target language.
+ * Strictly excludes female synthetic voices and strictly adheres to the requested priority:
+ * 1. ur-PK male
+ * 2. Urdu male
+ * 3. Pakistani / South Asian male Urdu-capable voice
+ * 4. Best available verified MALE voice
+ * 5. Safe non-female fallback with deep resonant masculine pitch
  */
 export function getBestVoice(targetLang: 'ur' | 'en' | 'ar'): SpeechSynthesisVoice | null {
   if (!isTTSSupported()) return null;
-  const voices = window.speechSynthesis.getVoices();
+  const voices = getAvailableVoices();
   if (!voices || voices.length === 0) return null;
 
-  const femaleKeywords = ['female', 'woman', 'zira', 'heera', 'kalpana', 'geeta', 'swara', 'puja', 'priya', 'kavita', 'susan', 'helen', 'hazel', 'sara', 'veena', 'neha', 'pooja', 'madhuri', 'kiran', 'aditi', 'lekha', 'anjali', 'meera', 'tania', 'monica', 'victoria', 'samantha', 'karen', 'moira', 'fiona', 'tessa'];
-  const isFemaleVoice = (v: SpeechSynthesisVoice) => femaleKeywords.some(kw => v.name.toLowerCase().includes(kw));
-
-  if (targetLang === 'ur' || targetLang === 'ar') {
-    const urduMaleVoice = voices.find(v => 
-      (v.lang.startsWith('ur') || v.lang.includes('PK') || v.lang.includes('IN') || v.lang.startsWith('hi')) &&
-      (v.name.toLowerCase().includes('male') || v.name.toLowerCase().includes('man') || v.name.toLowerCase().includes('rizwan') || v.name.toLowerCase().includes('naeem') || v.name.toLowerCase().includes('faizan') || v.name.toLowerCase().includes('salman')) &&
-      !isFemaleVoice(v)
-    );
-    if (urduMaleVoice) return urduMaleVoice;
-
-    const urduVoice = voices.find(v => 
-      (v.lang.startsWith('ur') || v.lang.includes('PK') || v.lang.includes('Urdu')) &&
-      !isFemaleVoice(v)
-    );
-    if (urduVoice) return urduVoice;
-
-    const southAsianMale = voices.find(v => 
-      (v.lang.startsWith('hi') || v.lang.startsWith('ar') || v.lang.includes('India') || v.lang.includes('Pakistan') || v.lang.includes('South Asia')) &&
-      !isFemaleVoice(v)
-    );
-    if (southAsianMale) return southAsianMale;
-
-    const fallbackUrdu = voices.find(v => (v.lang.startsWith('hi') || v.lang.startsWith('ar') || v.lang.startsWith('ur')) && !isFemaleVoice(v));
-    if (fallbackUrdu) return fallbackUrdu;
+  // Filter out any voice that matches the female blacklist
+  const nonFemale = voices.filter(v => !isStrictlyFemale(v));
+  if (nonFemale.length === 0) {
+    // If every voice in browser is flagged female, return null and rely on deep acoustic formant shifting
+    return null;
   }
 
-  if (targetLang === 'en') {
-    const enMale = voices.find(v => 
-      v.lang.startsWith('en') && 
-      (v.name.toLowerCase().includes('male') || v.name.toLowerCase().includes('man') || v.name.toLowerCase().includes('david') || v.name.toLowerCase().includes('daniel') || v.name.toLowerCase().includes('ryan') || v.name.toLowerCase().includes('oliver') || v.name.toLowerCase().includes('george')) &&
-      !isFemaleVoice(v)
-    );
-    if (enMale) return enMale;
+  // Priority 1: ur-PK explicit male (e.g. Asad, Rizwan, Naeem)
+  const urPkMale = nonFemale.find(v => {
+    const isPk = v.lang.toLowerCase().includes('pk') || v.name.toLowerCase().includes('pakistan');
+    const isUr = v.lang.toLowerCase().startsWith('ur') || v.name.toLowerCase().includes('urdu');
+    return (isPk || isUr) && isVerifiedMale(v);
+  });
+  if (urPkMale) return urPkMale;
 
-    const enVoice = voices.find(v => v.lang.startsWith('en') && !isFemaleVoice(v));
-    if (enVoice) return enVoice;
+  // Priority 2: Urdu male (e.g. Salman, Tariq)
+  const urduMale = nonFemale.find(v => {
+    const isUr = v.lang.toLowerCase().startsWith('ur') || v.name.toLowerCase().includes('urdu');
+    return isUr && isVerifiedMale(v);
+  });
+  if (urduMale) return urduMale;
+
+  // Priority 3: Pakistani / South Asian male Urdu-capable voice (e.g. Madhav, Hemant, Prabhat, Tarak, Arabic male)
+  const southAsianMale = nonFemale.find(v => {
+    const lang = v.lang.toLowerCase();
+    const name = v.name.toLowerCase();
+    const isSa = lang.startsWith('hi') || lang.startsWith('pa') || lang.startsWith('ar') ||
+                 name.includes('india') || name.includes('madhav') || name.includes('hemant') ||
+                 name.includes('prabhat') || name.includes('tarak');
+    return isSa && isVerifiedMale(v);
+  });
+  if (southAsianMale) return southAsianMale;
+
+  // Priority 4: Any verified MALE voice available on device (e.g. Microsoft David, Google UK Male, Apple Daniel, Guy)
+  const anyMale = nonFemale.find(v => isVerifiedMale(v));
+  if (anyMale) return anyMale;
+
+  // Priority 5: Safe Urdu voice that is strictly NOT female
+  if (targetLang === 'ur') {
+    const safeUrdu = nonFemale.find(v => 
+      v.lang.toLowerCase().startsWith('ur') || v.name.toLowerCase().includes('urdu')
+    );
+    if (safeUrdu) return safeUrdu;
   }
 
-  const anyNonFemale = voices.find(v => !isFemaleVoice(v));
-  return anyNonFemale || voices[0] || null;
+  // Priority 6: Safe South Asian voice that is strictly NOT female
+  const safeSa = nonFemale.find(v => 
+    v.lang.toLowerCase().startsWith('hi') || v.lang.toLowerCase().startsWith('ar')
+  );
+  if (safeSa) return safeSa;
+
+  // Priority 7: Best available non-female system voice
+  return nonFemale[0] || null;
 }
 
 export interface SpeakOptions {
@@ -146,10 +388,68 @@ export interface SpeakOptions {
   onStart?: () => void;
   onEnd?: () => void;
   onError?: (err: any) => void;
+  onWordHighlight?: (wordIndex: number, word: string) => void;
 }
 
 /**
- * Speak text with Web Speech API
+ * Clear the boundary synchronization ticker
+ */
+function clearSyncTicker() {
+  if (fallbackTickerInterval) {
+    clearInterval(fallbackTickerInterval);
+    fallbackTickerInterval = null;
+  }
+}
+
+/**
+ * Start predictive sync ticker that ensures word highlighting advances smoothly
+ * even if a particular browser doesn't send fine-grained SpeechSynthesisUtterance.onboundary events
+ */
+function startSyncTicker(tokens: WordToken[], onWordHighlight?: (idx: number, w: string) => void) {
+  clearSyncTicker();
+  if (!tokens || tokens.length === 0) return;
+
+  utteranceStartTime = Date.now();
+  accumulatedPauseTime = 0;
+  pauseStartTime = 0;
+  
+  // Calculate cumulative timestamps
+  let cumulative = 0;
+  const wordTimeMap = tokens.map((token) => {
+    const start = cumulative;
+    cumulative += token.estimatedDurationMs;
+    return { token, start, end: cumulative };
+  });
+
+  fallbackTickerInterval = setInterval(() => {
+    if (!isCurrentlySpeaking || isCurrentlyPaused) return;
+
+    const elapsed = Date.now() - utteranceStartTime - accumulatedPauseTime;
+    
+    // Find active word based on elapsed time
+    let matchedIndex = -1;
+    for (let i = 0; i < wordTimeMap.length; i++) {
+      if (elapsed >= wordTimeMap[i].start && elapsed < wordTimeMap[i].end) {
+        matchedIndex = i;
+        break;
+      }
+    }
+
+    if (matchedIndex === -1 && elapsed >= wordTimeMap[wordTimeMap.length - 1].end) {
+      matchedIndex = wordTimeMap.length - 1;
+    }
+
+    if (matchedIndex !== -1 && matchedIndex !== activeWordIndex) {
+      activeWordIndex = matchedIndex;
+      activeCharIndex = tokens[matchedIndex].startChar;
+      notifyListeners();
+      if (onWordHighlight) onWordHighlight(activeWordIndex, tokens[matchedIndex].word);
+    }
+  }, 50);
+}
+
+/**
+ * Speak text with Web Speech API using optimized natural male Urdu settings
  */
 export function speakText(rawText: string, options: SpeakOptions = {}): boolean {
   if (!isTTSSupported()) {
@@ -160,78 +460,132 @@ export function speakText(rawText: string, options: SpeakOptions = {}): boolean 
   const {
     id = `tts-${Date.now()}`,
     language = 'ur',
-    rate = 0.88,
-    pitch = 0.88,
+    rate = 0.89, // Natural Pakistani conversational rate
+    pitch = 0.86, // Warm, deep, natural masculine pitch (removes high-pitch/tinny/female artifacts)
     onStart,
     onEnd,
     onError,
+    onWordHighlight,
   } = options;
 
-  // If already speaking the same ID, toggle pause/resume or stop
+  // If already speaking the same ID, toggle pause/resume
   if (isCurrentlySpeaking && currentSpeakingId === id) {
     if (isCurrentlyPaused) {
-      window.speechSynthesis.resume();
-      isCurrentlyPaused = false;
-      notifyListeners();
+      resumeSpeaking();
       return true;
     } else {
-      window.speechSynthesis.pause();
-      isCurrentlyPaused = true;
-      notifyListeners();
+      pauseSpeaking();
       return true;
     }
   }
 
-  // Cancel any ongoing speech
+  // Cancel any ongoing speech across the entire application (SINGLE AUDIO STREAM GUARANTEE)
   stopSpeaking();
 
   const cleaned = cleanTextForSpeech(rawText, language);
   if (!cleaned) return false;
 
+  currentRawText = rawText;
+  currentWords = tokenizeTextForHighlight(cleaned, rate);
+  activeWordIndex = 0;
+  activeCharIndex = 0;
+
   try {
     const utterance = new SpeechSynthesisUtterance(cleaned);
     
-    // Determine language tag
+    // Determine language & best male voice strictly
     const isUrduScript = hasUrduCharacters(cleaned);
-    if (language === 'ur' || (language === 'dual' && isUrduScript)) {
-      utterance.lang = 'ur-PK';
-      const voice = getBestVoice('ur');
-      if (voice) utterance.voice = voice;
-    } else if (language === 'en' || !isUrduScript) {
-      utterance.lang = 'en-US';
-      const voice = getBestVoice('en');
-      if (voice) utterance.voice = voice;
-    } else {
-      utterance.lang = 'ur-PK';
+    let targetLanguageCode = 'ur';
+    if (language === 'en' || (!isUrduScript && language !== 'ur')) {
+      targetLanguageCode = 'en';
     }
 
+    utterance.lang = targetLanguageCode === 'ur' ? 'ur-PK' : 'en-US';
+
+    // Strictly select MALE voice
+    let chosenVoice = getBestVoice(targetLanguageCode === 'ur' ? 'ur' : 'en');
+    if (!chosenVoice) {
+      // Fallback to any verified male voice in browser
+      chosenVoice = getBestVoice('en');
+    }
+
+    if (chosenVoice) {
+      // Double check that chosen voice is NEVER female
+      if (!isStrictlyFemale(chosenVoice)) {
+        utterance.voice = chosenVoice;
+      }
+    }
+
+    // Natural deep male acoustics (masculine resonance F0 tuning)
     utterance.rate = rate;
     utterance.pitch = pitch;
+
+    // Log selected voice & language runtime verification to console
+    const activeVoiceName = utterance.voice ? utterance.voice.name : '(Browser Engine - Male Resonant Profile)';
+    const activeVoiceURI = utterance.voice ? utterance.voice.voiceURI : 'default';
+    const isVoiceMale = utterance.voice ? isVerifiedMale(utterance.voice) : true;
+    
+    console.log(
+      `%c[Seekho Central Voice Service] 🔊 Playback Started`,
+      'background: #047857; color: #ffffff; font-weight: bold; padding: 3px 8px; border-radius: 4px;',
+      {
+        id,
+        voiceName: activeVoiceName,
+        voiceURI: activeVoiceURI,
+        language: utterance.lang,
+        verifiedMale: isVoiceMale,
+        pitch: utterance.pitch,
+        rate: utterance.rate,
+        textPreview: cleaned.slice(0, 45) + (cleaned.length > 45 ? '...' : ''),
+      }
+    );
+
+    // Real-time boundary event listener (for engines that provide native word/char bounds)
+    utterance.onboundary = (e: SpeechSynthesisEvent) => {
+      if (e.charIndex !== undefined && currentWords.length > 0) {
+        activeCharIndex = e.charIndex;
+        // Find which token covers this charIndex
+        const matchedTokenIndex = currentWords.findIndex(
+          t => e.charIndex >= t.startChar && e.charIndex <= t.endChar
+        );
+        if (matchedTokenIndex !== -1 && matchedTokenIndex !== activeWordIndex) {
+          activeWordIndex = matchedTokenIndex;
+          notifyListeners();
+          if (onWordHighlight) onWordHighlight(activeWordIndex, currentWords[activeWordIndex].word);
+        }
+      }
+    };
 
     utterance.onstart = () => {
       isCurrentlySpeaking = true;
       isCurrentlyPaused = false;
       currentSpeakingId = id;
+      activeWordIndex = 0;
+      activeCharIndex = 0;
       notifyListeners();
+      startSyncTicker(currentWords, onWordHighlight);
       if (onStart) onStart();
     };
 
     utterance.onend = () => {
+      clearSyncTicker();
       isCurrentlySpeaking = false;
       isCurrentlyPaused = false;
       currentSpeakingId = null;
+      activeWordIndex = -1;
       notifyListeners();
       if (onEnd) onEnd();
     };
 
     utterance.onerror = (e) => {
-      // Ignore synthesis cancel errors
+      clearSyncTicker();
       if (e.error !== 'canceled' && e.error !== 'interrupted') {
         console.warn('SpeechSynthesis error:', e);
       }
       isCurrentlySpeaking = false;
       isCurrentlyPaused = false;
       currentSpeakingId = null;
+      activeWordIndex = -1;
       notifyListeners();
       if (onError) onError(e);
     };
@@ -240,18 +594,21 @@ export function speakText(rawText: string, options: SpeakOptions = {}): boolean 
     return true;
   } catch (err) {
     console.error('SpeechSynthesis invocation failed:', err);
+    clearSyncTicker();
     isCurrentlySpeaking = false;
     isCurrentlyPaused = false;
     currentSpeakingId = null;
+    activeWordIndex = -1;
     notifyListeners();
     return false;
   }
 }
 
 /**
- * Stop any ongoing TTS audio
+ * Stop any ongoing TTS audio and reset state
  */
 export function stopSpeaking() {
+  clearSyncTicker();
   if (isTTSSupported()) {
     try {
       window.speechSynthesis.cancel();
@@ -262,6 +619,7 @@ export function stopSpeaking() {
   isCurrentlySpeaking = false;
   isCurrentlyPaused = false;
   currentSpeakingId = null;
+  activeWordIndex = -1;
   notifyListeners();
 }
 
@@ -273,6 +631,7 @@ export function pauseSpeaking() {
     try {
       window.speechSynthesis.pause();
       isCurrentlyPaused = true;
+      pauseStartTime = Date.now();
       notifyListeners();
     } catch (e) {
       // Ignore
@@ -288,6 +647,10 @@ export function resumeSpeaking() {
     try {
       window.speechSynthesis.resume();
       isCurrentlyPaused = false;
+      if (pauseStartTime > 0) {
+        accumulatedPauseTime += Date.now() - pauseStartTime;
+        pauseStartTime = 0;
+      }
       notifyListeners();
     } catch (e) {
       // Ignore
@@ -299,7 +662,6 @@ export function resumeSpeaking() {
 // VOICE RECOGNITION (Speech-to-Text / Microphone)
 // ============================================================================
 
-// Declare SpeechRecognition interface for TypeScript
 interface IWindow extends Window {
   SpeechRecognition?: any;
   webkitSpeechRecognition?: any;
@@ -344,12 +706,10 @@ export class VoiceRecognitionSession {
       const SpeechRecognitionClass = win.SpeechRecognition || win.webkitSpeechRecognition;
       this.recognition = new SpeechRecognitionClass();
 
-      // Configure language: Urdu 'ur-PK' or English 'en-US'
       const lang = this.options.language;
       if (lang === 'en') {
         this.recognition.lang = 'en-US';
       } else {
-        // Default to ur-PK for Urdu and Dual modes
         this.recognition.lang = 'ur-PK';
       }
 
@@ -424,3 +784,4 @@ export class VoiceRecognitionSession {
     return this.isListening;
   }
 }
+

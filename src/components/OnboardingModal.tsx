@@ -237,7 +237,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
   const [step, setStep] = useState<1 | 2 | 3 | 4 | 5>(1);
 
   // Step 1: Basic Profile Info
-  const [name, setName] = useState(initialProfile.name && initialProfile.name !== 'علی احمد' ? initialProfile.name : '');
+  const [name, setName] = useState(initialProfile.name && initialProfile.name !== 'دعا فاطمہ' ? initialProfile.name : '');
   const [ageGroup, setAgeGroup] = useState<AgeGroup>(initialProfile.ageGroup || '16-25');
   const [village, setVillage] = useState(initialProfile.village || 'ڈوبے، برنالہ، آزاد کشمیر');
   const [role, setRole] = useState(initialProfile.role || 'سیکھنے والے');
@@ -310,7 +310,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
 
   // Handle Save & Finish Onboarding
   const handleFinishOnboarding = () => {
-    const finalName = name.trim() || (!isEnOnly ? 'علی احمد' : 'Learner');
+    const finalName = name.trim() || (!isEnOnly ? 'دعا فاطمہ' : 'Learner');
     const updatedProfile: UserProfile = {
       ...initialProfile,
       name: finalName,

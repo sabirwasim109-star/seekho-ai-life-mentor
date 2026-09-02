@@ -1478,5 +1478,64 @@ export interface DynamicSearchLesson {
   step7Impact: DynamicLessonStep7Impact;
 }
 
+// -------------------------------------------------------------
+// Life Purpose Guidance System (مقاصد زندگی — 6 Spheres)
+// -------------------------------------------------------------
+
+export type LifePurposeAreaId = 'self' | 'family' | 'society' | 'country' | 'humanity' | 'hereafter';
+
+export interface LifePurposeTopic {
+  id: string;
+  titleUrdu: string;
+  titleEn: string;
+  iconName: string;
+  summaryUrdu: string;
+  summaryEn: string;
+  quranSunnahWisdomUrdu?: {
+    arabicText?: string;
+    translationUrdu: string;
+    reference: string;
+    practicalTakeawayUrdu: string;
+  };
+  modernPracticalStepsUrdu: string[];
+  audioScriptUrdu: string;
+}
+
+export interface LifePurposeArea {
+  id: LifePurposeAreaId;
+  titleUrdu: string;
+  titleEn: string;
+  subtitleUrdu: string;
+  subtitleEn: string;
+  iconName: string;
+  themeColor: 'emerald' | 'teal' | 'cyan' | 'blue' | 'indigo' | 'amber';
+  introUrdu: string;
+  introEn: string;
+  todayAction: {
+    titleUrdu: string;
+    titleEn: string;
+    descriptionUrdu: string;
+    descriptionEn: string;
+    stepsUrdu: string[];
+    reflectionPromptUrdu: string;
+    estimatedMinutes: number;
+    points: number;
+  };
+  youthFocusSection?: {
+    questionUrdu: string;
+    explanationUrdu: string;
+    keyFactorsUrdu: { factor: string; solution: string }[];
+    mindsetShiftUrdu: string;
+  };
+  topics: LifePurposeTopic[];
+  reflectionQuestions: {
+    questionUrdu: string;
+    questionEn: string;
+    optionsUrdu?: string[];
+    encouragingNoteUrdu: string;
+  }[];
+  audioOverviewUrdu: string;
+}
+
 
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { 
   Volume2, 
   VolumeX, 
@@ -19,8 +19,157 @@ import {
   subscribeSpeechState, 
   isTTSSupported,
   isVoiceRecognitionSupported,
-  VoiceRecognitionSession 
+  VoiceRecognitionSession,
+  SpeechState
 } from '../utils/speech';
+
+// ============================================================================
+// ACTIVE SPEECH HOOK (Tracks when any element or specific ID is speaking)
+// ============================================================================
+
+export function useActiveSpeech(targetId?: string) {
+  const [speechState, setSpeechState] = useState<SpeechState>({
+    isSpeaking: false,
+    isPaused: false,
+    currentId: null,
+    text: '',
+    currentCharIndex: 0,
+    currentWordIndex: -1,
+    currentWord: '',
+    words: [],
+  });
+
+  useEffect(() => {
+    return subscribeSpeechState(setSpeechState);
+  }, []);
+
+  const isActive = speechState.isSpeaking && (targetId ? speechState.currentId === targetId : true);
+  const isPaused = speechState.isPaused && (targetId ? speechState.currentId === targetId : true);
+  return { ...speechState, isActive, isPaused };
+}
+
+// ============================================================================
+// READ-ALONG WORD-BY-WORD HIGHLIGHT COMPONENT
+// ============================================================================
+
+export interface ReadAlongTextProps {
+  id?: string;
+  text: string;
+  className?: string;
+  highlightColor?: 'emerald' | 'amber' | 'blue' | 'indigo' | 'purple' | 'rose';
+  autoScroll?: boolean;
+}
+
+/**
+ * Renders text that highlights word-by-word with an animated underline during speech.
+ * Operates gracefully with RTL Urdu without layout shifts or text deformation.
+ */
+export const ReadAlongText: React.FC<ReadAlongTextProps> = ({
+  id,
+  text,
+  className = '',
+  highlightColor = 'emerald',
+  autoScroll = false,
+}) => {
+  const speechState = useActiveSpeech(id);
+  const activeWordRef = useRef<HTMLSpanElement | null>(null);
+
+  // Split text into word segments and whitespace tokens
+  const tokens = useMemo(() => {
+    if (!text) return [];
+    return text.split(/(\s+)/);
+  }, [text]);
+
+  const isThisActive = speechState.isActive && (
+    id ? speechState.currentId === id : (
+      speechState.text ? speechState.text.includes(text.substring(0, Math.min(25, text.length))) : false
+    )
+  );
+  
+  const currentWordIndex = speechState.currentWordIndex;
+
+  // Auto-scroll to active word smoothly if enabled
+  useEffect(() => {
+    if (isThisActive && autoScroll && activeWordRef.current) {
+      try {
+        activeWordRef.current.scrollIntoView({
+          behavior: 'smooth',
+          block: 'nearest',
+          inline: 'nearest',
+        });
+      } catch (e) {
+        // Ignore
+      }
+    }
+  }, [isThisActive, currentWordIndex, autoScroll]);
+
+  const colorClasses = {
+    emerald: {
+      bg: 'bg-emerald-500/25 text-emerald-100 dark:bg-emerald-400/30',
+      line: 'after:bg-emerald-400',
+    },
+    amber: {
+      bg: 'bg-amber-500/25 text-amber-100 dark:bg-amber-400/30',
+      line: 'after:bg-amber-400',
+    },
+    blue: {
+      bg: 'bg-blue-500/25 text-blue-100 dark:bg-blue-400/30',
+      line: 'after:bg-blue-400',
+    },
+    indigo: {
+      bg: 'bg-indigo-500/25 text-indigo-100 dark:bg-indigo-400/30',
+      line: 'after:bg-indigo-400',
+    },
+    purple: {
+      bg: 'bg-purple-500/25 text-purple-100 dark:bg-purple-400/30',
+      line: 'after:bg-purple-400',
+    },
+    rose: {
+      bg: 'bg-rose-500/25 text-rose-100 dark:bg-rose-400/30',
+      line: 'after:bg-rose-400',
+    },
+  }[highlightColor] || {
+    bg: 'bg-emerald-500/25 text-emerald-100 dark:bg-emerald-400/30',
+    line: 'after:bg-emerald-400',
+  };
+
+  if (!isThisActive || currentWordIndex < 0) {
+    return <span className={className}>{text}</span>;
+  }
+
+  let nonWhitespaceCount = 0;
+
+  return (
+    <span className={className} dir="auto">
+      {tokens.map((chunk, idx) => {
+        const isWhitespace = /^\s+$/.test(chunk);
+        if (isWhitespace) {
+          return <span key={idx}>{chunk}</span>;
+        }
+
+        const thisIndex = nonWhitespaceCount;
+        nonWhitespaceCount++;
+        const isSpoken = thisIndex === currentWordIndex;
+
+        return (
+          <span
+            key={idx}
+            ref={isSpoken ? activeWordRef : null}
+            className={`transition-all duration-100 relative inline-block align-baseline ${
+              isSpoken
+                ? `${colorClasses.bg} font-bold rounded-xs px-1 -mx-0.5 after:content-[''] after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] ${colorClasses.line} after:rounded-full after:animate-pulse`
+                : ''
+            }`}
+          >
+            {chunk}
+          </span>
+        );
+      })}
+    </span>
+  );
+};
+
+export const WordHighlightText = ReadAlongText;
 
 // ============================================================================
 // AUDIO READER BUTTON (پڑھ کے سنائیں / Listen to Audio)
@@ -52,25 +201,11 @@ export const AudioReaderButton: React.FC<AudioReaderButtonProps> = ({
   labelEn = 'Listen Audio',
 }) => {
   const buttonId = useRef(customId || `audio-btn-${Math.random().toString(36).substring(2, 9)}`).current;
-  const [speechState, setSpeechState] = useState<{ isSpeaking: boolean; isPaused: boolean; currentId: string | null }>({
-    isSpeaking: false,
-    isPaused: false,
-    currentId: null,
-  });
+  const { isActive, isPaused } = useActiveSpeech(buttonId);
 
   const isUrdu = language === 'ur';
   const isDual = language === 'dual';
   const isEn = language === 'en';
-
-  useEffect(() => {
-    const unsubscribe = subscribeSpeechState(setSpeechState);
-    return () => {
-      unsubscribe();
-    };
-  }, []);
-
-  const isCurrentActive = speechState.isSpeaking && speechState.currentId === buttonId;
-  const isCurrentPaused = speechState.isPaused && speechState.currentId === buttonId;
 
   const handleToggle = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -78,8 +213,8 @@ export const AudioReaderButton: React.FC<AudioReaderButtonProps> = ({
 
     if (!text || !text.trim()) return;
 
-    if (isCurrentActive) {
-      if (isCurrentPaused) {
+    if (isActive) {
+      if (isPaused) {
         resumeSpeaking();
       } else {
         pauseSpeaking();
@@ -106,7 +241,7 @@ export const AudioReaderButton: React.FC<AudioReaderButtonProps> = ({
   const sizeClasses = {
     sm: 'p-1.5 text-xs',
     md: 'p-2 text-sm',
-    lg: 'px-4 py-2 text-base min-h-[44px]',
+    lg: 'px-4 py-2.5 text-base min-h-[44px]',
   }[size];
 
   const iconSizes = {
@@ -123,20 +258,20 @@ export const AudioReaderButton: React.FC<AudioReaderButtonProps> = ({
           type="button"
           onClick={handleToggle}
           title={
-            isCurrentActive 
-              ? (isCurrentPaused ? (isUrdu ? 'دوبارہ چلائیں' : 'Resume Audio') : (isUrdu ? 'آواز روکیں' : 'Pause Audio'))
+            isActive 
+              ? (isPaused ? (isUrdu ? 'دوبارہ چلائیں' : 'Resume Audio') : (isUrdu ? 'آواز روکیں' : 'Pause Audio'))
               : (isUrdu ? 'پڑھ کے سنائیں' : 'Listen with Audio Reader')
           }
-          className={`relative group inline-flex items-center gap-2 rounded-full font-bold transition-all shadow-xs ${
-            isCurrentActive
-              ? isCurrentPaused
+          className={`relative group inline-flex items-center gap-2 rounded-full font-bold transition-all shadow-xs cursor-pointer ${
+            isActive
+              ? isPaused
                 ? 'bg-amber-500 text-white hover:bg-amber-600 ring-2 ring-amber-300'
                 : 'bg-emerald-600 text-white hover:bg-emerald-700 ring-2 ring-emerald-300 animate-pulse'
               : 'bg-white/90 hover:bg-white text-emerald-900 border border-emerald-300/80 hover:border-emerald-500'
           } ${sizeClasses} ${className}`}
         >
-          {isCurrentActive ? (
-            isCurrentPaused ? (
+          {isActive ? (
+            isPaused ? (
               <Play className={`${iconSizes} fill-current`} />
             ) : (
               <Pause className={`${iconSizes} fill-current`} />
@@ -145,10 +280,10 @@ export const AudioReaderButton: React.FC<AudioReaderButtonProps> = ({
             <Volume2 className={`${iconSizes} text-emerald-700 group-hover:scale-110 transition-transform`} />
           )}
 
-          {(showLabel || isCurrentActive) && (
+          {(showLabel || isActive) && (
             <span className="font-arabic text-[14px] sm:text-[15px] font-bold px-1 select-none">
-              {isCurrentActive ? (
-                isCurrentPaused ? (
+              {isActive ? (
+                isPaused ? (
                   isDual ? 'جاری رکھیں (Resume)' : isUrdu ? 'جاری رکھیں' : 'Resume'
                 ) : (
                   isDual ? 'روکیں (Pause)' : isUrdu ? 'روکیں' : 'Pause'
@@ -160,7 +295,7 @@ export const AudioReaderButton: React.FC<AudioReaderButtonProps> = ({
           )}
 
           {/* Soundwave animation indicator when speaking */}
-          {isCurrentActive && !isCurrentPaused && (
+          {isActive && !isPaused && (
             <span className="flex items-center gap-0.5 ml-1">
               <span className="w-1 h-3 bg-white rounded-full animate-bounce [animation-delay:0ms]"></span>
               <span className="w-1 h-4 bg-white rounded-full animate-bounce [animation-delay:150ms]"></span>
@@ -169,12 +304,12 @@ export const AudioReaderButton: React.FC<AudioReaderButtonProps> = ({
           )}
         </button>
 
-        {isCurrentActive && (
+        {isActive && (
           <button
             type="button"
             onClick={handleStop}
             title={isUrdu ? 'آواز بند کریں' : 'Stop Audio'}
-            className="p-2 rounded-full bg-rose-50 text-rose-700 hover:bg-rose-100 border border-rose-200 transition"
+            className="p-2 rounded-full bg-rose-50 text-rose-700 hover:bg-rose-100 border border-rose-200 transition cursor-pointer"
           >
             <VolumeX className="w-4 h-4" />
           </button>
@@ -189,20 +324,20 @@ export const AudioReaderButton: React.FC<AudioReaderButtonProps> = ({
       <button
         type="button"
         onClick={handleToggle}
-        className={`inline-flex items-center gap-1.5 rounded-full font-bold transition font-arabic ${
-          isCurrentActive
+        className={`inline-flex items-center gap-1.5 rounded-full font-bold transition font-arabic cursor-pointer ${
+          isActive
             ? 'bg-emerald-700 text-white ring-2 ring-emerald-400'
             : 'bg-emerald-100/90 text-emerald-900 hover:bg-emerald-200 border border-emerald-300'
         } ${sizeClasses} ${className}`}
       >
-        {isCurrentActive ? (
-          isCurrentPaused ? <Play className="w-4 h-4 fill-current" /> : <Pause className="w-4 h-4 fill-current" />
+        {isActive ? (
+          isPaused ? <Play className="w-4 h-4 fill-current" /> : <Pause className="w-4 h-4 fill-current" />
         ) : (
           <Volume2 className="w-4 h-4" />
         )}
         <span className="text-[13.5px] sm:text-[14px]">
-          {isCurrentActive ? (
-            isCurrentPaused ? (isUrdu ? 'جاری رکھیں' : 'Resume') : (isUrdu ? 'روکیں' : 'Pause')
+          {isActive ? (
+            isPaused ? (isUrdu ? 'جاری رکھیں' : 'Resume') : (isUrdu ? 'روکیں' : 'Pause')
           ) : (
             isDual ? `${labelUr} / ${labelEn}` : isUrdu ? labelUr : labelEn
           )}
@@ -217,14 +352,14 @@ export const AudioReaderButton: React.FC<AudioReaderButtonProps> = ({
       type="button"
       onClick={handleToggle}
       title={isUrdu ? 'پڑھ کے سنائیں' : 'Listen with Audio Reader'}
-      className={`inline-flex items-center justify-center rounded-xl transition ${
-        isCurrentActive
+      className={`inline-flex items-center justify-center rounded-xl transition cursor-pointer ${
+        isActive
           ? 'bg-emerald-600 text-white shadow-md'
           : 'bg-slate-100 hover:bg-slate-200 text-slate-700 hover:text-slate-900'
       } ${sizeClasses} ${className}`}
     >
-      {isCurrentActive ? (
-        isCurrentPaused ? <Play className={iconSizes} /> : <Pause className={iconSizes} />
+      {isActive ? (
+        isPaused ? <Play className={iconSizes} /> : <Pause className={iconSizes} />
       ) : (
         <Volume2 className={iconSizes} />
       )}
@@ -335,7 +470,7 @@ export const VoiceInputButton: React.FC<VoiceInputButtonProps> = ({
             ? (isUrdu ? 'سننا بند کریں' : 'Stop Listening')
             : (isDual ? `${tooltipUr} (${tooltipEn})` : isUrdu ? tooltipUr : tooltipEn)
         }
-        className={`relative rounded-xl font-bold transition-all flex items-center justify-center ${
+        className={`relative rounded-xl font-bold transition-all flex items-center justify-center cursor-pointer ${
           isListening
             ? 'bg-rose-600 text-white ring-4 ring-rose-300 animate-pulse shadow-lg scale-105'
             : 'bg-slate-100 hover:bg-emerald-50 text-slate-700 hover:text-emerald-800 border border-slate-200 hover:border-emerald-300'
@@ -373,26 +508,6 @@ export const VoiceInputButton: React.FC<VoiceInputButtonProps> = ({
     </div>
   );
 };
-
-// ============================================================================
-// ACTIVE SPEECH HOOK (Tracks when any element or specific ID is speaking)
-// ============================================================================
-
-export function useActiveSpeech(targetId?: string) {
-  const [speechState, setSpeechState] = useState<{ isSpeaking: boolean; isPaused: boolean; currentId: string | null }>({
-    isSpeaking: false,
-    isPaused: false,
-    currentId: null,
-  });
-
-  useEffect(() => {
-    return subscribeSpeechState(setSpeechState);
-  }, []);
-
-  const isActive = speechState.isSpeaking && (targetId ? speechState.currentId === targetId : true);
-  const isPaused = speechState.isPaused && (targetId ? speechState.currentId === targetId : true);
-  return { ...speechState, isActive, isPaused };
-}
 
 // ============================================================================
 // FIELD-LEVEL AUDIO SPEAKER BUTTON (🔊 Interactive speaker for labels & fields)
@@ -464,7 +579,7 @@ export const FieldAudioSpeaker: React.FC<FieldAudioSpeakerProps> = ({
             : isUrdu ? 'آواز روکیں' : 'Pause Audio'
           : isDual ? `${titleUr} (${titleEn})` : isUrdu ? titleUr : titleEn
       }
-      className={`inline-flex items-center justify-center rounded-full transition-all duration-200 shrink-0 select-none ${
+      className={`inline-flex items-center justify-center rounded-full transition-all duration-200 shrink-0 select-none cursor-pointer ${
         isActive
           ? isPaused
             ? 'bg-amber-500 text-white ring-2 ring-amber-300 scale-105 shadow-sm'
@@ -485,4 +600,5 @@ export const FieldAudioSpeaker: React.FC<FieldAudioSpeakerProps> = ({
     </button>
   );
 };
+
 

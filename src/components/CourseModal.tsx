@@ -28,7 +28,7 @@ import {
 import { Course, Language, UserProfile, QuizQuestion } from '../types';
 import { UI_TRANSLATIONS } from '../data/mockData';
 import { AudioReaderButton, VoiceInputButton } from './AudioSpeechControls';
-import { stopSpeaking } from '../utils/speech';
+import { speakText, stopSpeaking } from '../utils/speech';
 
 interface CourseModalProps {
   course: Course;
@@ -151,29 +151,22 @@ export const CourseModal: React.FC<CourseModalProps> = ({
   const completedLessonsCount = course.lessons.filter(l => completedLessonIds.includes(l.id)).length;
   const isCourseComplete = completedLessonsCount === totalLessons && totalLessons > 0;
 
-  // Text to speech helper (Web Speech API)
+  // Text to speech helper (Centralized Voice Service)
   const toggleSpeech = () => {
-    if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
-      return;
-    }
-
+    const audioId = `course-lesson-${currentLesson.id}`;
     if (isSpeaking) {
-      window.speechSynthesis.cancel();
+      stopSpeaking();
       setIsSpeaking(false);
     } else {
-      try {
-        window.speechSynthesis.cancel();
-        const textToRead = language === 'ur' ? currentLesson.contentUrdu : currentLesson.contentEn;
-        const utterance = new SpeechSynthesisUtterance(textToRead.replace(/[#*`_]/g, ''));
-        utterance.lang = language === 'ur' ? 'ur-PK' : 'en-US';
-        utterance.rate = 0.9;
-        utterance.onend = () => setIsSpeaking(false);
-        utterance.onerror = () => setIsSpeaking(false);
-        window.speechSynthesis.speak(utterance);
-        setIsSpeaking(true);
-      } catch (e) {
-        setIsSpeaking(false);
-      }
+      stopSpeaking();
+      const textToRead = language === 'ur' ? currentLesson.contentUrdu : currentLesson.contentEn;
+      setIsSpeaking(true);
+      speakText(textToRead, {
+        id: audioId,
+        language: language === 'ur' ? 'ur' : 'en',
+        onEnd: () => setIsSpeaking(false),
+        onError: () => setIsSpeaking(false),
+      });
     }
   };
 
